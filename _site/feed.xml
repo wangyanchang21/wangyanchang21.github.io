@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>DCSnail</title>
+    <description>iOS, watchOS, swifter</description>
+    <link>http://wangyanchang21.github.io/</link>
+    <atom:link href="http://wangyanchang21.github.io/feed.xml" rel="self" type="application/rss+xml" />
+    <pubDate>Tue, 14 May 2019 10:46:35 +0800</pubDate>
+    <lastBuildDate>Tue, 14 May 2019 10:46:35 +0800</lastBuildDate>
+    <generator>Jekyll v3.6.2</generator>
+    
+      <item>
+        <title>Template Wellcome</title>
+        <description>&lt;p&gt;这是我的个人博客, 欢迎阅读交流.&lt;/p&gt;
+
+&lt;p&gt;我的博客地址是&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://wangyanchang21.github.io&quot;&gt;网址1&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;[网址2][CSDN]&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/jekyll-uno/images/snail.jpg&quot;&gt;图片1&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/jekyll-uno/images/snail.jpg&quot; alt=&quot;图片2&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;为什么要&lt;code class=&quot;highlighter-rouge&quot;&gt;搭建这个博客&lt;/code&gt;呢?&lt;/p&gt;
+
+&lt;p&gt;来看看, 代码如下&lt;/p&gt;
+&lt;div class=&quot;language-swift highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;number&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8088&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;userName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;wangyanchang21&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;site&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;https://wangyanchang21.github.io&quot;&lt;/span&gt;
+
+&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;userName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;site&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;参考资料:
+[CSDN]:https://dcsnail.blog.csdn.net&lt;/p&gt;
+
+</description>
+        <pubDate>Tue, 14 May 2019 02:23:23 +0800</pubDate>
+        <link>http://wangyanchang21.github.io/2019/Template-Wellcome/</link>
+        <guid isPermaLink="true">http://wangyanchang21.github.io/2019/Template-Wellcome/</guid>
+        
+        <category>iOS</category>
+        
+        
+        <category>iOS</category>
+        
+      </item>
+    
+  </channel>
+</rss>

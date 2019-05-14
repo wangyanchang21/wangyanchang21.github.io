@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+    
+    <url>
+      <loc>http://wangyanchang21.github.io/2019/Template-Wellcome/</loc>
+      
+        <lastmod>2019-05-14T02:23:23+08:00</lastmod>
+      
+      
+        <changefreq>monthly</changefreq>
+      
+      
+        <priority>0.5</priority>
+      
+    </url>
+    
+  
+  
+    
+  
+    
+    <url>
+      <loc>http://wangyanchang21.github.io/feed.xml</loc>
+      
+        <lastmod>2019-05-14T10:46:35+08:00</lastmod>
+      
+      
+        <changefreq>monthly</changefreq>
+      
+      
+        <priority>0.3</priority>
+      
+    </url>
+    
+  
+    
+    <url>
+      <loc>http://wangyanchang21.github.io/humans.txt</loc>
+      
+        <lastmod>2019-05-14T10:46:35+08:00</lastmod>
+      
+      
+        <changefreq>monthly</changefreq>
+      
+      
+        <priority>0.3</priority>
+      
+    </url>
+    
+  
+    
+  
+    
+    <url>
+      <loc>http://wangyanchang21.github.io/css/main.css</loc>
+      
+        <lastmod>2019-05-14T10:46:35+08:00</lastmod>
+      
+      
+        <changefreq>monthly</changefreq>
+      
+      
+        <priority>0.3</priority>
+      
+    </url>
+    
+  
+    
+  
+    
+  
+</urlset>
