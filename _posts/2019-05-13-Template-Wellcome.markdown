@@ -6,7 +6,7 @@ tags: [iOS]
 ---
 
 这是我的个人博客, 欢迎阅读交流.
-
+, 
 我的博客地址是
 
 [网址1](https://wangyanchang21.github.io)
@@ -32,4 +32,179 @@ print(userName + site)
 
 参考资料:
 [CSDN]:https://dcsnail.blog.csdn.net
+
+
+
+
+[以太坊钱包 Trust项目解读之架构和流程](https://blog.csdn.net/wangyanchang21/article/details/83584996)
+[由Trust Wallet理解以太坊钱包管理和智能合约](https://blog.csdn.net/wangyanchang21/article/details/83862016)
+
+-------
+
+# 前言
+
+由于前阵子工作涉及到区块链方面的业务, 再加上自己对技术的热忱, 本人也是不断地学(恶)习(补)这方面的知识。在 github上的有很多优秀的开源钱包的代码, 比如说今天要分享的iOS版本的 `Trust`, 还有这个月24号刚刚官宣开源的 `imToken`。
+
+文章中, 会涉及到一些区块链的基础知识如以太坊、智能合约、节点、Token、地址等等, 这些基础知识就不介绍了, 还请自行查阅吧。
+
+# 以太坊钱包平台介绍
+
+首先, 还是先介绍下市场上常用的一些以太坊钱包吧, 至少让大家了解一下这些平台。
+
+## Mist
+
+`Mist`是一个全节点的钱包, 以太坊的官方钱包。
+官方地址: [ethereum](https://ethereum.org/)
+
+## Parity
+
+`Parity`也是一个全节点钱包, 原以太坊基金会部分成员开发的。
+官方地址: [Parity](https://www.parity.io/)
+
+## Trust
+
+在国外 App Store已经上架, 目前有 `iOS`和 `Android`移动端的应用, 应用中有 `Web3浏览器`并支持很多 `DApp`使用。
+官方地址: [TrustWalletApp](https://trustwalletapp.com/)
+
+## imToken
+
+`imToken`是一个中国团队开发的, 目前只有 `iOS`和 `Android`移动端的应用。
+官方地址: [ImToken](https://token.im/)
+
+## MyEtherWallet
+
+`MyEtherWallet` 作为一个轻钱包，无需下载，直接在 Web端进行操作。
+官方地址: [MyEtherWallet](https://www.myetherwallet.com/)
+
+## MetaMask
+
+`MetaMask`是一个轻量级钱包, 以Chrome扩展程序存在的 Web端钱包。
+官方地址: [MetaMask](https://metamask.io/)
+
+
+# Trust Wallet
+
+了解过各种钱包平台后, 进入今天主要对应用 [trust-wallet-ios](https://github.com/TrustWallet/trust-wallet-ios)进行源码解析, 它在 github上已经是开源的了。并且在众多开源的虚拟货币钱包项目中，`Trust`已经十分完善和稳定了，已经在国外的 App Store上架了，对应的 Android版本也已开源(但貌似 Android版本并不是最新版本的)。
+
+`Trust`可与任何`ERC20`和`ERC223`代币配合使用，并支持以太坊生态系统中的以太坊主链、侧链，以及所有服从以太坊协议的加密货币。`Trust`为用户提供统一的钱包地址，可用于管理以太坊和所有代币。还有一个功能齐全的`Web3`浏览器，可与任何分布式的应用程式(`DApp`)配合使用。在它的官网有这样的介绍: 
+>- 无服务器环境完全本地化了每个已安装的应用程序
+>- 以客户端为基础架构,可确保密钥本地存储在您的设备上
+>- 银行级安全保护您的数字资产免受潜在威胁。
+>- 应用级认证系统可以防止未经授权的设备进行访问
+
+
+## 主要模块
+
+<center><img src="https://img-blog.csdnimg.cn/20181031154630925.png" width=40% img/></center>
+
+
+第一个模块是一个浏览器, 具体来说是一个 `Web3浏览器`, 它支持许多 `DApp`(Decentralized Application的缩写, 即分布式应用), 支持基于以太坊的货币交易和游戏的 `DApps`。当然也具备普通浏览器的功能, 访问其它网址, 添加书签, 查看历史记录等等。
+
+
+<center><img src="https://img-blog.csdnimg.cn/20181031154744766.png" width=40% img/></center>
+
+第二个模块是钱包模块, 是这个 App最核心的部分, 对`Token`的交易记录、余额、汇率变化的查看, 也可以进行交易转账(发送和接收)。
+
+
+<center><img src="https://img-blog.csdnimg.cn/20181031154823974.png" width=40% img/></center>
+
+第三个模块是设置模块, 包括钱包账户的切换, 安全管理, 当前货币种类, 浏览器设置, 社区分享, 开发者选项等等。
+
+
+## 项目架构
+
+`Trust`的 iOS项目在架构设计和代码风格、包括技术栈都是很不错的。我将会以架构模式和四层式架构来解析此项目。
+
+
+<center><img src="https://img-blog.csdnimg.cn/20181031171755801.png" width=30% img/></center>
+
+**目录结构。** 如上图所示, 主要模块和重要功能组成第一层的节点目录, 如`Browser`、`Tokens`、`Style`、`Extension`等等。又在各个模块中将第二层目录按照功能分为`Coordinators`、`Views`、`ViewModels`、`ViewControllers`、`Layouts`等等。
+
+**架构模式。** 采用的是`MVVM`的架构模式, 不过并没有使用动态绑定, 但这并不影响它项目结构清晰的逻辑。相对于`MVC`的架构模式来说, 就使得`Controller`的负载变小了, 易于测试性提高了。当然它也具备`MVVM`架构的优缺点, 这里就不赘述了。 我大概画了一个草图, 如下图: 
+<center><img src="https://img-blog.csdnimg.cn/20181102175322816.png" width=70% img/></center>
+
+**视图层。** 整个项目绝大部分使用纯代码进行`View层`的编写, 且代码规范性较强, 也没有过多的继承, 所以代码可读性高。布局方式采用`autolayout`方式, 在具体模块中还以`Layout`为功能模块进行开发, 使`View层`的代码更加清晰。
+
+**业务层。** `Trust`的主要业务逻辑当然是有`ViewModel`来承担的, 另外还配合了`Coordinator`(或者说路由)的使用, 在页面之间的跳转逻辑上实现了统一管理。这样就减少了横向依赖, 也让跨层访问的业务更加容易开展。
+
+**网络层。** 项目中使用`Moya`进行数据请求, `Moya`已经做了足够多的工作了, 包括交付给给业务层封装成对象的数据、网络层的各种优化工作等。也使用了`JSONRPCKit` + `APIKit`的框架去进行数据请求, 这在[接下来的文章](https://blog.csdn.net/wangyanchang21/article/details/83862016#t9)中会具体分析, 这些请求就是关于智能合约调用的。`Trust`客户端在区块链中相当于一个轻量节点, 从公链上请求数据的话, 需要依靠某个全节点。就如图中的URL, 就可以理解为`Trust`客户端取链上数据所借助的全节点。
+
+<center><img src="https://img-blog.csdnimg.cn/20181031183501958.png" width=70% img/></center>
+
+
+**数据层。** 主要的数据持有化方式使用Realm数据库, 这是个轻量级、高性能、高效率、可跨平台的移动数据库。核心数据如钱包账户、交易、`Token`等都存储于此。另外, 也使用了`keychain`来保存比较重要且轻量的数据, 如私钥、应用锁设置和密码、最近使用的钱包、`Browser`的`cookies`。还有一些数据, 如当前货币种类、启动次数、当前版本启动次数、是否分享、是否评分等等, 都是采用`UserDefaults`的形式进行数据保存的。
+
+
+## 项目流程
+
+从程序启动`APPDelegate`开始, `AppCoordinator`作为app间的路由, 判断当前app内是否有钱包账户, 若没有则进入以`WelcomeViewController`为根控制器的页面进行钱包账户创建; 若有最近使用过的钱包账户, 则进入app内部的路由`InCoordinator`。在这里, 钱包账号创建的页面和钱包使用页面已经划分为两条业务线。其实从业务角度来说, 可以也可以理解为这是`Trust`内部的两个应用。
+
+<center><img src="https://img-blog.csdnimg.cn/20181102171823364.png" width=70% img/></center>
+
+进入`InCoordinator`后, 才真正开始创建`TabBarController`、`NavigationController`以及各个业务模块的`Coordinator`和`VC`。上图中明确表示了这个过程, 也对主要的业务模块的`Coordinator`和其对应的`VC`进行了说明, 且同颜色的之间是一一对应的。
+
+
+## 主体框架的功能划分
+
+本文前面介绍过项目的目录结构了, 但这里所说的框架并不是按照目录结构的角度, 而是延续上面的项目流程的角度。首先, 我将按源码进行原模原样的表述, 然后我将提出对于其功能划分的一些自己的建议。因为我认为某写业务模块的功能是应该出现在另一个业务模块中的。
+
+<center><img src="https://img-blog.csdnimg.cn/20181102171757143.png" width=70% img/></center>
+
+### AppDelegate
+
+`AppDelegate`需要承担的是程序的初始化以及整个应用生命周期的所影响的业务逻辑。
+**ProtectionCoordinator。** 功能是在保护应用的方面, 如应用锁、解锁以及当应用失去焦点后保护应用内部页面不被暴露的功能。
+**URLNavigatorCoordinator。** 功能是由 [URLNavigator](https://github.com/devxoul/URLNavigator)和 [Branch](https://github.com/BranchMetrics/ios-branch-deep-linking)的功能组成的。前者是对`Browser`进行监听的, 并在检测到约定好的URL了进行映射和处理。后者是关于延迟深度链接(Deferred Deep Linking)的。
+**Branch。** 和上面的`Branch`是同一个, 在启动应用时进行初始化, 并将在应用程序生命周期中多次调用，当应用由后台向前台切换时也将调用。用于处理从外部跳转入后, 根据传入的参数要跳转进入指定的页面。
+**EtherKeystore。** 应用的核心业务的处理类, 有钱包管理(创建、删除、导入、导出)、助记词转化、签名工作、私钥管理等功能。它的具体业务将会在[下篇文章](https://blog.csdn.net/wangyanchang21/article/details/83862016)中具体介绍。
+
+在`AppDelegate`中, `ProtectionCoordinator`需要跟随应用的生命周期进行功能的调整。`URLNavigatorCoordinator`中的`navigator`用来处理响应[URL Scheme](https://developer.apple.com/library/archive/featuredarticles/iPhoneURLScheme_Reference/Introduction/Introduction.html)这种由其它 App的跳入, 而`Branch`用来处理响应[Universal Links](https://developer.apple.com/ios/universal-links/)这种通用链接的跳入形式。
+而`EtherKeystore`在这里只是作为一个`AppCoordinator`初始化的一个参数, 并无实际使用。这也是我个人认为在这个业务模块并不应出现的类, 当然后面我也会细聊我为什么这么说? 我也将会给出我自己的建议。
+
+### AppCoordinator
+
+`AppCoordinator`(或者说路由)在业务上一般可以分为 App间的路由和 App内的路由。而在此项目中, 因为还有`InCoordinator`, 所以当前的`AppCoordinator`是一个 App间的路由, 而`InCoordinator`是一个App内的路由。所以在项目中`AppCoordinator`承担了一些应用层的功能。
+
+**Initializers。** `CrashReportInitializer`是统计崩溃的, 用到[Fabric](https://get.fabric.io/)的一些工具, 如 Crashlytics、Answers等。而`SkipBackupFilesInitializer`是防止文件被备份的。
+**AppTracker。** 记录应用启动次数、当前版本启动次数、是否分享、是否评分等一些仅保存于本地的应用层统计数据。
+**AppGlobalStyle。** 应用统一的风格, 包括导航栏外观、UITexfield外观、TableView分割线风格(边距, 颜色)等。这个统一风格是整个应用一致的, 一定要区别于统一管理的字体和颜色的类(如项目中的Colors类和AppStyle类)。
+**PushNotificationsRegistrar。** 管理远程推送授权和注册相关的业务。
+**BranchEventClosure。** 在从外部跳入当前 App后, 由`Branch`的操作调起的, 在`BranchEventClosure`的 block中, 由下层的`InCoordinator`来控制将要跳入的目标页面。但我个人认为, 它并不应该出现在这里, 后面建议中会具体说明原因。
+
+
+### InCoodinator
+
+这是 App内的路由, 与具体业务模块有间接联系的路由, 负责创建和管理各个业务模块的`Coordinator`和各个业务模块之间的跳转逻辑。
+
+**CheckDeviceCoordinator。** 检测当前设备是否是越狱设备, 如果是越狱设备则会提醒用户不安全, 因为这样在 `keychain`中存储的钱包账户的私钥就可能被盗。毕竟在区块链中, 私钥是你作为钱包主人的唯一证明。
+**HelpsCoordinator。** 通过本地对启动次数的监听, 在指定的启动次数时对用户进行应用分享和评分的提醒。
+**URLNavigable、URLNavigator。** 在`Browser`中进行监听, 一旦检测到有约定好的URL后, 可以在对应的block中做出想要的映射或者处理。如下图。
+<center><img src="https://img-blog.csdnimg.cn/2018110216360916.png" width=70% img/></center>
+
+
+**MigrationInitializer、Realm、WalletSession。** `Realm`数据库和数据库迁移的处理。这里其实不是特指数据库, 而是指所有与具体业务模块的`Coordinator`创建时所使用的公共类。所以这里包括`WalletSession`等类。
+**Coordinators。** 指`InCoordinator`所管理的具体业务模块的 Coordinator, 包括`BrowserCoordinator`、`TokensCoordinator`、`settingsCoordinator`。
+**TabBarController。** 创建上述`Coordinators`中各个具体业务模块的 Coordinator所管理的`NavigationController`和`ViewController`。
+
+### 直抒己见
+
+在上面的文章中, 我也说过有一些地方, 我个人认为是可以做一些调整的。当然, 如果你没有我这样的强迫症, 可以略过。
+先来看一个理念。在没有使用`Coordinator`的项目中, 其启动流程和各个`VC`之间的创建应该是这样的([原图出处](https://medium.com/ios-os-x-development/ios-architecture-patterns-ecba4c38de52#.4g9db2ybm)):
+<center><img src="https://img-blog.csdnimg.cn/20181101181606999.png" width=70% img/></center>
+
+然而在使用了`Coordinator`的项目中, 应该是这样的([原图出处](https://medium.com/ios-os-x-development/ios-architecture-patterns-ecba4c38de52#.4g9db2ybm)): 
+<center><img src="https://img-blog.csdnimg.cn/20181101182031878.png" width=70% img/></center>
+
+当然, 在这个项目中, 项目的架构模式并不完全是第二张图这样。`Trust`将第二张图中的 `AppCoordinator`细分为了两个, 即应用间和应用内的路由。而在`Trust`项目中, 图二中的显然只是相当于`InCoordinator`, 而从外部跳转(包括从其它 App跳转也包括从通用链接跳转)进入当前 App的管理是`AppCoordinator`来处理的。这个理念懂了, 我们进入主题。
+
+**第一, 将 App外部跳转的事务交于`AppCoordinator`。** 如果按照上面所说的理念, 那么在`AppDelegate`中, 其实应该把所有与外部跳转的事务交由`AppCoordinator`来做。也就是可以考虑将`URLNavigatorCoordinator`、`Branch`、`EtherKeystore`这些放到`AppCoordinator`中, 而`AppDelegate`中只留下与应用的初始化以及整个应用生命周期的所影响的业务逻辑。
+**第二, 将于具体的业务模块切换的事务交于`InCoordinator`。**  在`AppCoordinator`中有一个`BranchEventClosure`, 是用来通过`InCoordinator`来控制目标页面的跳转的。这些与具体业务模块的跳转逻辑有关的业务就应该交于内部路由`InCoordinator`来做。`AppCoordinator`中只留下与外部跳转和应用层有关的业务。
+如果这样多了的话, 功能划分就有变化了, 如下图, 绿色边框的是新增的功能: 
+<center><img src="https://img-blog.csdnimg.cn/20181102171638114.png" width=70% img/></center>
+
+
+到此为止 Trust Wallet项目以 iOS的角度, 按照架构和主要功能对其源码解析完了。然后, 真正关于区块链的核心功能, 如智能合约调用、私钥公钥管理等, 会以`Trust`钱包为例让你逐步理解。具体请阅读下一篇[由Trust Wallet理解以太坊钱包管理和智能合约](https://blog.csdn.net/wangyanchang21/article/details/83862016)。
+
+
+
 

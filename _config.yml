@@ -29,6 +29,7 @@ permalink: /:year/:title/
 markdown: kramdown
 highlighter: rouge
 future: true
+encoding: UTF-8
 
 sass:
     sass_dir: _sass
