@@ -143,22 +143,18 @@ func getPrivatePublicKey() -> (String, String) {
 
 默认的JSON-RPC端点：
 
-| Center Aligned  | Center Aligned |
-|:-------------:|:---------------:|
 | Client | URL |
-| --- | --- |
+|:-------------:|:---------------:|
 | C++ | http://localhost:8545 |
 | Go | http://localhost:8545 |
 | Py | http://localhost:4000 |
 | Parity |	http://localhost:8545 |
 
-RPC的支持:情况 
 
+RPC的支持情况: 
 
-| Center Aligned  | Center Aligned  | Center Aligned | Center Aligned |
+| cpp-ethereum | go-ethereum | py-ethereum | parity |
 |:-------------:|:---------------:|:-------------:|:-------------:|
-|   | cpp-ethereum | go-ethereum | py-ethereum | parity |
-| --- | --- | --- | --- | --- |
 | JSON-RPC 1.0 | ✓ |  |   |   | 
 | JSON-RPC 2.0 | ✓ | ✓ | ✓ | ✓ |
 | Batch requests | ✓ | ✓ | ✓ | ✓ |
