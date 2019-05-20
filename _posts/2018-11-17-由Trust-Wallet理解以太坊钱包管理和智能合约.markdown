@@ -1,11 +1,11 @@
 ---
-title:  "以太坊钱包 Trust项目解读之架构和流程"
+title:  "由Trust Wallet理解以太坊钱包管理和智能合约"
 date:   2018-11-17 23:07:17
 categories: [区块链]
 tags: [区块链]
 ---
 
-[以太坊钱包 Trust项目解读之架构和流程](https://blog.csdn.net/wangyanchang21/article/details/83584996)
+[以太坊钱包 Trust项目解读之架构和流程](https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6)
 
 [由Trust Wallet理解以太坊钱包管理和智能合约](https://blog.csdn.net/wangyanchang21/article/details/83862016)
 
@@ -101,7 +101,7 @@ func getPrivatePublicKey() -> (String, String) {
 #### 保存到本地
 
 `KeyStore`会将当前钱包账户的`KeystoreKey`数据存储在本地文件中。文件以"UTC+时间戳+钱包唯一标识"为名称存储在本地, 其中存储的是上面`KeystoreKey`的数据。这些数据用户每次启动时, 将会由这些数据再次生成所有的`Wallet`数据。
-当然, 私钥当然也是需要保存的, [前一篇文章](https://blog.csdn.net/wangyanchang21/article/details/83584996)中说过了, 这样的敏感信息保存在`keychain`中。但`keychain`并不是直接存储这私钥, 而是将获取私钥的密码保存在其中了。以钱包的id为key值, 将获取私钥的密码保存子`keychain`之中, 拿出密码后, 再使用`KeystoreKey`进行`AES-128`对称解密, 获取私钥, 便可以使用了。所以, `KeystoreKey`这个类的主要功能是对私钥和助记词的管理以及对私钥的加解密。
+当然, 私钥当然也是需要保存的, [前一篇文章](https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6)中说过了, 这样的敏感信息保存在`keychain`中。但`keychain`并不是直接存储这私钥, 而是将获取私钥的密码保存在其中了。以钱包的id为key值, 将获取私钥的密码保存子`keychain`之中, 拿出密码后, 再使用`KeystoreKey`进行`AES-128`对称解密, 获取私钥, 便可以使用了。所以, `KeystoreKey`这个类的主要功能是对私钥和助记词的管理以及对私钥的加解密。
 
 另外, 这样拥有`PrivateKey`的钱包账户是不需要存储在`Realm`数据库中的。只有一种需要保存到本地的`Realm`数据库中, 那就是导入地址钱包, 下面将会说明。
 
@@ -127,7 +127,7 @@ func getPrivatePublicKey() -> (String, String) {
 
 ## 智能合约
 
-在[前一篇文章](https://blog.csdn.net/wangyanchang21/article/details/83584996)中的网络层中, 对只能合约以及具体网络层业务逻辑没有做详细说明。这里将会讨论几个问题, 网络层具体方案, 以太坊智能合约的调用。
+在[前一篇文章](https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6)中的网络层中, 对只能合约以及具体网络层业务逻辑没有做详细说明。这里将会讨论几个问题, 网络层具体方案, 以太坊智能合约的调用。
 
 ### 合约调用方式
 
@@ -166,7 +166,7 @@ RPC的支持:情况
 
 #### JSON RPC Over HTTP
 
-在项目中, 以太坊智能合约调用都是`JSON RPC Over HTTP`的方式, 而且所使用的以太坊节点[前一篇文章](https://blog.csdn.net/wangyanchang21/article/details/83584996)网络层中就提到过。
+在项目中, 以太坊智能合约调用都是`JSON RPC Over HTTP`的方式, 而且所使用的以太坊节点[前一篇文章](https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6)网络层中就提到过。
 ``` swift
 var remoteURL: URL {
         let urlString: String = {
@@ -216,7 +216,7 @@ let trustAPI = URL(string: "https://public.trustwalletapp.com")
 </center>
 
 
-到这里, 就将[前一篇文章](https://blog.csdn.net/wangyanchang21/article/details/83584996)所遗留的网络层的详情补充完整了。
+到这里, 就将[前一篇文章](https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6)所遗留的网络层的详情补充完整了。
 
 
 ## 交易
