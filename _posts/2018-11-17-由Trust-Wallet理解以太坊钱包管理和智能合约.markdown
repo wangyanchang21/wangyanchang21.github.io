@@ -142,6 +142,9 @@ func getPrivatePublicKey() -> (String, String) {
 [JSON-RPC](https://www.jsonrpc.org/specification)是一种轻量级的远程过程调用(RPC)协议。该规范主要定义了一些数据结构和处理的规则。它与传输无关, 因为这些概念可以通过`Socket`、`HTTP`, 或者其它的消息传递环境中使用。它使用 JSON([RFC 4627](http://www.ietf.org/rfc/rfc4627.txt))作为数据格式。
 
 默认的JSON-RPC端点：
+
+| Center Aligned  | Center Aligned |
+|:-------------:|:---------------:|
 | Client | URL |
 | --- | --- |
 | C++ | http://localhost:8545 |
@@ -150,6 +153,10 @@ func getPrivatePublicKey() -> (String, String) {
 | Parity |	http://localhost:8545 |
 
 RPC的支持:情况 
+
+
+| Center Aligned  | Center Aligned  | Center Aligned | Center Aligned |
+|:-------------:|:---------------:|:-------------:|:-------------:|
 |   | cpp-ethereum | go-ethereum | py-ethereum | parity |
 | --- | --- | --- | --- | --- |
 | JSON-RPC 1.0 | ✓ |  |   |   | 
@@ -274,17 +281,12 @@ let trustAPI = URL(string: "https://public.trustwalletapp.com")
 **交易发起。** 在`Web3`浏览器中的`DApp`中, 发起转账交易, 发起方式就是`JS`调用`iOS原生`。通过传入的数据, 在`BrowserCoordinator`模块中, 将数据进行解析。
 
 **解析。** 通过`DAppAction`、`DappCommand`、`DAppRequester`等类进行解析, 完成后, 封装入`DAppAction`内, 来决定需要进行哪种操作、需要调用合约中的哪种API。它有6种响应事件, 分别是: 
->1.signMessage
-
->2.signPersonalMessage
-
->3.signTypedMessage
-
->4.signTransaction
-
->5.sendTransaction
-
->6.unknown
+> * 1.signMessage
+> * 2.signPersonalMessage 
+> * 3.signTypedMessage
+> * 4.signTransaction
+> * 5.sendTransaction
+> * 6.unknown
 
 
 
