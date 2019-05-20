@@ -7,7 +7,7 @@ tags: [区块链]
 
 [以太坊钱包 Trust项目解读之架构和流程](https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6)
 
-[由Trust Wallet理解以太坊钱包管理和智能合约](https://blog.csdn.net/wangyanchang21/article/details/83862016)
+[由Trust Wallet理解以太坊钱包管理和智能合约](https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6)
 
 ------
 

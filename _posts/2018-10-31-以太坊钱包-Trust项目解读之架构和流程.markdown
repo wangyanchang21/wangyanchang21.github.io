@@ -6,16 +6,16 @@ tags: [区块链]
 ---
 
 
-[以太坊钱包 Trust项目解读之架构和流程](https://blog.csdn.net/wangyanchang21/article/details/83584996)
+[以太坊钱包 Trust项目解读之架构和流程](https://wangyanchang21.github.io/2018/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85-Trust%E9%A1%B9%E7%9B%AE%E8%A7%A3%E8%AF%BB%E4%B9%8B%E6%9E%B6%E6%9E%84%E5%92%8C%E6%B5%81%E7%A8%8B)
 
-[由Trust Wallet理解以太坊钱包管理和智能合约](https://blog.csdn.net/wangyanchang21/article/details/83862016)
+[由Trust Wallet理解以太坊钱包管理和智能合约](https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6)
    
 -------
 
 ## 前言
 
 由于前阵子工作涉及到区块链方面的业务, 再加上自己对技术的热忱, 本人也是不断地学(恶)习(补)这方面的知识。在 github上的有很多优秀的开源钱包的代码, 比如说今天要分享的iOS版本的 `Trust`, 还有这个月24号刚刚官宣开源的 `imToken`。
-### 
+
 文章中, 会涉及到一些区块链的基础知识如以太坊、智能合约、节点、Token、地址等等, 这些基础知识就不介绍了, 还请自行查阅吧。
 
 ### 以太坊钱包平台介绍
@@ -114,7 +114,7 @@ tags: [区块链]
 
 **业务层。** `Trust`的主要业务逻辑当然是有`ViewModel`来承担的, 另外还配合了`Coordinator`(或者说路由)的使用, 在页面之间的跳转逻辑上实现了统一管理。这样就减少了横向依赖, 也让跨层访问的业务更加容易开展。
 
-**网络层。** 项目中使用`Moya`进行数据请求, `Moya`已经做了足够多的工作了, 包括交付给给业务层封装成对象的数据、网络层的各种优化工作等。也使用了`JSONRPCKit` + `APIKit`的框架去进行数据请求, 这在[接下来的文章](https://blog.csdn.net/wangyanchang21/article/details/83862016#t9)中会具体分析, 这些请求就是关于智能合约调用的。`Trust`客户端在区块链中相当于一个轻量节点, 从公链上请求数据的话, 需要依靠某个全节点。就如图中的URL, 就可以理解为`Trust`客户端取链上数据所借助的全节点。
+**网络层。** 项目中使用`Moya`进行数据请求, `Moya`已经做了足够多的工作了, 包括交付给给业务层封装成对象的数据、网络层的各种优化工作等。也使用了`JSONRPCKit` + `APIKit`的框架去进行数据请求, 这在[接下来的文章](https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6)中会具体分析, 这些请求就是关于智能合约调用的。`Trust`客户端在区块链中相当于一个轻量节点, 从公链上请求数据的话, 需要依靠某个全节点。就如图中的URL, 就可以理解为`Trust`客户端取链上数据所借助的全节点。
 
 <center>
 	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/trustwallet-1/20181031183501958.png" width="70%" img/>
@@ -149,7 +149,7 @@ tags: [区块链]
 **ProtectionCoordinator。** 功能是在保护应用的方面, 如应用锁、解锁以及当应用失去焦点后保护应用内部页面不被暴露的功能。
 **URLNavigatorCoordinator。** 功能是由 [URLNavigator](https://github.com/devxoul/URLNavigator)和 [Branch](https://github.com/BranchMetrics/ios-branch-deep-linking)的功能组成的。前者是对`Browser`进行监听的, 并在检测到约定好的URL了进行映射和处理。后者是关于延迟深度链接(Deferred Deep Linking)的。
 **Branch。** 和上面的`Branch`是同一个, 在启动应用时进行初始化, 并将在应用程序生命周期中多次调用，当应用由后台向前台切换时也将调用。用于处理从外部跳转入后, 根据传入的参数要跳转进入指定的页面。
-**EtherKeystore。** 应用的核心业务的处理类, 有钱包管理(创建、删除、导入、导出)、助记词转化、签名工作、私钥管理等功能。它的具体业务将会在[下篇文章](https://blog.csdn.net/wangyanchang21/article/details/83862016)中具体介绍。
+**EtherKeystore。** 应用的核心业务的处理类, 有钱包管理(创建、删除、导入、导出)、助记词转化、签名工作、私钥管理等功能。它的具体业务将会在[下篇文章](https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6)中具体介绍。
 
 在`AppDelegate`中, `ProtectionCoordinator`需要跟随应用的生命周期进行功能的调整。`URLNavigatorCoordinator`中的`navigator`用来处理响应[URL Scheme](https://developer.apple.com/library/archive/featuredarticles/iPhoneURLScheme_Reference/Introduction/Introduction.html)这种由其它 App的跳入, 而`Branch`用来处理响应[Universal Links](https://developer.apple.com/ios/universal-links/)这种通用链接的跳入形式。
 而`EtherKeystore`在这里只是作为一个`AppCoordinator`初始化的一个参数, 并无实际使用。这也是我个人认为在这个业务模块并不应出现的类, 当然后面我也会细聊我为什么这么说? 我也将会给出我自己的建议。
@@ -208,7 +208,7 @@ tags: [区块链]
 </center>
 
 
-到此为止 Trust Wallet项目以 iOS的角度, 按照架构和主要功能对其源码解析完了。然后, 真正关于区块链的核心功能, 如智能合约调用、私钥公钥管理等, 会以`Trust`钱包为例让你逐步理解。具体请阅读下一篇[由Trust Wallet理解以太坊钱包管理和智能合约](https://blog.csdn.net/wangyanchang21/article/details/83862016)。
+到此为止 Trust Wallet项目以 iOS的角度, 按照架构和主要功能对其源码解析完了。然后, 真正关于区块链的核心功能, 如智能合约调用、私钥公钥管理等, 会以`Trust`钱包为例让你逐步理解。具体请阅读下一篇[由Trust Wallet理解以太坊钱包管理和智能合约](https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6)。
 
 
 
