@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+
+  <title>由Trust Wallet理解以太坊钱包管理和智能合约</title>
+  <meta name="description" content="在前一篇文章中, 已经介绍过Trust的项目架构、业务流程等了。这篇文章将会解读一些核心的功能, 包括前一篇文章提到的EtherKeystore这个业务类, 还有网络层的如何调用智能合约、其它调用合约的方式, 以及以太坊交易的结构和流程等。
+
+">
+  <meta name="author" content="DCSnail">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="由Trust Wallet理解以太坊钱包管理和智能合约">
+  <meta name="twitter:description" content="在前一篇文章中, 已经介绍过Trust的项目架构、业务流程等了。这篇文章将会解读一些核心的功能, 包括前一篇文章提到的EtherKeystore这个业务类, 还有网络层的如何调用智能合约、其它调用合约的方式, 以及以太坊交易的结构和流程等。
+
+">
+  
+  <meta name="twitter:creator" content="none">
+  
+  <meta name="twitter:image" content="/images/favicons/favicon-194x194.png" />
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="由Trust Wallet理解以太坊钱包管理和智能合约">
+  <meta property="og:description" content="在前一篇文章中, 已经介绍过Trust的项目架构、业务流程等了。这篇文章将会解读一些核心的功能, 包括前一篇文章提到的EtherKeystore这个业务类, 还有网络层的如何调用智能合约、其它调用合约的方式, 以及以太坊交易的结构和流程等。
+
+">
+  <meta property="og:image" content="/images/favicons/favicon-194x194.png" />
+
+  <link rel="apple-touch-icon" sizes="57x57" href="/images/favicons/apple-touch-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/images/favicons/apple-touch-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/images/favicons/apple-touch-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/images/favicons/apple-touch-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/images/favicons/apple-touch-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/images/favicons/apple-touch-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/images/favicons/apple-touch-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/images/favicons/apple-touch-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicons/apple-touch-icon-180x180.png">
+  <link rel="icon" type="image/png" href="/images/favicons/favicon-32x32.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="/images/favicons/favicon-194x194.png" sizes="194x194">
+  <link rel="icon" type="image/png" href="/images/favicons/favicon-96x96.png" sizes="96x96">
+  <link rel="icon" type="image/png" href="/images/favicons/android-chrome-192x192.png" sizes="192x192">
+  <link rel="icon" type="image/png" href="/images/favicons/favicon-16x16.png" sizes="16x16">
+  <link rel="manifest" href="/images/favicons/manifest.json">
+  <link rel="shortcut icon" href="/images/favicons/favicon.ico">
+  <meta name="msapplication-TileColor" content="#ffc40d">
+  <meta name="msapplication-TileImage" content="/images/favicons/mstile-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+  
+  <link rel="stylesheet" href="/css/main.css?1558344697863960000">
+  <link rel="canonical" href="http://localhost:4000/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6/">
+  <link rel="alternate" type="application/rss+xml" title="DCSnail" href="/feed.xml">
+</head>
+
+
+  <body>
+    <span class="mobile btn-mobile-menu">
+  <i class="icon icon-list btn-mobile-menu__icon"></i>
+  <i class="icon icon-x-circle btn-mobile-close__icon hidden"></i>
+</span>
+
+<header class="panel-cover" style="background-image: url(/images/cover.jpg)">
+  <div class="panel-main">
+
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+        <a href="/" title="link to home of DCSnail">
+          <img src="/images/profile.jpg" class="user-image" alt="My Profile Photo">
+          <h1 class="panel-cover__title panel-title">DCSnail</h1>
+        </a>
+        <hr class="panel-cover__divider">
+        <p class="panel-cover__description">iOS, watchOS, swifter. is migrating...</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary">
+
+        <div class="navigation-wrapper">
+
+          <nav class="cover-navigation cover-navigation--primary">
+            <ul class="navigation">
+              <li class="navigation__item"><a href="/#blog" title="link to DCSnail blog" class="blog-button">Blog</a></li>
+            </ul>
+          </nav>
+
+          <nav class="cover-navigation navigation--social">
+            <ul class="navigation">
+
+            
+              <!-- Twitter -->
+              <li class="navigation__item">
+                <a href="http://twitter.com/none" title="@none on Twitter" target="_blank">
+                  <i class="icon icon-social-twitter"></i>
+                  <span class="label">Twitter</span>
+                </a>
+              </li>
+            
+
+            
+              <!-- Facebook -->
+              <li class="navigation__item">
+                <a href="http://fb.me/none" title="none on Facebook" target="_blank">
+                  <i class="icon icon-social-facebook"></i>
+                  <span class="label">Facebook</span>
+                </a>
+              </li>
+            
+
+            
+              <!-- LinkedIn -->
+              <li class="navigation__item">
+                <a href="https://www.linkedin.com/in/none" title="none on LinkedIn" target="_blank">
+                  <i class="icon icon-social-linkedin"></i>
+                  <span class="label">LinkedIn</span>
+                </a>
+              </li>
+            
+
+            
+              <!-- GitHub -->
+              <li class="navigation__item">
+                <a href="https://www.github.com/wangyanchang21" title="wangyanchang21 on GitHub" target="_blank">
+                  <i class="icon icon-social-github"></i>
+                  <span class="label">GitHub</span>
+                </a>
+              </li>
+            
+
+            
+              <!-- Email -->
+              <li class="navigation__item">
+                <a href="mailto:wangyanchang21@163.com" title="Email wangyanchang21@163.com" target="_blank">
+                  <i class="icon icon-mail"></i>
+                  <span class="label">Email</span>
+                </a>
+              </li>
+            
+
+            <!-- RSS -->
+            <li class="navigation__item">
+              <a href="/feed.xml" title="Subscribe" target="_blank">
+                <i class="icon icon-rss"></i>
+                <span class="label">RSS</span>
+              </a>
+            </li>
+
+            </ul>
+          </nav>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="panel-cover--overlay"></div>
+  </div>
+</header>
+
+
+    <div class="content-wrapper">
+      <div class="content-wrapper__inner">
+        <article class="post-container post-container--single">
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2018-11-17 23:07" class="post-meta__date date">17 Nov 2018</time>
+      
+      &#8226; <span class="post-meta__tags">on <a href="/tags/#区块链">区块链</a></span>
+      
+    </div>
+    <h1 class="post-title">由Trust Wallet理解以太坊钱包管理和智能合约</h1>
+  </header>
+
+  <section class="post">
+    <p>在前一篇文章中, 已经介绍过<code class="highlighter-rouge">Trust</code>的项目架构、业务流程等了。这篇文章将会解读一些核心的功能, 包括前一篇文章提到的<code class="highlighter-rouge">EtherKeystore</code>这个业务类, 还有网络层的如何调用智能合约、其它调用合约的方式, 以及以太坊交易的结构和流程等。</p>
+
+<p><a href="https://github.com/wangyanchang21"><img src="https://img.shields.io/badge/contact-wangyanchang21-green.svg" alt="Contact" /></a></p>
+
+<hr />
+
+<p><a href="https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6">以太坊钱包 Trust项目解读之架构和流程</a></p>
+
+<p><a href="https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6">由Trust Wallet理解以太坊钱包管理和智能合约</a></p>
+
+<hr />
+
+<h2 id="钱包管理">钱包管理</h2>
+
+<p>钱包管理就要提到一个类<code class="highlighter-rouge">EtherKeystore</code>, 应用的核心业务的处理类, 有钱包管理(创建、删除、导入、导出)、助记词转化、签名工作、私钥管理等功能。
+<code class="highlighter-rouge">EtherKeystore</code>中使用了由<code class="highlighter-rouge">Trust</code>开源的了两个库: <a href="https://github.com/TrustWallet/trust-keystore">TrustKeystore</a>: 用于管理钱包的通用以太坊密钥库。<a href="https://github.com/TrustWallet/trust-core">TrustCore</a>: 区块链核心的数据结构和算法。还有<a href="https://github.com/krzyzanowskim/CryptoSwift">CryptoSwift</a>, 一个标准的安全加密算法集合的库。</p>
+
+<h3 id="钱包创建">钱包创建</h3>
+
+<p>在<code class="highlighter-rouge">EtherKeystore</code>类中, 封装了钱包的创建, 主要使用了<code class="highlighter-rouge">TrustKeystore</code>库、<code class="highlighter-rouge">TrustCore</code>库中关于公私钥和地址的API、以及密码学的库<code class="highlighter-rouge">CryptoSwift</code>。我下面所说的整个流程也包括这些库中的源码逻辑, 先创建密钥对(或者助记词), 再利用本地生成的随机密码对密钥进行加密保存, 然后生成钱包, 将钱包、获取私钥的密码以及<code class="highlighter-rouge">KeystoreKey</code>保存到本地。</p>
+
+<p><code class="highlighter-rouge">Trust</code>默认的方式是生成助记词, 这种方式其实是私钥的一种管理方式, 助记词是由私钥通过某种算法派生出来的, <code class="highlighter-rouge">TrustCore</code>中的<code class="highlighter-rouge">Crypto</code>就是这个功能。而且当你用到私钥的时候, 你还可以把你的助记词通过对应的算法在转译成私钥。所以它只是一种私钥的存储方式, 下面文章中以私钥为例来讲述整个流程。</p>
+
+<h4 id="创建公钥私钥">创建公钥私钥</h4>
+
+<p>创建钱包就相当于生成一对密钥, 公钥(PublicKey)和私钥(PrivateKey)。公钥其实就相当于你账户在区块链中的地址(Address); 私钥就相当于你钱包的账号密码, 它是证明你是钱包主人的唯一证明, 一旦丢失就不可找回。当然, 公钥并不完全等于地址, 地址是由公钥经过一系列的算法生成的, 需要经过<code class="highlighter-rouge">SHA3-256</code>(Keccak)哈希然后转化为符合<code class="highlighter-rouge">EIP55</code>规则的字符串。</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> (sk, pk) = generateKeys(keysize) 
+</code></pre></div></div>
+<p>上面这段伪代码中, generateKeys方法把 keysize作为输入, 来产生一对公钥和私钥。私钥sk被安全保存## ，并用来签名一段消息；公钥pk是人人都可以找到的，拿到它，就可以用来验证你的签名。下图是<code class="highlighter-rouge">TrustCore</code>中对以太坊私钥和地址的<code class="highlighter-rouge">keysize</code>定义, 私钥是32字节, 公钥地址是20字节, 所以十六进制的私钥长度为64位, 而公钥地址长度为40位。</p>
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/trustwallet-2/20181107182953343.png" width="70%" img="" />
+</center>
+
+<p>具体来说, 创建公钥和私钥的功能是由<code class="highlighter-rouge">TrustCore</code>中的<code class="highlighter-rouge">PrivateKey</code>来完成的。而且是通过苹果官方的<code class="highlighter-rouge">Security</code>库来创建的公钥和私钥, 经过整理密钥对生成和获取过程如下:</p>
+
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">func</span> <span class="nf">getPrivatePublicKey</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="kt">String</span><span class="p">,</span> <span class="kt">String</span><span class="p">)</span> <span class="p">{</span>
+    
+    <span class="k">let</span> <span class="nv">privateAttributes</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">kSecAttrIsExtractable</span> <span class="k">as</span> <span class="kt">String</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="k">let</span> <span class="nv">parameters</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">kSecAttrKeyType</span> <span class="k">as</span> <span class="kt">String</span><span class="p">:</span> <span class="n">kSecAttrKeyTypeEC</span><span class="p">,</span>
+        <span class="n">kSecAttrKeySizeInBits</span> <span class="k">as</span> <span class="kt">String</span><span class="p">:</span> <span class="mi">256</span><span class="p">,</span>
+        <span class="n">kSecPrivateKeyAttrs</span> <span class="k">as</span> <span class="kt">String</span><span class="p">:</span> <span class="n">privateAttributes</span><span class="p">,</span>
+        <span class="p">]</span>
+    
+    <span class="c1">// PrivateKey To String</span>
+    <span class="k">guard</span> <span class="k">let</span> <span class="nv">privateKey</span> <span class="o">=</span> <span class="kt">SecKeyCreateRandomKey</span><span class="p">(</span><span class="n">parameters</span> <span class="k">as</span> <span class="kt">CFDictionary</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nf">fatalError</span><span class="p">(</span><span class="s">"Failed to generate key pair"</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">guard</span> <span class="k">var</span> <span class="nv">priRepresentation</span> <span class="o">=</span> <span class="kt">SecKeyCopyExternalRepresentation</span><span class="p">(</span><span class="n">privateKey</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span> <span class="k">as</span> <span class="kt">Data</span><span class="p">?</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nf">fatalError</span><span class="p">(</span><span class="s">"Failed to extract new private key"</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">defer</span> <span class="p">{</span>
+        <span class="n">priRepresentation</span><span class="o">.</span><span class="nf">replaceSubrange</span><span class="p">(</span><span class="mi">0</span> <span class="o">..&lt;</span> <span class="n">priRepresentation</span><span class="o">.</span><span class="n">count</span><span class="p">,</span> <span class="nv">with</span><span class="p">:</span> <span class="nf">repeatElement</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nv">count</span><span class="p">:</span> <span class="n">priRepresentation</span><span class="o">.</span><span class="n">count</span><span class="p">))</span>
+    <span class="p">}</span>
+    
+    <span class="k">let</span> <span class="nv">priData</span> <span class="o">=</span> <span class="kt">Data</span><span class="p">(</span><span class="n">priRepresentation</span><span class="o">.</span><span class="nf">suffix</span><span class="p">(</span><span class="mi">32</span><span class="p">))</span>
+    <span class="k">var</span> <span class="nv">priString</span> <span class="o">=</span> <span class="s">""</span>
+    <span class="k">for</span> <span class="n">byte</span> <span class="k">in</span> <span class="n">priData</span> <span class="p">{</span>
+        <span class="n">priString</span><span class="o">.</span><span class="nf">append</span><span class="p">(</span><span class="kt">String</span><span class="p">(</span><span class="nv">format</span><span class="p">:</span> <span class="s">"%02x"</span><span class="p">,</span> <span class="n">byte</span><span class="p">))</span>
+    <span class="p">}</span>
+    
+    
+    <span class="c1">// PublicKey To String</span>
+    <span class="k">guard</span> <span class="k">let</span> <span class="nv">publicKey</span> <span class="o">=</span> <span class="kt">SecKeyCopyPublicKey</span><span class="p">(</span><span class="n">privateKey</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nf">fatalError</span><span class="p">(</span><span class="s">"Failed to get publickey"</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">guard</span> <span class="k">var</span> <span class="nv">pubRepresentation</span> <span class="o">=</span> <span class="kt">SecKeyCopyExternalRepresentation</span><span class="p">(</span><span class="n">publicKey</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span> <span class="k">as</span> <span class="kt">Data</span><span class="p">?</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nf">fatalError</span><span class="p">(</span><span class="s">"Failed to extract new public key"</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">defer</span> <span class="p">{</span>
+        <span class="n">pubRepresentation</span><span class="o">.</span><span class="nf">replaceSubrange</span><span class="p">(</span><span class="mi">0</span> <span class="o">..&lt;</span> <span class="n">pubRepresentation</span><span class="o">.</span><span class="n">count</span><span class="p">,</span> <span class="nv">with</span><span class="p">:</span> <span class="nf">repeatElement</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nv">count</span><span class="p">:</span> <span class="n">pubRepresentation</span><span class="o">.</span><span class="n">count</span><span class="p">))</span>
+    <span class="p">}</span>
+    
+    <span class="k">let</span> <span class="nv">pubData</span> <span class="o">=</span> <span class="kt">Data</span><span class="p">(</span><span class="n">pubRepresentation</span><span class="o">.</span><span class="nf">suffix</span><span class="p">(</span><span class="mi">32</span><span class="p">))</span>
+    <span class="k">var</span> <span class="nv">pubString</span> <span class="o">=</span> <span class="s">""</span>
+    <span class="k">for</span> <span class="n">byte</span> <span class="k">in</span> <span class="n">pubData</span> <span class="p">{</span>
+        <span class="n">pubString</span><span class="o">.</span><span class="nf">append</span><span class="p">(</span><span class="kt">String</span><span class="p">(</span><span class="nv">format</span><span class="p">:</span> <span class="s">"%02x"</span><span class="p">,</span> <span class="n">byte</span><span class="p">))</span>
+    <span class="p">}</span>
+    
+    <span class="nf">return</span> <span class="p">(</span><span class="n">priString</span><span class="p">,</span> <span class="n">pubString</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="使用随机密码对私钥加密">使用随机密码对私钥加密</h4>
+
+<p>在生成了私钥之后, 将在<code class="highlighter-rouge">KeystoreKeyHeader</code>类中, 这里使用了<code class="highlighter-rouge">CryptoSwift</code>(安全加密算法集合的库)对私钥进行加密。使用<code class="highlighter-rouge">AES-128</code>算法进行对称加密后, 将这些数据以<code class="highlighter-rouge">KeystoreKeyHeader</code>类型保存在<code class="highlighter-rouge">KeystoreKey</code>中。</p>
+
+<h4 id="创建-wallet">创建 Wallet</h4>
+
+<p>在前两个步骤的基础之上, 就可以创建一个<code class="highlighter-rouge">Wallet</code>了, 并将<code class="highlighter-rouge">Wallet</code>加入到当前的账户中。也会计算或者获取一些参数存储在<code class="highlighter-rouge">Wallet</code>中, 如公钥地址Address, Account、<code class="highlighter-rouge">KeystoreKey</code>等。</p>
+
+<h4 id="保存到本地">保存到本地</h4>
+
+<p><code class="highlighter-rouge">KeyStore</code>会将当前钱包账户的<code class="highlighter-rouge">KeystoreKey</code>数据存储在本地文件中。文件以”UTC+时间戳+钱包唯一标识”为名称存储在本地, 其中存储的是上面<code class="highlighter-rouge">KeystoreKey</code>的数据。这些数据用户每次启动时, 将会由这些数据再次生成所有的<code class="highlighter-rouge">Wallet</code>数据。
+当然, 私钥当然也是需要保存的, <a href="https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6">前一篇文章</a>中说过了, 这样的敏感信息保存在<code class="highlighter-rouge">keychain</code>中。但<code class="highlighter-rouge">keychain</code>并不是直接存储这私钥, 而是将获取私钥的密码保存在其中了。以钱包的id为key值, 将获取私钥的密码保存子<code class="highlighter-rouge">keychain</code>之中, 拿出密码后, 再使用<code class="highlighter-rouge">KeystoreKey</code>进行<code class="highlighter-rouge">AES-128</code>对称解密, 获取私钥, 便可以使用了。所以, <code class="highlighter-rouge">KeystoreKey</code>这个类的主要功能是对私钥和助记词的管理以及对私钥的加解密。</p>
+
+<p>另外, 这样拥有<code class="highlighter-rouge">PrivateKey</code>的钱包账户是不需要存储在<code class="highlighter-rouge">Realm</code>数据库中的。只有一种需要保存到本地的<code class="highlighter-rouge">Realm</code>数据库中, 那就是导入地址钱包, 下面将会说明。</p>
+
+<h3 id="钱包的导入">钱包的导入</h3>
+
+<p>钱包导入相对于钱包的创建来说, 只是不需要自己去生成公钥和私钥对了, 剩下的流程还是一样的。当然导入时会有三种方式, 除了之前提到的私钥和助记词的方式, 还有地址的方式。
+钱包地址是公开的, 当然你也可以导入, 也可以查看这个钱包的任何数据, 但因为你不具备它的私钥, 所以你不可以进行签名或者说任何写入区块链的操作。所以这种方式, 就不需要<code class="highlighter-rouge">KeyStore</code>进行操作了, 只需要<code class="highlighter-rouge">EtherKeystore</code>进行本地操作, 将其放入本地的<code class="highlighter-rouge">Realm</code>数据库中, 那就是导入地址钱包。当启动应用时, 将会以两者组成的数据为本地钱包列表。</p>
+
+<h3 id="钱包导出删除等">钱包导出、删除等</h3>
+
+<p>钱包导出, 当然也会分三种方式, 私钥和助记词的方式, 还有地址的方式。在<code class="highlighter-rouge">keychain</code>中将密码取出, 然后通过<code class="highlighter-rouge">KeystoreKey</code>解密到私钥或者助记词, 导出。地址的方式, 就是直接导出地址。</p>
+
+<p>如果你把上面的钱包创建条理理清楚了, 你就可以想到删除只是钱包创建的逆过程, 但没有那么复杂。只需要验证你的私钥是正确的就可以将你本地<code class="highlighter-rouge">KeystoreKey</code>删除了。</p>
+
+<h3 id="etherkeystore-模块结构图">EtherKeystore 模块结构图</h3>
+
+<p>下图中画了 <code class="highlighter-rouge">EtherKeystore</code>在创建或者导入钱包时的流程, 可一清楚的看到这个模块的结构。绿色的部分是<code class="highlighter-rouge">TrustCore</code>和<code class="highlighter-rouge">TrustKeystore</code>库中的调用, 浅蓝色是数据层的一些处理。</p>
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/trustwallet-2/20181109110331147.png" width="70%" img="" />
+</center>
+
+<h2 id="智能合约">智能合约</h2>
+
+<p>在<a href="https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6">前一篇文章</a>中的网络层中, 对只能合约以及具体网络层业务逻辑没有做详细说明。这里将会讨论几个问题, 网络层具体方案, 以太坊智能合约的调用。</p>
+
+<h3 id="合约调用方式">合约调用方式</h3>
+
+<p>在以太坊的官方文档中提供了两种 API, 一个种是<a href="https://github.com/ethereum/wiki/wiki/JSON-RPC">JSON RPC API</a>, 一种是<a href="https://github.com/ethereum/wiki/wiki/JavaScript-API">JavaScript API</a>。</p>
+
+<h4 id="javascript-api">JavaScript API</h4>
+
+<p>虽然看起来是两种 API, 其实后者是通过RPC调用与本地节点进行通信的。也就可以理解为 <code class="highlighter-rouge">JavaScript API</code>是对 <code class="highlighter-rouge">JSON RPC API</code>的封装, 方便了从JavaScript应用程序内部与<code class="highlighter-rouge">ethereum节点</code>通信。官方开源的库<a href="https://github.com/ethereum/web3.js">web3.js</a>就是做了这个事情。</p>
+
+<h4 id="json-rpc-api">JSON RPC API</h4>
+
+<p><a href="https://www.jsonrpc.org/specification">JSON-RPC</a>是一种轻量级的远程过程调用(RPC)协议。该规范主要定义了一些数据结构和处理的规则。它与传输无关, 因为这些概念可以通过<code class="highlighter-rouge">Socket</code>、<code class="highlighter-rouge">HTTP</code>, 或者其它的消息传递环境中使用。它使用 JSON(<a href="http://www.ietf.org/rfc/rfc4627.txt">RFC 4627</a>)作为数据格式。</p>
+
+<p>默认的JSON-RPC端点：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Client</th>
+      <th style="text-align: center">URL</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">C++</td>
+      <td style="text-align: center">http://localhost:8545</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Go</td>
+      <td style="text-align: center">http://localhost:8545</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Py</td>
+      <td style="text-align: center">http://localhost:4000</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Parity</td>
+      <td style="text-align: center">http://localhost:8545</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>RPC的支持情况:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left"> </th>
+      <th style="text-align: center">cpp-ethereum</th>
+      <th style="text-align: center">go-ethereum</th>
+      <th style="text-align: center">py-ethereum</th>
+      <th style="text-align: center">parity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">JSON-RPC 1.0</td>
+      <td style="text-align: center">✓</td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left">JSON-RPC 2.0</td>
+      <td style="text-align: center">✓</td>
+      <td style="text-align: center">✓</td>
+      <td style="text-align: center">✓</td>
+      <td style="text-align: center">✓</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Batch requests</td>
+      <td style="text-align: center">✓</td>
+      <td style="text-align: center">✓</td>
+      <td style="text-align: center">✓</td>
+      <td style="text-align: center">✓</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">HTTP</td>
+      <td style="text-align: center">✓</td>
+      <td style="text-align: center">✓</td>
+      <td style="text-align: center">✓</td>
+      <td style="text-align: center">✓</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">IPC</td>
+      <td style="text-align: center">✓</td>
+      <td style="text-align: center">✓</td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center">✓</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">WS</td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center">✓</td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center">✓</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="合约调用">合约调用</h3>
+
+<p>当然, 在<code class="highlighter-rouge">Trust</code>的 iOS端是通过 <code class="highlighter-rouge">JSON RPC Over HTTP</code>的方式进行智能合约调用的。项目中针对合约调用的请求, 网络层的设计是 <a href="https://github.com/ishkawa/APIKit">APIKit</a> + <a href="https://github.com/bricklife/JSONRPCKit">JSONRPCKit</a> 的方式。</p>
+
+<h4 id="json-rpc-over-http">JSON RPC Over HTTP</h4>
+
+<p>在项目中, 以太坊智能合约调用都是<code class="highlighter-rouge">JSON RPC Over HTTP</code>的方式, 而且所使用的以太坊节点<a href="https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6">前一篇文章</a>网络层中就提到过。</p>
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">var</span> <span class="nv">remoteURL</span><span class="p">:</span> <span class="kt">URL</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="nv">urlString</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="k">switch</span> <span class="k">self</span> <span class="p">{</span>
+            <span class="k">case</span> <span class="o">.</span><span class="nv">main</span><span class="p">:</span> <span class="k">return</span> <span class="s">"https://api.trustwalletapp.com"</span>
+            <span class="k">case</span> <span class="o">.</span><span class="nv">classic</span><span class="p">:</span> <span class="k">return</span> <span class="s">"https://classic.trustwalletapp.com"</span>
+            <span class="k">case</span> <span class="o">.</span><span class="nv">callisto</span><span class="p">:</span> <span class="k">return</span> <span class="s">"https://callisto.trustwalletapp.com"</span>
+            <span class="k">case</span> <span class="o">.</span><span class="nv">poa</span><span class="p">:</span> <span class="k">return</span> <span class="s">"https://poa.trustwalletapp.com"</span>
+            <span class="k">case</span> <span class="o">.</span><span class="nv">gochain</span><span class="p">:</span> <span class="k">return</span> <span class="s">"https://gochain.trustwalletapp.com"</span>
+            <span class="p">}</span>
+        <span class="p">}()</span>
+        <span class="k">return</span> <span class="kt">URL</span><span class="p">(</span><span class="nv">string</span><span class="p">:</span> <span class="n">urlString</span><span class="p">)</span><span class="o">!</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+<p>网络层结构应该如下图所示:</p>
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/trustwallet-2/20181109180054191.png" width="40%" img="" />
+</center>
+
+<p>当你明白这种网络结构后, 在来看<code class="highlighter-rouge">Trust</code>中, 统一使用<code class="highlighter-rouge">xxxRequest</code>的命名来封装<code class="highlighter-rouge">JSONRPCKit</code>的应用组件。其中定义了<code class="highlighter-rouge">method</code>、<code class="highlighter-rouge">parameters</code>、response的转化等, 这里的<code class="highlighter-rouge">method</code>就是调用以太坊智能合约的接口名称。项目中, 统一使用<code class="highlighter-rouge">xxxProvider</code>的命名, 按功能对<code class="highlighter-rouge">APIKit</code>的请求组件进行封装。当然, 没有这层抽象的HTTP请求也是可以的。</p>
+
+<p>下面图片中, <code class="highlighter-rouge">Trust</code>中涉及到一些 API: <code class="highlighter-rouge">eth_estimateGas</code>、<code class="highlighter-rouge">eth_sendRawTransaction</code>、<code class="highlighter-rouge">eth_gasPrice</code>、<code class="highlighter-rouge">eth_blockNumber</code>、<code class="highlighter-rouge">eth_getTransactionByHash</code>、<code class="highlighter-rouge">eth_call</code>、<code class="highlighter-rouge">eth_getBalance</code>。下面详细列出了项目中合约调用的类和具体使用的以太坊 API, 它们是一一对应的关系。</p>
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/trustwallet-2/2018110917531565.png" width="70%" img="" />
+</center>
+
+<h4 id="web3swift">Web3.swift</h4>
+
+<p><code class="highlighter-rouge">Trust</code>项目中并没有使用<code class="highlighter-rouge">web3</code>的方式进行合约调用, 但是我还是想说一说这种方式。这是因为除了以太坊官方的对 JavaScript API的<code class="highlighter-rouge">web3</code>库以外, 还有一个纯Swift写的库<a href="https://github.com/Boilertalk/Web3.swift">Web3.swift</a>。它是可以用于在以太坊网络中签署交易并与智能合约进行交互, 而且可以直接使用于你的iOS客户端。假如你的网络层用<code class="highlighter-rouge">Web3.swift</code>替换<code class="highlighter-rouge">APIKit</code> + <code class="highlighter-rouge">JSONRPCKit</code>这样的话, 将会降低网络层结构复杂度, 且代码简洁性也提高了。</p>
+
+<h3 id="网络层其他请求">网络层其他请求</h3>
+
+<p>在<code class="highlighter-rouge">Trust</code>中, 获取区块链上的数据, 其实分为两种, 一种是上面提到的直接通过智能合约获取的数据。另一种就是<code class="highlighter-rouge">Trust</code>官网已经封装过的一些接口, 它们是关于多币种的, 大多需要在区块链中去查找, 接口不单一且有大工作量的请求, 如transactions, getTokes等。这些接口是直接使用网络库<code class="highlighter-rouge">Moya</code>进行封装的, 而没有调用智能合约。而这些<code class="highlighter-rouge">HTTP</code>请求的服务器是:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>let trustAPI = URL(string: "https://public.trustwalletapp.com")
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">TrustAPI</code>类中将这些接口清楚的列举了出来, 并且将它们集体封装在<code class="highlighter-rouge">TrustNetwork</code>类中来管理。</p>
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/trustwallet-2/20181109182907445.png" width="70%" img="" />
+</center>
+
+<p>到这里, 就将<a href="https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6">前一篇文章</a>所遗留的网络层的详情补充完整了。</p>
+
+<h2 id="交易">交易</h2>
+
+<p>交易, 即<code class="highlighter-rouge">Transaction</code>, 我这里是指转账交易。上面简单介绍过以太坊上的交易, 并了解交易的 API是 <code class="highlighter-rouge">eth_sendRawTransaction</code>。下面介绍下在项目中, 转账交易的结构, 以及转账交易在<code class="highlighter-rouge">原生App</code>和<code class="highlighter-rouge">DApp</code>中分别是怎样的流程。</p>
+
+<h3 id="交易的结构">交易的结构</h3>
+
+<p>在项目的主目录中, 有一个<code class="highlighter-rouge">Transfer</code>模块, 这个模块主要功能就是处理转账交易。在形成一个交易前, 将以定义的<code class="highlighter-rouge">Transfer</code>类为基础, 封装出一个<code class="highlighter-rouge">Transaction</code>的结构, 这个结构中包含着发送地址、接收地址、币的数量、交易费等等所有交易相关的数据。最后定义<code class="highlighter-rouge">TransactionConfigurator</code>类, 对交易进行最外层的业务管理和校验。在<code class="highlighter-rouge">TransactionConfigurator</code>中经过校验、签名之后的交易才会发送给以太坊节点, 并在矿工挖到矿并将此交易放入区块中, 当前<code class="highlighter-rouge">Token</code>的转账才算完成。</p>
+
+<h4 id="transfer">Transfer</h4>
+
+<p><code class="highlighter-rouge">Transfer</code>中主要包含当前转账发起方的<code class="highlighter-rouge">Token</code>相关的一些数据, 如地址、合约等等。而且它有类型之分, 及<code class="highlighter-rouge">TransferType</code>的三种类型, 分别是<code class="highlighter-rouge">Coin</code>、<code class="highlighter-rouge">ERC20</code>、<code class="highlighter-rouge">Dapp</code>, 前两种是原生App的方式, 后一种是浏览器中 DApp的方式。</p>
+
+<h4 id="unconfirmedtransaction">UnconfirmedTransaction</h4>
+
+<p><code class="highlighter-rouge">UnconfirmedTransaction</code>中, 主要包含当前<code class="highlighter-rouge">Token</code>的一些信息, 即<code class="highlighter-rouge">Transfer</code>。还有一个转账接收方的信息, 如地址、币的数量、交易费、Data等等。</p>
+
+<h4 id="transactionconfigurator">TransactionConfigurator</h4>
+
+<p><code class="highlighter-rouge">TransactionConfigurator</code>类, 对交易进行最外层的业务管理和校验。它其中包含全量的<code class="highlighter-rouge">UnconfirmedTransaction</code>数据, 且还有校验余额是否有效、交易费、交易限制等功能, 最终生成一个经过校验后的完整<code class="highlighter-rouge">SignTransaction</code>。</p>
+
+<h4 id="dappaction">DappAction</h4>
+
+<p><code class="highlighter-rouge">DappAction</code>只在<code class="highlighter-rouge">DApp</code>进行转账交易时, 才能使用到的类。而上面的三个无论是<code class="highlighter-rouge">原生App</code>还是<code class="highlighter-rouge">DApp</code>都需要使用到的交易结构类。<code class="highlighter-rouge">DappAction</code>会将浏览器中传入的消息进行解析, 得到<code class="highlighter-rouge">Method</code>以及其它数据, 并封装在<code class="highlighter-rouge">DappCommand</code>里面。然后以浏览器的web标题和URL生成的<code class="highlighter-rouge">DAppRequester</code>等元素生成<code class="highlighter-rouge">Transfer</code>。最终这两者, 共同生成的<code class="highlighter-rouge">DappAction</code>来决定需要进行哪种操作、需要调用合约中的哪种API、还有交易的一些数据等。</p>
+
+<h4 id="交易结构图">交易结构图</h4>
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/trustwallet-2/20181114104214461.png" width="70%" img="" />
+</center>
+
+<h3 id="交易的流程">交易的流程</h3>
+
+<p>交易流程自然也是分成两, 一种是<code class="highlighter-rouge">原生App</code>中发起的交易, 一种是<code class="highlighter-rouge">DApp</code>在浏览器中发起的交易。之前提及的交易结构会在流程中以数据的形式作为重要的参与部分, 这里主要说明交易从发起至交易完成的主要流程, 以及需要调用哪些以太坊智能合约的 API。</p>
+
+<h4 id="原生app发起的交易">原生App发起的交易</h4>
+
+<p><strong>交易发起。</strong> 在<code class="highlighter-rouge">原生App</code>的钱包首页有着当前账户下的<code class="highlighter-rouge">Token</code>列表, 而发起的转账交易是在某个具体<code class="highlighter-rouge">Token</code>中操作的。所以当前的<code class="highlighter-rouge">Transfer</code>是已经具备的, 而具体的交易接收地址、币的数量以及gas费就需要用户在<code class="highlighter-rouge">SendCoordinator</code>的模块中自行输入了。</p>
+
+<p><strong>构建交易数据。</strong> 交易发起后, 我们就具备了构建<code class="highlighter-rouge">UnconfirmedTransaction</code>和<code class="highlighter-rouge">TransactionConfigurator</code>的所有数据了。它们的具体情况, 前面已经说明过了, 就不赘述了。构建完成<code class="highlighter-rouge">TransactionConfigurator</code>后, 进入流程中的<code class="highlighter-rouge">ConfirmCoordinator</code>模块, 它的功能是让用户来确认交易详情, 以及核实当前<code class="highlighter-rouge">Token</code>的余额是否足够等。</p>
+
+<p><strong>智能合约调用。</strong> 当用户确认且余额足够支持转账的情况下, 就需要<code class="highlighter-rouge">SendTransactionCoordinator</code>来进行核心的转账交易业务, 所以它是一个纯业务的功能类, 并无页面。这时候要根据在<code class="highlighter-rouge">TransactionConfigurator</code>经过校验的 <code class="highlighter-rouge">Transaction</code>, 判断其<code class="highlighter-rouge">noce</code>是否大于0。如果不大于0, 则需要通过<code class="highlighter-rouge">JSON RPC Over HTTP</code>的方式调用以太坊智能合约的API, 即<code class="highlighter-rouge">eth_getTransactionByHash</code>对<code class="highlighter-rouge">nonce</code>进行更新, 然后重新进行判断; 如果大于0, 则<code class="highlighter-rouge">EtherKeystore</code>对交易进行签名, 然后通过<code class="highlighter-rouge">JSON RPC Over HTTP</code>的方式调用以太坊智能合约的API, 即<code class="highlighter-rouge">eth_sendRawTransaction</code>。</p>
+
+<p><strong>交易回调处理。</strong> 交易结果产生后, 要回调至发起的模块, 还要处理后续的业务。如果交易成功, 会将交易保存到本地的<code class="highlighter-rouge">Realm</code>数据库等; 如果交易失败, 提示用户交易失败。</p>
+
+<p>到此, 转账交易的流程的闭环完成。在后面的图中也对整个交易流程做了一个梳理。</p>
+
+<h4 id="dapp发起的交易">DApp发起的交易</h4>
+
+<p><code class="highlighter-rouge">Trust</code>具有一个功能齐全的<code class="highlighter-rouge">Web3</code>浏览器，可与任何分布式的应用程式(DApp)配合使用。这个情景就是当转账交易发生在<code class="highlighter-rouge">DApp</code>中发起的情况。交易整体的流程与<code class="highlighter-rouge">原生App</code>中基本一致, 且交易的核心数据结构一致。它们的区别在于发起方式、回调处理, 以及<code class="highlighter-rouge">DApp</code>中要多一些解析的过程。</p>
+
+<p><strong>交易发起。</strong> 在<code class="highlighter-rouge">Web3</code>浏览器中的<code class="highlighter-rouge">DApp</code>中, 发起转账交易, 发起方式就是<code class="highlighter-rouge">JS</code>调用<code class="highlighter-rouge">iOS原生</code>。通过传入的数据, 在<code class="highlighter-rouge">BrowserCoordinator</code>模块中, 将数据进行解析。</p>
+
+<p><strong>解析。</strong> 通过<code class="highlighter-rouge">DAppAction</code>、<code class="highlighter-rouge">DappCommand</code>、<code class="highlighter-rouge">DAppRequester</code>等类进行解析, 完成后, 封装入<code class="highlighter-rouge">DAppAction</code>内, 来决定需要进行哪种操作、需要调用合约中的哪种API。它有6种响应事件, 分别是:</p>
+<blockquote>
+  <ul>
+    <li>1.signMessage</li>
+    <li>2.signPersonalMessage</li>
+    <li>3.signTypedMessage</li>
+    <li>4.signTransaction</li>
+    <li>5.sendTransaction</li>
+    <li>6.unknown</li>
+  </ul>
+</blockquote>
+
+<p><strong>构建交易数据</strong> 和 <strong>智能合约调用。</strong> 这两个步骤和原生的之间基本一致, 都是通过数据构建出<code class="highlighter-rouge">Transaction</code>, 用来做交易准备。然后进行校验, 再调用智能合约。所以就不具体说明了, 请参照<code class="highlighter-rouge">原生App</code>。</p>
+
+<p><strong>交易回调处理。</strong> 交易结果产生后, 也要回调至发起的模块, 来处理后续的业务。这里与<code class="highlighter-rouge">原生App</code>区别是, 除了需要完成<code class="highlighter-rouge">原生App</code>在成功或失败下完成的流程外, 还需要将交易结果再通知到<code class="highlighter-rouge">Web</code>, 这样才能形成完整的闭环。所以, 无论回调结果如何, 都会通过<code class="highlighter-rouge">iOS原生</code>调用<code class="highlighter-rouge">JS</code>的方式通知<code class="highlighter-rouge">Web</code>交易的具体情况。</p>
+
+<h4 id="交易流程图">交易流程图</h4>
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/trustwallet-2/20181114151958473.png" width="80%" img="" />
+</center>
+
+<p><code class="highlighter-rouge">Trust</code>项目到这里基本就很清晰了, 这两篇文章虽然只是对<code class="highlighter-rouge">Trust 
+wallet</code>的解读, 很局限。但是由它们能延伸到的知识, 如以太坊的智能合约的知识、钱包和私钥管理的知识等等, 还有你对区块链的认知, 这些不是狭义的。所以无论你认为区块链是好是坏, 或者有没有实际的应用和市场的欢迎, 这门技术都带来了无限创新。</p>
+
+<p>欢迎指正, <a href="https://github.com/wangyanchang21">wangyanchang21</a>.</p>
+
+
+  </section>
+  
+</article>
+
+
+
+      </div>
+
+      <footer class="footer">
+  <span class="footer__copyright">&copy; 2019 DCSnail. All rights reserved.</span>
+</footer>
+
+<script type="text/javascript" src="https://ajax.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript" src="/js/main.js?1558344697863960000"></script>
+
+
+    </div>
+  </body>
+</html>

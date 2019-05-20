@@ -5,13 +5,17 @@ categories: [区块链]
 tags: [区块链]
 ---
 
+在前一篇文章中, 已经介绍过`Trust`的项目架构、业务流程等了。这篇文章将会解读一些核心的功能, 包括前一篇文章提到的`EtherKeystore`这个业务类, 还有网络层的如何调用智能合约、其它调用合约的方式, 以及以太坊交易的结构和流程等。
+
+[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)
+
+------
+
 [以太坊钱包 Trust项目解读之架构和流程](https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6)
 
 [由Trust Wallet理解以太坊钱包管理和智能合约](https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6)
 
 ------
-
-在前一篇文章中, 已经介绍过`Trust`的项目架构、业务流程等了。这篇文章将会解读一些核心的功能, 包括前一篇文章提到的`EtherKeystore`这个业务类, 还有网络层的如何调用智能合约、其它调用合约的方式, 以及以太坊交易的结构和流程等。
 
 ## 钱包管理
 
@@ -144,7 +148,7 @@ func getPrivatePublicKey() -> (String, String) {
 默认的JSON-RPC端点：
 
 | Client | URL |
-|:-------------:|:---------------:|
+| :------------- | :---------------: |
 | C++ | http://localhost:8545 |
 | Go | http://localhost:8545 |
 | Py | http://localhost:4000 |
@@ -153,8 +157,8 @@ func getPrivatePublicKey() -> (String, String) {
 
 RPC的支持情况: 
 
-| cpp-ethereum | go-ethereum | py-ethereum | parity |
-|:-------------:|:---------------:|:-------------:|:-------------:|
+|  | cpp-ethereum | go-ethereum | py-ethereum | parity |
+| :----- | :-------------: | :---------------: | :-------------: | :-------------: |
 | JSON-RPC 1.0 | ✓ |  |   |   | 
 | JSON-RPC 2.0 | ✓ | ✓ | ✓ | ✓ |
 | Batch requests | ✓ | ✓ | ✓ | ✓ |
@@ -303,9 +307,6 @@ wallet`的解读, 很局限。但是由它们能延伸到的知识, 如以太坊
 
 
 
-
-
-
-
+欢迎指正, [wangyanchang21](https://github.com/wangyanchang21).
 
 

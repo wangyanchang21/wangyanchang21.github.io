@@ -2,199 +2,46 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>DCSnail</title>
-    <description>iOS, watchOS, swifter</description>
+    <description>iOS, watchOS, swifter. is migrating...</description>
     <link>http://localhost:4000/</link>
     <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
-    <pubDate>Mon, 20 May 2019 16:07:43 +0800</pubDate>
-    <lastBuildDate>Mon, 20 May 2019 16:07:43 +0800</lastBuildDate>
+    <pubDate>Mon, 20 May 2019 17:31:37 +0800</pubDate>
+    <lastBuildDate>Mon, 20 May 2019 17:31:37 +0800</lastBuildDate>
     <generator>Jekyll v3.6.2</generator>
     
       <item>
         <title>Template Wellcome</title>
-        <description>&lt;p&gt;这是我的个人博客, 欢迎阅读交流.
-, 
-我的博客地址是&lt;/p&gt;
+        <description>&lt;p&gt;摘要描述…&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;https://wangyanchang21.github.io&quot;&gt;网址1&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;[网址2][CSDN]&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;/jekyll-uno/images/snail.jpg&quot;&gt;图片1&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/jekyll-uno/images/snail.jpg&quot; alt=&quot;图片2&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;为什么要&lt;code class=&quot;highlighter-rouge&quot;&gt;搭建这个博客&lt;/code&gt;呢?&lt;/p&gt;
-
-&lt;p&gt;来看看, 代码如下&lt;/p&gt;
-&lt;div class=&quot;language-swift highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;number&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8088&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;userName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;wangyanchang21&quot;&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;site&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;https://wangyanchang21.github.io&quot;&lt;/span&gt;
-
-&lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;userName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;site&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;参考资料:
-[CSDN]:https://dcsnail.blog.csdn.net&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://blog.csdn.net/wangyanchang21/article/details/83584996&quot;&gt;以太坊钱包 Trust项目解读之架构和流程&lt;/a&gt;
-&lt;a href=&quot;https://blog.csdn.net/wangyanchang21/article/details/83862016&quot;&gt;由Trust Wallet理解以太坊钱包管理和智能合约&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/wangyanchang21&quot;&gt;&lt;img src=&quot;https://img.shields.io/badge/contact-wangyanchang21-green.svg&quot; alt=&quot;Contact&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;hr /&gt;
 
-&lt;h1 id=&quot;前言&quot;&gt;前言&lt;/h1&gt;
+&lt;p&gt;系列文章列表:&lt;/p&gt;
 
-&lt;p&gt;由于前阵子工作涉及到区块链方面的业务, 再加上自己对技术的热忱, 本人也是不断地学(恶)习(补)这方面的知识。在 github上的有很多优秀的开源钱包的代码, 比如说今天要分享的iOS版本的 &lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;, 还有这个月24号刚刚官宣开源的 &lt;code class=&quot;highlighter-rouge&quot;&gt;imToken&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://wangyanchang21.github.io/2018/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85-Trust%E9%A1%B9%E7%9B%AE%E8%A7%A3%E8%AF%BB%E4%B9%8B%E6%9E%B6%E6%9E%84%E5%92%8C%E6%B5%81%E7%A8%8B&quot;&gt;以太坊钱包 Trust项目解读之架构和流程&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;文章中, 会涉及到一些区块链的基础知识如以太坊、智能合约、节点、Token、地址等等, 这些基础知识就不介绍了, 还请自行查阅吧。&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6&quot;&gt;由Trust Wallet理解以太坊钱包管理和智能合约&lt;/a&gt;&lt;/p&gt;
 
-&lt;h1 id=&quot;以太坊钱包平台介绍&quot;&gt;以太坊钱包平台介绍&lt;/h1&gt;
+&lt;p&gt;&lt;a href=&quot;https://wangyanchang21.github.io/2018/以太坊钱包-Trust项目解读之架构和流程&quot;&gt;以太坊钱包-Trust项目解读之架构和流程&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;首先, 还是先介绍下市场上常用的一些以太坊钱包吧, 至少让大家了解一下这些平台。&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://wangyanchang21.github.io/2018/由Trust-Wallet理解以太坊钱包管理和智能合约&quot;&gt;由Trust Wallet理解以太坊钱包管理和智能合约&lt;/a&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;mist&quot;&gt;Mist&lt;/h2&gt;
+&lt;hr /&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Mist&lt;/code&gt;是一个全节点的钱包, 以太坊的官方钱包。
-官方地址: &lt;a href=&quot;https://ethereum.org/&quot;&gt;ethereum&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;图片和链接&lt;/p&gt;
 
-&lt;h2 id=&quot;parity&quot;&gt;Parity&lt;/h2&gt;
+&lt;center&gt;
+&lt;img src=&quot;https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/trustwallet-2/20181107182953343.png&quot; width=&quot;70%&quot; img=&quot;&quot; /&gt;
+&lt;/center&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Parity&lt;/code&gt;也是一个全节点钱包, 原以太坊基金会部分成员开发的。
-官方地址: &lt;a href=&quot;https://www.parity.io/&quot;&gt;Parity&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://wangyanchang21.github.io&quot;&gt;博客地址&lt;/a&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;trust&quot;&gt;Trust&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;https://dcsnail.blog.csdn.net&quot;&gt;原博客地址&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;在国外 App Store已经上架, 目前有 &lt;code class=&quot;highlighter-rouge&quot;&gt;iOS&lt;/code&gt;和 &lt;code class=&quot;highlighter-rouge&quot;&gt;Android&lt;/code&gt;移动端的应用, 应用中有 &lt;code class=&quot;highlighter-rouge&quot;&gt;Web3浏览器&lt;/code&gt;并支持很多 &lt;code class=&quot;highlighter-rouge&quot;&gt;DApp&lt;/code&gt;使用。
-官方地址: &lt;a href=&quot;https://trustwalletapp.com/&quot;&gt;TrustWalletApp&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;footer:&lt;/p&gt;
 
-&lt;h2 id=&quot;imtoken&quot;&gt;imToken&lt;/h2&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;imToken&lt;/code&gt;是一个中国团队开发的, 目前只有 &lt;code class=&quot;highlighter-rouge&quot;&gt;iOS&lt;/code&gt;和 &lt;code class=&quot;highlighter-rouge&quot;&gt;Android&lt;/code&gt;移动端的应用。
-官方地址: &lt;a href=&quot;https://token.im/&quot;&gt;ImToken&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;myetherwallet&quot;&gt;MyEtherWallet&lt;/h2&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;MyEtherWallet&lt;/code&gt; 作为一个轻钱包，无需下载，直接在 Web端进行操作。
-官方地址: &lt;a href=&quot;https://www.myetherwallet.com/&quot;&gt;MyEtherWallet&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;metamask&quot;&gt;MetaMask&lt;/h2&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;MetaMask&lt;/code&gt;是一个轻量级钱包, 以Chrome扩展程序存在的 Web端钱包。
-官方地址: &lt;a href=&quot;https://metamask.io/&quot;&gt;MetaMask&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;trust-wallet&quot;&gt;Trust Wallet&lt;/h1&gt;
-
-&lt;p&gt;了解过各种钱包平台后, 进入今天主要对应用 &lt;a href=&quot;https://github.com/TrustWallet/trust-wallet-ios&quot;&gt;trust-wallet-ios&lt;/a&gt;进行源码解析, 它在 github上已经是开源的了。并且在众多开源的虚拟货币钱包项目中，&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;已经十分完善和稳定了，已经在国外的 App Store上架了，对应的 Android版本也已开源(但貌似 Android版本并不是最新版本的)。&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;可与任何&lt;code class=&quot;highlighter-rouge&quot;&gt;ERC20&lt;/code&gt;和&lt;code class=&quot;highlighter-rouge&quot;&gt;ERC223&lt;/code&gt;代币配合使用，并支持以太坊生态系统中的以太坊主链、侧链，以及所有服从以太坊协议的加密货币。&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;为用户提供统一的钱包地址，可用于管理以太坊和所有代币。还有一个功能齐全的&lt;code class=&quot;highlighter-rouge&quot;&gt;Web3&lt;/code&gt;浏览器，可与任何分布式的应用程式(&lt;code class=&quot;highlighter-rouge&quot;&gt;DApp&lt;/code&gt;)配合使用。在它的官网有这样的介绍:&lt;/p&gt;
-&lt;blockquote&gt;
-  &lt;ul&gt;
-    &lt;li&gt;无服务器环境完全本地化了每个已安装的应用程序&lt;/li&gt;
-    &lt;li&gt;以客户端为基础架构,可确保密钥本地存储在您的设备上&lt;/li&gt;
-    &lt;li&gt;银行级安全保护您的数字资产免受潜在威胁。&lt;/li&gt;
-    &lt;li&gt;应用级认证系统可以防止未经授权的设备进行访问&lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/blockquote&gt;
-
-&lt;h2 id=&quot;主要模块&quot;&gt;主要模块&lt;/h2&gt;
-
-&lt;center&gt;&amp;lt;img src=&quot;https://img-blog.csdnimg.cn/20181031154630925.png&quot; width=40% img/&amp;gt;&lt;/center&gt;
-
-&lt;p&gt;第一个模块是一个浏览器, 具体来说是一个 &lt;code class=&quot;highlighter-rouge&quot;&gt;Web3浏览器&lt;/code&gt;, 它支持许多 &lt;code class=&quot;highlighter-rouge&quot;&gt;DApp&lt;/code&gt;(Decentralized Application的缩写, 即分布式应用), 支持基于以太坊的货币交易和游戏的 &lt;code class=&quot;highlighter-rouge&quot;&gt;DApps&lt;/code&gt;。当然也具备普通浏览器的功能, 访问其它网址, 添加书签, 查看历史记录等等。&lt;/p&gt;
-
-&lt;center&gt;&amp;lt;img src=&quot;https://img-blog.csdnimg.cn/20181031154744766.png&quot; width=40% img/&amp;gt;&lt;/center&gt;
-
-&lt;p&gt;第二个模块是钱包模块, 是这个 App最核心的部分, 对&lt;code class=&quot;highlighter-rouge&quot;&gt;Token&lt;/code&gt;的交易记录、余额、汇率变化的查看, 也可以进行交易转账(发送和接收)。&lt;/p&gt;
-
-&lt;center&gt;&amp;lt;img src=&quot;https://img-blog.csdnimg.cn/20181031154823974.png&quot; width=40% img/&amp;gt;&lt;/center&gt;
-
-&lt;p&gt;第三个模块是设置模块, 包括钱包账户的切换, 安全管理, 当前货币种类, 浏览器设置, 社区分享, 开发者选项等等。&lt;/p&gt;
-
-&lt;h2 id=&quot;项目架构&quot;&gt;项目架构&lt;/h2&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;的 iOS项目在架构设计和代码风格、包括技术栈都是很不错的。我将会以架构模式和四层式架构来解析此项目。&lt;/p&gt;
-
-&lt;center&gt;&amp;lt;img src=&quot;https://img-blog.csdnimg.cn/20181031171755801.png&quot; width=30% img/&amp;gt;&lt;/center&gt;
-
-&lt;p&gt;&lt;strong&gt;目录结构。&lt;/strong&gt; 如上图所示, 主要模块和重要功能组成第一层的节点目录, 如&lt;code class=&quot;highlighter-rouge&quot;&gt;Browser&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;Tokens&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;Style&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;Extension&lt;/code&gt;等等。又在各个模块中将第二层目录按照功能分为&lt;code class=&quot;highlighter-rouge&quot;&gt;Coordinators&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;Views&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;ViewModels&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;ViewControllers&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;Layouts&lt;/code&gt;等等。&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;架构模式。&lt;/strong&gt; 采用的是&lt;code class=&quot;highlighter-rouge&quot;&gt;MVVM&lt;/code&gt;的架构模式, 不过并没有使用动态绑定, 但这并不影响它项目结构清晰的逻辑。相对于&lt;code class=&quot;highlighter-rouge&quot;&gt;MVC&lt;/code&gt;的架构模式来说, 就使得&lt;code class=&quot;highlighter-rouge&quot;&gt;Controller&lt;/code&gt;的负载变小了, 易于测试性提高了。当然它也具备&lt;code class=&quot;highlighter-rouge&quot;&gt;MVVM&lt;/code&gt;架构的优缺点, 这里就不赘述了。 我大概画了一个草图, 如下图:&lt;/p&gt;
-&lt;center&gt;&amp;lt;img src=&quot;https://img-blog.csdnimg.cn/20181102175322816.png&quot; width=70% img/&amp;gt;&lt;/center&gt;
-
-&lt;p&gt;&lt;strong&gt;视图层。&lt;/strong&gt; 整个项目绝大部分使用纯代码进行&lt;code class=&quot;highlighter-rouge&quot;&gt;View层&lt;/code&gt;的编写, 且代码规范性较强, 也没有过多的继承, 所以代码可读性高。布局方式采用&lt;code class=&quot;highlighter-rouge&quot;&gt;autolayout&lt;/code&gt;方式, 在具体模块中还以&lt;code class=&quot;highlighter-rouge&quot;&gt;Layout&lt;/code&gt;为功能模块进行开发, 使&lt;code class=&quot;highlighter-rouge&quot;&gt;View层&lt;/code&gt;的代码更加清晰。&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;业务层。&lt;/strong&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;的主要业务逻辑当然是有&lt;code class=&quot;highlighter-rouge&quot;&gt;ViewModel&lt;/code&gt;来承担的, 另外还配合了&lt;code class=&quot;highlighter-rouge&quot;&gt;Coordinator&lt;/code&gt;(或者说路由)的使用, 在页面之间的跳转逻辑上实现了统一管理。这样就减少了横向依赖, 也让跨层访问的业务更加容易开展。&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;网络层。&lt;/strong&gt; 项目中使用&lt;code class=&quot;highlighter-rouge&quot;&gt;Moya&lt;/code&gt;进行数据请求, &lt;code class=&quot;highlighter-rouge&quot;&gt;Moya&lt;/code&gt;已经做了足够多的工作了, 包括交付给给业务层封装成对象的数据、网络层的各种优化工作等。也使用了&lt;code class=&quot;highlighter-rouge&quot;&gt;JSONRPCKit&lt;/code&gt; + &lt;code class=&quot;highlighter-rouge&quot;&gt;APIKit&lt;/code&gt;的框架去进行数据请求, 这在&lt;a href=&quot;https://blog.csdn.net/wangyanchang21/article/details/83862016#t9&quot;&gt;接下来的文章&lt;/a&gt;中会具体分析, 这些请求就是关于智能合约调用的。&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;客户端在区块链中相当于一个轻量节点, 从公链上请求数据的话, 需要依靠某个全节点。就如图中的URL, 就可以理解为&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;客户端取链上数据所借助的全节点。&lt;/p&gt;
-
-&lt;center&gt;&amp;lt;img src=&quot;https://img-blog.csdnimg.cn/20181031183501958.png&quot; width=70% img/&amp;gt;&lt;/center&gt;
-
-&lt;p&gt;&lt;strong&gt;数据层。&lt;/strong&gt; 主要的数据持有化方式使用Realm数据库, 这是个轻量级、高性能、高效率、可跨平台的移动数据库。核心数据如钱包账户、交易、&lt;code class=&quot;highlighter-rouge&quot;&gt;Token&lt;/code&gt;等都存储于此。另外, 也使用了&lt;code class=&quot;highlighter-rouge&quot;&gt;keychain&lt;/code&gt;来保存比较重要且轻量的数据, 如私钥、应用锁设置和密码、最近使用的钱包、&lt;code class=&quot;highlighter-rouge&quot;&gt;Browser&lt;/code&gt;的&lt;code class=&quot;highlighter-rouge&quot;&gt;cookies&lt;/code&gt;。还有一些数据, 如当前货币种类、启动次数、当前版本启动次数、是否分享、是否评分等等, 都是采用&lt;code class=&quot;highlighter-rouge&quot;&gt;UserDefaults&lt;/code&gt;的形式进行数据保存的。&lt;/p&gt;
-
-&lt;h2 id=&quot;项目流程&quot;&gt;项目流程&lt;/h2&gt;
-
-&lt;p&gt;从程序启动&lt;code class=&quot;highlighter-rouge&quot;&gt;APPDelegate&lt;/code&gt;开始, &lt;code class=&quot;highlighter-rouge&quot;&gt;AppCoordinator&lt;/code&gt;作为app间的路由, 判断当前app内是否有钱包账户, 若没有则进入以&lt;code class=&quot;highlighter-rouge&quot;&gt;WelcomeViewController&lt;/code&gt;为根控制器的页面进行钱包账户创建; 若有最近使用过的钱包账户, 则进入app内部的路由&lt;code class=&quot;highlighter-rouge&quot;&gt;InCoordinator&lt;/code&gt;。在这里, 钱包账号创建的页面和钱包使用页面已经划分为两条业务线。其实从业务角度来说, 可以也可以理解为这是&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;内部的两个应用。&lt;/p&gt;
-
-&lt;center&gt;&amp;lt;img src=&quot;https://img-blog.csdnimg.cn/20181102171823364.png&quot; width=70% img/&amp;gt;&lt;/center&gt;
-
-&lt;p&gt;进入&lt;code class=&quot;highlighter-rouge&quot;&gt;InCoordinator&lt;/code&gt;后, 才真正开始创建&lt;code class=&quot;highlighter-rouge&quot;&gt;TabBarController&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;NavigationController&lt;/code&gt;以及各个业务模块的&lt;code class=&quot;highlighter-rouge&quot;&gt;Coordinator&lt;/code&gt;和&lt;code class=&quot;highlighter-rouge&quot;&gt;VC&lt;/code&gt;。上图中明确表示了这个过程, 也对主要的业务模块的&lt;code class=&quot;highlighter-rouge&quot;&gt;Coordinator&lt;/code&gt;和其对应的&lt;code class=&quot;highlighter-rouge&quot;&gt;VC&lt;/code&gt;进行了说明, 且同颜色的之间是一一对应的。&lt;/p&gt;
-
-&lt;h2 id=&quot;主体框架的功能划分&quot;&gt;主体框架的功能划分&lt;/h2&gt;
-
-&lt;p&gt;本文前面介绍过项目的目录结构了, 但这里所说的框架并不是按照目录结构的角度, 而是延续上面的项目流程的角度。首先, 我将按源码进行原模原样的表述, 然后我将提出对于其功能划分的一些自己的建议。因为我认为某写业务模块的功能是应该出现在另一个业务模块中的。&lt;/p&gt;
-
-&lt;center&gt;&amp;lt;img src=&quot;https://img-blog.csdnimg.cn/20181102171757143.png&quot; width=70% img/&amp;gt;&lt;/center&gt;
-
-&lt;h3 id=&quot;appdelegate&quot;&gt;AppDelegate&lt;/h3&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;AppDelegate&lt;/code&gt;需要承担的是程序的初始化以及整个应用生命周期的所影响的业务逻辑。
-&lt;strong&gt;ProtectionCoordinator。&lt;/strong&gt; 功能是在保护应用的方面, 如应用锁、解锁以及当应用失去焦点后保护应用内部页面不被暴露的功能。
-&lt;strong&gt;URLNavigatorCoordinator。&lt;/strong&gt; 功能是由 &lt;a href=&quot;https://github.com/devxoul/URLNavigator&quot;&gt;URLNavigator&lt;/a&gt;和 &lt;a href=&quot;https://github.com/BranchMetrics/ios-branch-deep-linking&quot;&gt;Branch&lt;/a&gt;的功能组成的。前者是对&lt;code class=&quot;highlighter-rouge&quot;&gt;Browser&lt;/code&gt;进行监听的, 并在检测到约定好的URL了进行映射和处理。后者是关于延迟深度链接(Deferred Deep Linking)的。
-&lt;strong&gt;Branch。&lt;/strong&gt; 和上面的&lt;code class=&quot;highlighter-rouge&quot;&gt;Branch&lt;/code&gt;是同一个, 在启动应用时进行初始化, 并将在应用程序生命周期中多次调用，当应用由后台向前台切换时也将调用。用于处理从外部跳转入后, 根据传入的参数要跳转进入指定的页面。
-&lt;strong&gt;EtherKeystore。&lt;/strong&gt; 应用的核心业务的处理类, 有钱包管理(创建、删除、导入、导出)、助记词转化、签名工作、私钥管理等功能。它的具体业务将会在&lt;a href=&quot;https://blog.csdn.net/wangyanchang21/article/details/83862016&quot;&gt;下篇文章&lt;/a&gt;中具体介绍。&lt;/p&gt;
-
-&lt;p&gt;在&lt;code class=&quot;highlighter-rouge&quot;&gt;AppDelegate&lt;/code&gt;中, &lt;code class=&quot;highlighter-rouge&quot;&gt;ProtectionCoordinator&lt;/code&gt;需要跟随应用的生命周期进行功能的调整。&lt;code class=&quot;highlighter-rouge&quot;&gt;URLNavigatorCoordinator&lt;/code&gt;中的&lt;code class=&quot;highlighter-rouge&quot;&gt;navigator&lt;/code&gt;用来处理响应&lt;a href=&quot;https://developer.apple.com/library/archive/featuredarticles/iPhoneURLScheme_Reference/Introduction/Introduction.html&quot;&gt;URL Scheme&lt;/a&gt;这种由其它 App的跳入, 而&lt;code class=&quot;highlighter-rouge&quot;&gt;Branch&lt;/code&gt;用来处理响应&lt;a href=&quot;https://developer.apple.com/ios/universal-links/&quot;&gt;Universal Links&lt;/a&gt;这种通用链接的跳入形式。
-而&lt;code class=&quot;highlighter-rouge&quot;&gt;EtherKeystore&lt;/code&gt;在这里只是作为一个&lt;code class=&quot;highlighter-rouge&quot;&gt;AppCoordinator&lt;/code&gt;初始化的一个参数, 并无实际使用。这也是我个人认为在这个业务模块并不应出现的类, 当然后面我也会细聊我为什么这么说? 我也将会给出我自己的建议。&lt;/p&gt;
-
-&lt;h3 id=&quot;appcoordinator&quot;&gt;AppCoordinator&lt;/h3&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;AppCoordinator&lt;/code&gt;(或者说路由)在业务上一般可以分为 App间的路由和 App内的路由。而在此项目中, 因为还有&lt;code class=&quot;highlighter-rouge&quot;&gt;InCoordinator&lt;/code&gt;, 所以当前的&lt;code class=&quot;highlighter-rouge&quot;&gt;AppCoordinator&lt;/code&gt;是一个 App间的路由, 而&lt;code class=&quot;highlighter-rouge&quot;&gt;InCoordinator&lt;/code&gt;是一个App内的路由。所以在项目中&lt;code class=&quot;highlighter-rouge&quot;&gt;AppCoordinator&lt;/code&gt;承担了一些应用层的功能。&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Initializers。&lt;/strong&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;CrashReportInitializer&lt;/code&gt;是统计崩溃的, 用到&lt;a href=&quot;https://get.fabric.io/&quot;&gt;Fabric&lt;/a&gt;的一些工具, 如 Crashlytics、Answers等。而&lt;code class=&quot;highlighter-rouge&quot;&gt;SkipBackupFilesInitializer&lt;/code&gt;是防止文件被备份的。
-&lt;strong&gt;AppTracker。&lt;/strong&gt; 记录应用启动次数、当前版本启动次数、是否分享、是否评分等一些仅保存于本地的应用层统计数据。
-&lt;strong&gt;AppGlobalStyle。&lt;/strong&gt; 应用统一的风格, 包括导航栏外观、UITexfield外观、TableView分割线风格(边距, 颜色)等。这个统一风格是整个应用一致的, 一定要区别于统一管理的字体和颜色的类(如项目中的Colors类和AppStyle类)。
-&lt;strong&gt;PushNotificationsRegistrar。&lt;/strong&gt; 管理远程推送授权和注册相关的业务。
-&lt;strong&gt;BranchEventClosure。&lt;/strong&gt; 在从外部跳入当前 App后, 由&lt;code class=&quot;highlighter-rouge&quot;&gt;Branch&lt;/code&gt;的操作调起的, 在&lt;code class=&quot;highlighter-rouge&quot;&gt;BranchEventClosure&lt;/code&gt;的 block中, 由下层的&lt;code class=&quot;highlighter-rouge&quot;&gt;InCoordinator&lt;/code&gt;来控制将要跳入的目标页面。但我个人认为, 它并不应该出现在这里, 后面建议中会具体说明原因。&lt;/p&gt;
-
-&lt;h3 id=&quot;incoodinator&quot;&gt;InCoodinator&lt;/h3&gt;
-
-&lt;p&gt;这是 App内的路由, 与具体业务模块有间接联系的路由, 负责创建和管理各个业务模块的&lt;code class=&quot;highlighter-rouge&quot;&gt;Coordinator&lt;/code&gt;和各个业务模块之间的跳转逻辑。&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;CheckDeviceCoordinator。&lt;/strong&gt; 检测当前设备是否是越狱设备, 如果是越狱设备则会提醒用户不安全, 因为这样在 &lt;code class=&quot;highlighter-rouge&quot;&gt;keychain&lt;/code&gt;中存储的钱包账户的私钥就可能被盗。毕竟在区块链中, 私钥是你作为钱包主人的唯一证明。
-&lt;strong&gt;HelpsCoordinator。&lt;/strong&gt; 通过本地对启动次数的监听, 在指定的启动次数时对用户进行应用分享和评分的提醒。
-&lt;strong&gt;URLNavigable、URLNavigator。&lt;/strong&gt; 在&lt;code class=&quot;highlighter-rouge&quot;&gt;Browser&lt;/code&gt;中进行监听, 一旦检测到有约定好的URL后, 可以在对应的block中做出想要的映射或者处理。如下图。&lt;/p&gt;
-&lt;center&gt;&amp;lt;img src=&quot;https://img-blog.csdnimg.cn/2018110216360916.png&quot; width=70% img/&amp;gt;&lt;/center&gt;
-
-&lt;p&gt;&lt;strong&gt;MigrationInitializer、Realm、WalletSession。&lt;/strong&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;Realm&lt;/code&gt;数据库和数据库迁移的处理。这里其实不是特指数据库, 而是指所有与具体业务模块的&lt;code class=&quot;highlighter-rouge&quot;&gt;Coordinator&lt;/code&gt;创建时所使用的公共类。所以这里包括&lt;code class=&quot;highlighter-rouge&quot;&gt;WalletSession&lt;/code&gt;等类。
-&lt;strong&gt;Coordinators。&lt;/strong&gt; 指&lt;code class=&quot;highlighter-rouge&quot;&gt;InCoordinator&lt;/code&gt;所管理的具体业务模块的 Coordinator, 包括&lt;code class=&quot;highlighter-rouge&quot;&gt;BrowserCoordinator&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;TokensCoordinator&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;settingsCoordinator&lt;/code&gt;。
-&lt;strong&gt;TabBarController。&lt;/strong&gt; 创建上述&lt;code class=&quot;highlighter-rouge&quot;&gt;Coordinators&lt;/code&gt;中各个具体业务模块的 Coordinator所管理的&lt;code class=&quot;highlighter-rouge&quot;&gt;NavigationController&lt;/code&gt;和&lt;code class=&quot;highlighter-rouge&quot;&gt;ViewController&lt;/code&gt;。&lt;/p&gt;
-
-&lt;h3 id=&quot;直抒己见&quot;&gt;直抒己见&lt;/h3&gt;
-
-&lt;p&gt;在上面的文章中, 我也说过有一些地方, 我个人认为是可以做一些调整的。当然, 如果你没有我这样的强迫症, 可以略过。
-先来看一个理念。在没有使用&lt;code class=&quot;highlighter-rouge&quot;&gt;Coordinator&lt;/code&gt;的项目中, 其启动流程和各个&lt;code class=&quot;highlighter-rouge&quot;&gt;VC&lt;/code&gt;之间的创建应该是这样的(&lt;a href=&quot;https://medium.com/ios-os-x-development/ios-architecture-patterns-ecba4c38de52#.4g9db2ybm&quot;&gt;原图出处&lt;/a&gt;):&lt;/p&gt;
-&lt;center&gt;&amp;lt;img src=&quot;https://img-blog.csdnimg.cn/20181101181606999.png&quot; width=70% img/&amp;gt;&lt;/center&gt;
-
-&lt;p&gt;然而在使用了&lt;code class=&quot;highlighter-rouge&quot;&gt;Coordinator&lt;/code&gt;的项目中, 应该是这样的(&lt;a href=&quot;https://medium.com/ios-os-x-development/ios-architecture-patterns-ecba4c38de52#.4g9db2ybm&quot;&gt;原图出处&lt;/a&gt;):&lt;/p&gt;
-&lt;center&gt;&amp;lt;img src=&quot;https://img-blog.csdnimg.cn/20181101182031878.png&quot; width=70% img/&amp;gt;&lt;/center&gt;
-
-&lt;p&gt;当然, 在这个项目中, 项目的架构模式并不完全是第二张图这样。&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;将第二张图中的 &lt;code class=&quot;highlighter-rouge&quot;&gt;AppCoordinator&lt;/code&gt;细分为了两个, 即应用间和应用内的路由。而在&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;项目中, 图二中的显然只是相当于&lt;code class=&quot;highlighter-rouge&quot;&gt;InCoordinator&lt;/code&gt;, 而从外部跳转(包括从其它 App跳转也包括从通用链接跳转)进入当前 App的管理是&lt;code class=&quot;highlighter-rouge&quot;&gt;AppCoordinator&lt;/code&gt;来处理的。这个理念懂了, 我们进入主题。&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;第一, 将 App外部跳转的事务交于&lt;code class=&quot;highlighter-rouge&quot;&gt;AppCoordinator&lt;/code&gt;。&lt;/strong&gt; 如果按照上面所说的理念, 那么在&lt;code class=&quot;highlighter-rouge&quot;&gt;AppDelegate&lt;/code&gt;中, 其实应该把所有与外部跳转的事务交由&lt;code class=&quot;highlighter-rouge&quot;&gt;AppCoordinator&lt;/code&gt;来做。也就是可以考虑将&lt;code class=&quot;highlighter-rouge&quot;&gt;URLNavigatorCoordinator&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;Branch&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;EtherKeystore&lt;/code&gt;这些放到&lt;code class=&quot;highlighter-rouge&quot;&gt;AppCoordinator&lt;/code&gt;中, 而&lt;code class=&quot;highlighter-rouge&quot;&gt;AppDelegate&lt;/code&gt;中只留下与应用的初始化以及整个应用生命周期的所影响的业务逻辑。
-&lt;strong&gt;第二, 将于具体的业务模块切换的事务交于&lt;code class=&quot;highlighter-rouge&quot;&gt;InCoordinator&lt;/code&gt;。&lt;/strong&gt;  在&lt;code class=&quot;highlighter-rouge&quot;&gt;AppCoordinator&lt;/code&gt;中有一个&lt;code class=&quot;highlighter-rouge&quot;&gt;BranchEventClosure&lt;/code&gt;, 是用来通过&lt;code class=&quot;highlighter-rouge&quot;&gt;InCoordinator&lt;/code&gt;来控制目标页面的跳转的。这些与具体业务模块的跳转逻辑有关的业务就应该交于内部路由&lt;code class=&quot;highlighter-rouge&quot;&gt;InCoordinator&lt;/code&gt;来做。&lt;code class=&quot;highlighter-rouge&quot;&gt;AppCoordinator&lt;/code&gt;中只留下与外部跳转和应用层有关的业务。
-如果这样多了的话, 功能划分就有变化了, 如下图, 绿色边框的是新增的功能:&lt;/p&gt;
-&lt;center&gt;&amp;lt;img src=&quot;https://img-blog.csdnimg.cn/20181102171638114.png&quot; width=70% img/&amp;gt;&lt;/center&gt;
-
-&lt;p&gt;到此为止 Trust Wallet项目以 iOS的角度, 按照架构和主要功能对其源码解析完了。然后, 真正关于区块链的核心功能, 如智能合约调用、私钥公钥管理等, 会以&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;钱包为例让你逐步理解。具体请阅读下一篇&lt;a href=&quot;https://blog.csdn.net/wangyanchang21/article/details/83862016&quot;&gt;由Trust Wallet理解以太坊钱包管理和智能合约&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;欢迎指正, &lt;a href=&quot;https://github.com/wangyanchang21&quot;&gt;wangyanchang21&lt;/a&gt;.&lt;/p&gt;
 
 </description>
         <pubDate>Tue, 14 May 2019 02:23:23 +0800</pubDate>
@@ -209,62 +56,430 @@
       </item>
     
       <item>
-        <title>以太坊钱包 Trust项目解读之架构和流程</title>
-        <description>&lt;p&gt;以太坊钱包 Trust项目解读之架构和流程&lt;/p&gt;
+        <title>由Trust Wallet理解以太坊钱包管理和智能合约</title>
+        <description>&lt;p&gt;在前一篇文章中, 已经介绍过&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;的项目架构、业务流程等了。这篇文章将会解读一些核心的功能, 包括前一篇文章提到的&lt;code class=&quot;highlighter-rouge&quot;&gt;EtherKeystore&lt;/code&gt;这个业务类, 还有网络层的如何调用智能合约、其它调用合约的方式, 以及以太坊交易的结构和流程等。&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;https://blog.csdn.net/wangyanchang21/article/details/83584996&quot;&gt;以太坊钱包 Trust项目解读之架构和流程&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://blog.csdn.net/wangyanchang21/article/details/83862016&quot;&gt;由Trust Wallet理解以太坊钱包管理和智能合约&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/wangyanchang21&quot;&gt;&lt;img src=&quot;https://img.shields.io/badge/contact-wangyanchang21-green.svg&quot; alt=&quot;Contact&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;hr /&gt;
 
-&lt;h1 id=&quot;前言&quot;&gt;前言&lt;/h1&gt;
+&lt;p&gt;&lt;a href=&quot;https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6&quot;&gt;以太坊钱包 Trust项目解读之架构和流程&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;由于前阵子工作涉及到区块链方面的业务, 再加上自己对技术的热忱, 本人也是不断地学(恶)习(补)这方面的知识。在 github上的有很多优秀的开源钱包的代码, 比如说今天要分享的iOS版本的 &lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;, 还有这个月24号刚刚官宣开源的 &lt;code class=&quot;highlighter-rouge&quot;&gt;imToken&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6&quot;&gt;由Trust Wallet理解以太坊钱包管理和智能合约&lt;/a&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;钱包管理&quot;&gt;钱包管理&lt;/h2&gt;
+
+&lt;p&gt;钱包管理就要提到一个类&lt;code class=&quot;highlighter-rouge&quot;&gt;EtherKeystore&lt;/code&gt;, 应用的核心业务的处理类, 有钱包管理(创建、删除、导入、导出)、助记词转化、签名工作、私钥管理等功能。
+&lt;code class=&quot;highlighter-rouge&quot;&gt;EtherKeystore&lt;/code&gt;中使用了由&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;开源的了两个库: &lt;a href=&quot;https://github.com/TrustWallet/trust-keystore&quot;&gt;TrustKeystore&lt;/a&gt;: 用于管理钱包的通用以太坊密钥库。&lt;a href=&quot;https://github.com/TrustWallet/trust-core&quot;&gt;TrustCore&lt;/a&gt;: 区块链核心的数据结构和算法。还有&lt;a href=&quot;https://github.com/krzyzanowskim/CryptoSwift&quot;&gt;CryptoSwift&lt;/a&gt;, 一个标准的安全加密算法集合的库。&lt;/p&gt;
+
+&lt;h3 id=&quot;钱包创建&quot;&gt;钱包创建&lt;/h3&gt;
+
+&lt;p&gt;在&lt;code class=&quot;highlighter-rouge&quot;&gt;EtherKeystore&lt;/code&gt;类中, 封装了钱包的创建, 主要使用了&lt;code class=&quot;highlighter-rouge&quot;&gt;TrustKeystore&lt;/code&gt;库、&lt;code class=&quot;highlighter-rouge&quot;&gt;TrustCore&lt;/code&gt;库中关于公私钥和地址的API、以及密码学的库&lt;code class=&quot;highlighter-rouge&quot;&gt;CryptoSwift&lt;/code&gt;。我下面所说的整个流程也包括这些库中的源码逻辑, 先创建密钥对(或者助记词), 再利用本地生成的随机密码对密钥进行加密保存, 然后生成钱包, 将钱包、获取私钥的密码以及&lt;code class=&quot;highlighter-rouge&quot;&gt;KeystoreKey&lt;/code&gt;保存到本地。&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;默认的方式是生成助记词, 这种方式其实是私钥的一种管理方式, 助记词是由私钥通过某种算法派生出来的, &lt;code class=&quot;highlighter-rouge&quot;&gt;TrustCore&lt;/code&gt;中的&lt;code class=&quot;highlighter-rouge&quot;&gt;Crypto&lt;/code&gt;就是这个功能。而且当你用到私钥的时候, 你还可以把你的助记词通过对应的算法在转译成私钥。所以它只是一种私钥的存储方式, 下面文章中以私钥为例来讲述整个流程。&lt;/p&gt;
+
+&lt;h4 id=&quot;创建公钥私钥&quot;&gt;创建公钥私钥&lt;/h4&gt;
+
+&lt;p&gt;创建钱包就相当于生成一对密钥, 公钥(PublicKey)和私钥(PrivateKey)。公钥其实就相当于你账户在区块链中的地址(Address); 私钥就相当于你钱包的账号密码, 它是证明你是钱包主人的唯一证明, 一旦丢失就不可找回。当然, 公钥并不完全等于地址, 地址是由公钥经过一系列的算法生成的, 需要经过&lt;code class=&quot;highlighter-rouge&quot;&gt;SHA3-256&lt;/code&gt;(Keccak)哈希然后转化为符合&lt;code class=&quot;highlighter-rouge&quot;&gt;EIP55&lt;/code&gt;规则的字符串。&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; (sk, pk) = generateKeys(keysize) 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;上面这段伪代码中, generateKeys方法把 keysize作为输入, 来产生一对公钥和私钥。私钥sk被安全保存## ，并用来签名一段消息；公钥pk是人人都可以找到的，拿到它，就可以用来验证你的签名。下图是&lt;code class=&quot;highlighter-rouge&quot;&gt;TrustCore&lt;/code&gt;中对以太坊私钥和地址的&lt;code class=&quot;highlighter-rouge&quot;&gt;keysize&lt;/code&gt;定义, 私钥是32字节, 公钥地址是20字节, 所以十六进制的私钥长度为64位, 而公钥地址长度为40位。&lt;/p&gt;
+
+&lt;center&gt;
+	&lt;img src=&quot;https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/trustwallet-2/20181107182953343.png&quot; width=&quot;70%&quot; img=&quot;&quot; /&gt;
+&lt;/center&gt;
+
+&lt;p&gt;具体来说, 创建公钥和私钥的功能是由&lt;code class=&quot;highlighter-rouge&quot;&gt;TrustCore&lt;/code&gt;中的&lt;code class=&quot;highlighter-rouge&quot;&gt;PrivateKey&lt;/code&gt;来完成的。而且是通过苹果官方的&lt;code class=&quot;highlighter-rouge&quot;&gt;Security&lt;/code&gt;库来创建的公钥和私钥, 经过整理密钥对生成和获取过程如下:&lt;/p&gt;
+
+&lt;div class=&quot;language-swift highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;getPrivatePublicKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    
+    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;privateAttributes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Any&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;kSecAttrIsExtractable&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;parameters&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Any&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;kSecAttrKeyType&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;kSecAttrKeyTypeEC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;kSecAttrKeySizeInBits&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;256&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;kSecPrivateKeyAttrs&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;privateAttributes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    
+    &lt;span class=&quot;c1&quot;&gt;// PrivateKey To String&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;guard&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;privateKey&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;SecKeyCreateRandomKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parameters&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;CFDictionary&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nf&quot;&gt;fatalError&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Failed to generate key pair&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;guard&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;priRepresentation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;SecKeyCopyExternalRepresentation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;privateKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nf&quot;&gt;fatalError&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Failed to extract new private key&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;defer&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;priRepresentation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;replaceSubrange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;..&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;priRepresentation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;with&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;repeatElement&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;priRepresentation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    
+    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;priData&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;priRepresentation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;suffix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;priString&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;byte&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;priData&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;priString&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;%02x&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;byte&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    
+    
+    &lt;span class=&quot;c1&quot;&gt;// PublicKey To String&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;guard&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;publicKey&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;SecKeyCopyPublicKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;privateKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nf&quot;&gt;fatalError&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Failed to get publickey&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;guard&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;pubRepresentation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;SecKeyCopyExternalRepresentation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;publicKey&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nf&quot;&gt;fatalError&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Failed to extract new public key&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;defer&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;pubRepresentation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;replaceSubrange&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;..&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pubRepresentation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;with&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;repeatElement&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pubRepresentation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    
+    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;pubData&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pubRepresentation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;suffix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;pubString&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;byte&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pubData&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;pubString&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;%02x&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;byte&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    
+    &lt;span class=&quot;nf&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;priString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pubString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;使用随机密码对私钥加密&quot;&gt;使用随机密码对私钥加密&lt;/h4&gt;
+
+&lt;p&gt;在生成了私钥之后, 将在&lt;code class=&quot;highlighter-rouge&quot;&gt;KeystoreKeyHeader&lt;/code&gt;类中, 这里使用了&lt;code class=&quot;highlighter-rouge&quot;&gt;CryptoSwift&lt;/code&gt;(安全加密算法集合的库)对私钥进行加密。使用&lt;code class=&quot;highlighter-rouge&quot;&gt;AES-128&lt;/code&gt;算法进行对称加密后, 将这些数据以&lt;code class=&quot;highlighter-rouge&quot;&gt;KeystoreKeyHeader&lt;/code&gt;类型保存在&lt;code class=&quot;highlighter-rouge&quot;&gt;KeystoreKey&lt;/code&gt;中。&lt;/p&gt;
+
+&lt;h4 id=&quot;创建-wallet&quot;&gt;创建 Wallet&lt;/h4&gt;
+
+&lt;p&gt;在前两个步骤的基础之上, 就可以创建一个&lt;code class=&quot;highlighter-rouge&quot;&gt;Wallet&lt;/code&gt;了, 并将&lt;code class=&quot;highlighter-rouge&quot;&gt;Wallet&lt;/code&gt;加入到当前的账户中。也会计算或者获取一些参数存储在&lt;code class=&quot;highlighter-rouge&quot;&gt;Wallet&lt;/code&gt;中, 如公钥地址Address, Account、&lt;code class=&quot;highlighter-rouge&quot;&gt;KeystoreKey&lt;/code&gt;等。&lt;/p&gt;
+
+&lt;h4 id=&quot;保存到本地&quot;&gt;保存到本地&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;KeyStore&lt;/code&gt;会将当前钱包账户的&lt;code class=&quot;highlighter-rouge&quot;&gt;KeystoreKey&lt;/code&gt;数据存储在本地文件中。文件以”UTC+时间戳+钱包唯一标识”为名称存储在本地, 其中存储的是上面&lt;code class=&quot;highlighter-rouge&quot;&gt;KeystoreKey&lt;/code&gt;的数据。这些数据用户每次启动时, 将会由这些数据再次生成所有的&lt;code class=&quot;highlighter-rouge&quot;&gt;Wallet&lt;/code&gt;数据。
+当然, 私钥当然也是需要保存的, &lt;a href=&quot;https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6&quot;&gt;前一篇文章&lt;/a&gt;中说过了, 这样的敏感信息保存在&lt;code class=&quot;highlighter-rouge&quot;&gt;keychain&lt;/code&gt;中。但&lt;code class=&quot;highlighter-rouge&quot;&gt;keychain&lt;/code&gt;并不是直接存储这私钥, 而是将获取私钥的密码保存在其中了。以钱包的id为key值, 将获取私钥的密码保存子&lt;code class=&quot;highlighter-rouge&quot;&gt;keychain&lt;/code&gt;之中, 拿出密码后, 再使用&lt;code class=&quot;highlighter-rouge&quot;&gt;KeystoreKey&lt;/code&gt;进行&lt;code class=&quot;highlighter-rouge&quot;&gt;AES-128&lt;/code&gt;对称解密, 获取私钥, 便可以使用了。所以, &lt;code class=&quot;highlighter-rouge&quot;&gt;KeystoreKey&lt;/code&gt;这个类的主要功能是对私钥和助记词的管理以及对私钥的加解密。&lt;/p&gt;
+
+&lt;p&gt;另外, 这样拥有&lt;code class=&quot;highlighter-rouge&quot;&gt;PrivateKey&lt;/code&gt;的钱包账户是不需要存储在&lt;code class=&quot;highlighter-rouge&quot;&gt;Realm&lt;/code&gt;数据库中的。只有一种需要保存到本地的&lt;code class=&quot;highlighter-rouge&quot;&gt;Realm&lt;/code&gt;数据库中, 那就是导入地址钱包, 下面将会说明。&lt;/p&gt;
+
+&lt;h3 id=&quot;钱包的导入&quot;&gt;钱包的导入&lt;/h3&gt;
+
+&lt;p&gt;钱包导入相对于钱包的创建来说, 只是不需要自己去生成公钥和私钥对了, 剩下的流程还是一样的。当然导入时会有三种方式, 除了之前提到的私钥和助记词的方式, 还有地址的方式。
+钱包地址是公开的, 当然你也可以导入, 也可以查看这个钱包的任何数据, 但因为你不具备它的私钥, 所以你不可以进行签名或者说任何写入区块链的操作。所以这种方式, 就不需要&lt;code class=&quot;highlighter-rouge&quot;&gt;KeyStore&lt;/code&gt;进行操作了, 只需要&lt;code class=&quot;highlighter-rouge&quot;&gt;EtherKeystore&lt;/code&gt;进行本地操作, 将其放入本地的&lt;code class=&quot;highlighter-rouge&quot;&gt;Realm&lt;/code&gt;数据库中, 那就是导入地址钱包。当启动应用时, 将会以两者组成的数据为本地钱包列表。&lt;/p&gt;
+
+&lt;h3 id=&quot;钱包导出删除等&quot;&gt;钱包导出、删除等&lt;/h3&gt;
+
+&lt;p&gt;钱包导出, 当然也会分三种方式, 私钥和助记词的方式, 还有地址的方式。在&lt;code class=&quot;highlighter-rouge&quot;&gt;keychain&lt;/code&gt;中将密码取出, 然后通过&lt;code class=&quot;highlighter-rouge&quot;&gt;KeystoreKey&lt;/code&gt;解密到私钥或者助记词, 导出。地址的方式, 就是直接导出地址。&lt;/p&gt;
+
+&lt;p&gt;如果你把上面的钱包创建条理理清楚了, 你就可以想到删除只是钱包创建的逆过程, 但没有那么复杂。只需要验证你的私钥是正确的就可以将你本地&lt;code class=&quot;highlighter-rouge&quot;&gt;KeystoreKey&lt;/code&gt;删除了。&lt;/p&gt;
+
+&lt;h3 id=&quot;etherkeystore-模块结构图&quot;&gt;EtherKeystore 模块结构图&lt;/h3&gt;
+
+&lt;p&gt;下图中画了 &lt;code class=&quot;highlighter-rouge&quot;&gt;EtherKeystore&lt;/code&gt;在创建或者导入钱包时的流程, 可一清楚的看到这个模块的结构。绿色的部分是&lt;code class=&quot;highlighter-rouge&quot;&gt;TrustCore&lt;/code&gt;和&lt;code class=&quot;highlighter-rouge&quot;&gt;TrustKeystore&lt;/code&gt;库中的调用, 浅蓝色是数据层的一些处理。&lt;/p&gt;
+
+&lt;center&gt;
+	&lt;img src=&quot;https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/trustwallet-2/20181109110331147.png&quot; width=&quot;70%&quot; img=&quot;&quot; /&gt;
+&lt;/center&gt;
+
+&lt;h2 id=&quot;智能合约&quot;&gt;智能合约&lt;/h2&gt;
+
+&lt;p&gt;在&lt;a href=&quot;https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6&quot;&gt;前一篇文章&lt;/a&gt;中的网络层中, 对只能合约以及具体网络层业务逻辑没有做详细说明。这里将会讨论几个问题, 网络层具体方案, 以太坊智能合约的调用。&lt;/p&gt;
+
+&lt;h3 id=&quot;合约调用方式&quot;&gt;合约调用方式&lt;/h3&gt;
+
+&lt;p&gt;在以太坊的官方文档中提供了两种 API, 一个种是&lt;a href=&quot;https://github.com/ethereum/wiki/wiki/JSON-RPC&quot;&gt;JSON RPC API&lt;/a&gt;, 一种是&lt;a href=&quot;https://github.com/ethereum/wiki/wiki/JavaScript-API&quot;&gt;JavaScript API&lt;/a&gt;。&lt;/p&gt;
+
+&lt;h4 id=&quot;javascript-api&quot;&gt;JavaScript API&lt;/h4&gt;
+
+&lt;p&gt;虽然看起来是两种 API, 其实后者是通过RPC调用与本地节点进行通信的。也就可以理解为 &lt;code class=&quot;highlighter-rouge&quot;&gt;JavaScript API&lt;/code&gt;是对 &lt;code class=&quot;highlighter-rouge&quot;&gt;JSON RPC API&lt;/code&gt;的封装, 方便了从JavaScript应用程序内部与&lt;code class=&quot;highlighter-rouge&quot;&gt;ethereum节点&lt;/code&gt;通信。官方开源的库&lt;a href=&quot;https://github.com/ethereum/web3.js&quot;&gt;web3.js&lt;/a&gt;就是做了这个事情。&lt;/p&gt;
+
+&lt;h4 id=&quot;json-rpc-api&quot;&gt;JSON RPC API&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.jsonrpc.org/specification&quot;&gt;JSON-RPC&lt;/a&gt;是一种轻量级的远程过程调用(RPC)协议。该规范主要定义了一些数据结构和处理的规则。它与传输无关, 因为这些概念可以通过&lt;code class=&quot;highlighter-rouge&quot;&gt;Socket&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;HTTP&lt;/code&gt;, 或者其它的消息传递环境中使用。它使用 JSON(&lt;a href=&quot;http://www.ietf.org/rfc/rfc4627.txt&quot;&gt;RFC 4627&lt;/a&gt;)作为数据格式。&lt;/p&gt;
+
+&lt;p&gt;默认的JSON-RPC端点：&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt;Client&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;URL&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;C++&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;http://localhost:8545&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Go&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;http://localhost:8545&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Py&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;http://localhost:4000&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Parity&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;http://localhost:8545&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;RPC的支持情况:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;text-align: left&quot;&gt; &lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;cpp-ethereum&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;go-ethereum&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;py-ethereum&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;parity&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;JSON-RPC 1.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;✓&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt; &lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt; &lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt; &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;JSON-RPC 2.0&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;✓&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;✓&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;✓&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;✓&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;Batch requests&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;✓&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;✓&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;✓&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;✓&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;HTTP&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;✓&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;✓&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;✓&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;✓&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;IPC&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;✓&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;✓&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt; &lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;✓&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td style=&quot;text-align: left&quot;&gt;WS&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt; &lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;✓&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt; &lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;✓&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;合约调用&quot;&gt;合约调用&lt;/h3&gt;
+
+&lt;p&gt;当然, 在&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;的 iOS端是通过 &lt;code class=&quot;highlighter-rouge&quot;&gt;JSON RPC Over HTTP&lt;/code&gt;的方式进行智能合约调用的。项目中针对合约调用的请求, 网络层的设计是 &lt;a href=&quot;https://github.com/ishkawa/APIKit&quot;&gt;APIKit&lt;/a&gt; + &lt;a href=&quot;https://github.com/bricklife/JSONRPCKit&quot;&gt;JSONRPCKit&lt;/a&gt; 的方式。&lt;/p&gt;
+
+&lt;h4 id=&quot;json-rpc-over-http&quot;&gt;JSON RPC Over HTTP&lt;/h4&gt;
+
+&lt;p&gt;在项目中, 以太坊智能合约调用都是&lt;code class=&quot;highlighter-rouge&quot;&gt;JSON RPC Over HTTP&lt;/code&gt;的方式, 而且所使用的以太坊节点&lt;a href=&quot;https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6&quot;&gt;前一篇文章&lt;/a&gt;网络层中就提到过。&lt;/p&gt;
+&lt;div class=&quot;language-swift highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;remoteURL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;URL&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;urlString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;switch&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;self&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;https://api.trustwalletapp.com&quot;&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;classic&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;https://classic.trustwalletapp.com&quot;&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;callisto&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;https://callisto.trustwalletapp.com&quot;&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;poa&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;https://poa.trustwalletapp.com&quot;&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;gochain&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;https://gochain.trustwalletapp.com&quot;&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}()&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;URL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;urlString&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;网络层结构应该如下图所示:&lt;/p&gt;
+
+&lt;center&gt;
+	&lt;img src=&quot;https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/trustwallet-2/20181109180054191.png&quot; width=&quot;40%&quot; img=&quot;&quot; /&gt;
+&lt;/center&gt;
+
+&lt;p&gt;当你明白这种网络结构后, 在来看&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;中, 统一使用&lt;code class=&quot;highlighter-rouge&quot;&gt;xxxRequest&lt;/code&gt;的命名来封装&lt;code class=&quot;highlighter-rouge&quot;&gt;JSONRPCKit&lt;/code&gt;的应用组件。其中定义了&lt;code class=&quot;highlighter-rouge&quot;&gt;method&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;parameters&lt;/code&gt;、response的转化等, 这里的&lt;code class=&quot;highlighter-rouge&quot;&gt;method&lt;/code&gt;就是调用以太坊智能合约的接口名称。项目中, 统一使用&lt;code class=&quot;highlighter-rouge&quot;&gt;xxxProvider&lt;/code&gt;的命名, 按功能对&lt;code class=&quot;highlighter-rouge&quot;&gt;APIKit&lt;/code&gt;的请求组件进行封装。当然, 没有这层抽象的HTTP请求也是可以的。&lt;/p&gt;
+
+&lt;p&gt;下面图片中, &lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;中涉及到一些 API: &lt;code class=&quot;highlighter-rouge&quot;&gt;eth_estimateGas&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;eth_sendRawTransaction&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;eth_gasPrice&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;eth_blockNumber&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;eth_getTransactionByHash&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;eth_call&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;eth_getBalance&lt;/code&gt;。下面详细列出了项目中合约调用的类和具体使用的以太坊 API, 它们是一一对应的关系。&lt;/p&gt;
+
+&lt;center&gt;
+	&lt;img src=&quot;https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/trustwallet-2/2018110917531565.png&quot; width=&quot;70%&quot; img=&quot;&quot; /&gt;
+&lt;/center&gt;
+
+&lt;h4 id=&quot;web3swift&quot;&gt;Web3.swift&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;项目中并没有使用&lt;code class=&quot;highlighter-rouge&quot;&gt;web3&lt;/code&gt;的方式进行合约调用, 但是我还是想说一说这种方式。这是因为除了以太坊官方的对 JavaScript API的&lt;code class=&quot;highlighter-rouge&quot;&gt;web3&lt;/code&gt;库以外, 还有一个纯Swift写的库&lt;a href=&quot;https://github.com/Boilertalk/Web3.swift&quot;&gt;Web3.swift&lt;/a&gt;。它是可以用于在以太坊网络中签署交易并与智能合约进行交互, 而且可以直接使用于你的iOS客户端。假如你的网络层用&lt;code class=&quot;highlighter-rouge&quot;&gt;Web3.swift&lt;/code&gt;替换&lt;code class=&quot;highlighter-rouge&quot;&gt;APIKit&lt;/code&gt; + &lt;code class=&quot;highlighter-rouge&quot;&gt;JSONRPCKit&lt;/code&gt;这样的话, 将会降低网络层结构复杂度, 且代码简洁性也提高了。&lt;/p&gt;
+
+&lt;h3 id=&quot;网络层其他请求&quot;&gt;网络层其他请求&lt;/h3&gt;
+
+&lt;p&gt;在&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;中, 获取区块链上的数据, 其实分为两种, 一种是上面提到的直接通过智能合约获取的数据。另一种就是&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;官网已经封装过的一些接口, 它们是关于多币种的, 大多需要在区块链中去查找, 接口不单一且有大工作量的请求, 如transactions, getTokes等。这些接口是直接使用网络库&lt;code class=&quot;highlighter-rouge&quot;&gt;Moya&lt;/code&gt;进行封装的, 而没有调用智能合约。而这些&lt;code class=&quot;highlighter-rouge&quot;&gt;HTTP&lt;/code&gt;请求的服务器是:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;let trustAPI = URL(string: &quot;https://public.trustwalletapp.com&quot;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;TrustAPI&lt;/code&gt;类中将这些接口清楚的列举了出来, 并且将它们集体封装在&lt;code class=&quot;highlighter-rouge&quot;&gt;TrustNetwork&lt;/code&gt;类中来管理。&lt;/p&gt;
+
+&lt;center&gt;
+	&lt;img src=&quot;https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/trustwallet-2/20181109182907445.png&quot; width=&quot;70%&quot; img=&quot;&quot; /&gt;
+&lt;/center&gt;
+
+&lt;p&gt;到这里, 就将&lt;a href=&quot;https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6&quot;&gt;前一篇文章&lt;/a&gt;所遗留的网络层的详情补充完整了。&lt;/p&gt;
+
+&lt;h2 id=&quot;交易&quot;&gt;交易&lt;/h2&gt;
+
+&lt;p&gt;交易, 即&lt;code class=&quot;highlighter-rouge&quot;&gt;Transaction&lt;/code&gt;, 我这里是指转账交易。上面简单介绍过以太坊上的交易, 并了解交易的 API是 &lt;code class=&quot;highlighter-rouge&quot;&gt;eth_sendRawTransaction&lt;/code&gt;。下面介绍下在项目中, 转账交易的结构, 以及转账交易在&lt;code class=&quot;highlighter-rouge&quot;&gt;原生App&lt;/code&gt;和&lt;code class=&quot;highlighter-rouge&quot;&gt;DApp&lt;/code&gt;中分别是怎样的流程。&lt;/p&gt;
+
+&lt;h3 id=&quot;交易的结构&quot;&gt;交易的结构&lt;/h3&gt;
+
+&lt;p&gt;在项目的主目录中, 有一个&lt;code class=&quot;highlighter-rouge&quot;&gt;Transfer&lt;/code&gt;模块, 这个模块主要功能就是处理转账交易。在形成一个交易前, 将以定义的&lt;code class=&quot;highlighter-rouge&quot;&gt;Transfer&lt;/code&gt;类为基础, 封装出一个&lt;code class=&quot;highlighter-rouge&quot;&gt;Transaction&lt;/code&gt;的结构, 这个结构中包含着发送地址、接收地址、币的数量、交易费等等所有交易相关的数据。最后定义&lt;code class=&quot;highlighter-rouge&quot;&gt;TransactionConfigurator&lt;/code&gt;类, 对交易进行最外层的业务管理和校验。在&lt;code class=&quot;highlighter-rouge&quot;&gt;TransactionConfigurator&lt;/code&gt;中经过校验、签名之后的交易才会发送给以太坊节点, 并在矿工挖到矿并将此交易放入区块中, 当前&lt;code class=&quot;highlighter-rouge&quot;&gt;Token&lt;/code&gt;的转账才算完成。&lt;/p&gt;
+
+&lt;h4 id=&quot;transfer&quot;&gt;Transfer&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Transfer&lt;/code&gt;中主要包含当前转账发起方的&lt;code class=&quot;highlighter-rouge&quot;&gt;Token&lt;/code&gt;相关的一些数据, 如地址、合约等等。而且它有类型之分, 及&lt;code class=&quot;highlighter-rouge&quot;&gt;TransferType&lt;/code&gt;的三种类型, 分别是&lt;code class=&quot;highlighter-rouge&quot;&gt;Coin&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;ERC20&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;Dapp&lt;/code&gt;, 前两种是原生App的方式, 后一种是浏览器中 DApp的方式。&lt;/p&gt;
+
+&lt;h4 id=&quot;unconfirmedtransaction&quot;&gt;UnconfirmedTransaction&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;UnconfirmedTransaction&lt;/code&gt;中, 主要包含当前&lt;code class=&quot;highlighter-rouge&quot;&gt;Token&lt;/code&gt;的一些信息, 即&lt;code class=&quot;highlighter-rouge&quot;&gt;Transfer&lt;/code&gt;。还有一个转账接收方的信息, 如地址、币的数量、交易费、Data等等。&lt;/p&gt;
+
+&lt;h4 id=&quot;transactionconfigurator&quot;&gt;TransactionConfigurator&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;TransactionConfigurator&lt;/code&gt;类, 对交易进行最外层的业务管理和校验。它其中包含全量的&lt;code class=&quot;highlighter-rouge&quot;&gt;UnconfirmedTransaction&lt;/code&gt;数据, 且还有校验余额是否有效、交易费、交易限制等功能, 最终生成一个经过校验后的完整&lt;code class=&quot;highlighter-rouge&quot;&gt;SignTransaction&lt;/code&gt;。&lt;/p&gt;
+
+&lt;h4 id=&quot;dappaction&quot;&gt;DappAction&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;DappAction&lt;/code&gt;只在&lt;code class=&quot;highlighter-rouge&quot;&gt;DApp&lt;/code&gt;进行转账交易时, 才能使用到的类。而上面的三个无论是&lt;code class=&quot;highlighter-rouge&quot;&gt;原生App&lt;/code&gt;还是&lt;code class=&quot;highlighter-rouge&quot;&gt;DApp&lt;/code&gt;都需要使用到的交易结构类。&lt;code class=&quot;highlighter-rouge&quot;&gt;DappAction&lt;/code&gt;会将浏览器中传入的消息进行解析, 得到&lt;code class=&quot;highlighter-rouge&quot;&gt;Method&lt;/code&gt;以及其它数据, 并封装在&lt;code class=&quot;highlighter-rouge&quot;&gt;DappCommand&lt;/code&gt;里面。然后以浏览器的web标题和URL生成的&lt;code class=&quot;highlighter-rouge&quot;&gt;DAppRequester&lt;/code&gt;等元素生成&lt;code class=&quot;highlighter-rouge&quot;&gt;Transfer&lt;/code&gt;。最终这两者, 共同生成的&lt;code class=&quot;highlighter-rouge&quot;&gt;DappAction&lt;/code&gt;来决定需要进行哪种操作、需要调用合约中的哪种API、还有交易的一些数据等。&lt;/p&gt;
+
+&lt;h4 id=&quot;交易结构图&quot;&gt;交易结构图&lt;/h4&gt;
+
+&lt;center&gt;
+	&lt;img src=&quot;https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/trustwallet-2/20181114104214461.png&quot; width=&quot;70%&quot; img=&quot;&quot; /&gt;
+&lt;/center&gt;
+
+&lt;h3 id=&quot;交易的流程&quot;&gt;交易的流程&lt;/h3&gt;
+
+&lt;p&gt;交易流程自然也是分成两, 一种是&lt;code class=&quot;highlighter-rouge&quot;&gt;原生App&lt;/code&gt;中发起的交易, 一种是&lt;code class=&quot;highlighter-rouge&quot;&gt;DApp&lt;/code&gt;在浏览器中发起的交易。之前提及的交易结构会在流程中以数据的形式作为重要的参与部分, 这里主要说明交易从发起至交易完成的主要流程, 以及需要调用哪些以太坊智能合约的 API。&lt;/p&gt;
+
+&lt;h4 id=&quot;原生app发起的交易&quot;&gt;原生App发起的交易&lt;/h4&gt;
+
+&lt;p&gt;&lt;strong&gt;交易发起。&lt;/strong&gt; 在&lt;code class=&quot;highlighter-rouge&quot;&gt;原生App&lt;/code&gt;的钱包首页有着当前账户下的&lt;code class=&quot;highlighter-rouge&quot;&gt;Token&lt;/code&gt;列表, 而发起的转账交易是在某个具体&lt;code class=&quot;highlighter-rouge&quot;&gt;Token&lt;/code&gt;中操作的。所以当前的&lt;code class=&quot;highlighter-rouge&quot;&gt;Transfer&lt;/code&gt;是已经具备的, 而具体的交易接收地址、币的数量以及gas费就需要用户在&lt;code class=&quot;highlighter-rouge&quot;&gt;SendCoordinator&lt;/code&gt;的模块中自行输入了。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;构建交易数据。&lt;/strong&gt; 交易发起后, 我们就具备了构建&lt;code class=&quot;highlighter-rouge&quot;&gt;UnconfirmedTransaction&lt;/code&gt;和&lt;code class=&quot;highlighter-rouge&quot;&gt;TransactionConfigurator&lt;/code&gt;的所有数据了。它们的具体情况, 前面已经说明过了, 就不赘述了。构建完成&lt;code class=&quot;highlighter-rouge&quot;&gt;TransactionConfigurator&lt;/code&gt;后, 进入流程中的&lt;code class=&quot;highlighter-rouge&quot;&gt;ConfirmCoordinator&lt;/code&gt;模块, 它的功能是让用户来确认交易详情, 以及核实当前&lt;code class=&quot;highlighter-rouge&quot;&gt;Token&lt;/code&gt;的余额是否足够等。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;智能合约调用。&lt;/strong&gt; 当用户确认且余额足够支持转账的情况下, 就需要&lt;code class=&quot;highlighter-rouge&quot;&gt;SendTransactionCoordinator&lt;/code&gt;来进行核心的转账交易业务, 所以它是一个纯业务的功能类, 并无页面。这时候要根据在&lt;code class=&quot;highlighter-rouge&quot;&gt;TransactionConfigurator&lt;/code&gt;经过校验的 &lt;code class=&quot;highlighter-rouge&quot;&gt;Transaction&lt;/code&gt;, 判断其&lt;code class=&quot;highlighter-rouge&quot;&gt;noce&lt;/code&gt;是否大于0。如果不大于0, 则需要通过&lt;code class=&quot;highlighter-rouge&quot;&gt;JSON RPC Over HTTP&lt;/code&gt;的方式调用以太坊智能合约的API, 即&lt;code class=&quot;highlighter-rouge&quot;&gt;eth_getTransactionByHash&lt;/code&gt;对&lt;code class=&quot;highlighter-rouge&quot;&gt;nonce&lt;/code&gt;进行更新, 然后重新进行判断; 如果大于0, 则&lt;code class=&quot;highlighter-rouge&quot;&gt;EtherKeystore&lt;/code&gt;对交易进行签名, 然后通过&lt;code class=&quot;highlighter-rouge&quot;&gt;JSON RPC Over HTTP&lt;/code&gt;的方式调用以太坊智能合约的API, 即&lt;code class=&quot;highlighter-rouge&quot;&gt;eth_sendRawTransaction&lt;/code&gt;。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;交易回调处理。&lt;/strong&gt; 交易结果产生后, 要回调至发起的模块, 还要处理后续的业务。如果交易成功, 会将交易保存到本地的&lt;code class=&quot;highlighter-rouge&quot;&gt;Realm&lt;/code&gt;数据库等; 如果交易失败, 提示用户交易失败。&lt;/p&gt;
+
+&lt;p&gt;到此, 转账交易的流程的闭环完成。在后面的图中也对整个交易流程做了一个梳理。&lt;/p&gt;
+
+&lt;h4 id=&quot;dapp发起的交易&quot;&gt;DApp发起的交易&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;具有一个功能齐全的&lt;code class=&quot;highlighter-rouge&quot;&gt;Web3&lt;/code&gt;浏览器，可与任何分布式的应用程式(DApp)配合使用。这个情景就是当转账交易发生在&lt;code class=&quot;highlighter-rouge&quot;&gt;DApp&lt;/code&gt;中发起的情况。交易整体的流程与&lt;code class=&quot;highlighter-rouge&quot;&gt;原生App&lt;/code&gt;中基本一致, 且交易的核心数据结构一致。它们的区别在于发起方式、回调处理, 以及&lt;code class=&quot;highlighter-rouge&quot;&gt;DApp&lt;/code&gt;中要多一些解析的过程。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;交易发起。&lt;/strong&gt; 在&lt;code class=&quot;highlighter-rouge&quot;&gt;Web3&lt;/code&gt;浏览器中的&lt;code class=&quot;highlighter-rouge&quot;&gt;DApp&lt;/code&gt;中, 发起转账交易, 发起方式就是&lt;code class=&quot;highlighter-rouge&quot;&gt;JS&lt;/code&gt;调用&lt;code class=&quot;highlighter-rouge&quot;&gt;iOS原生&lt;/code&gt;。通过传入的数据, 在&lt;code class=&quot;highlighter-rouge&quot;&gt;BrowserCoordinator&lt;/code&gt;模块中, 将数据进行解析。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;解析。&lt;/strong&gt; 通过&lt;code class=&quot;highlighter-rouge&quot;&gt;DAppAction&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;DappCommand&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;DAppRequester&lt;/code&gt;等类进行解析, 完成后, 封装入&lt;code class=&quot;highlighter-rouge&quot;&gt;DAppAction&lt;/code&gt;内, 来决定需要进行哪种操作、需要调用合约中的哪种API。它有6种响应事件, 分别是:&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;ul&gt;
+    &lt;li&gt;1.signMessage&lt;/li&gt;
+    &lt;li&gt;2.signPersonalMessage&lt;/li&gt;
+    &lt;li&gt;3.signTypedMessage&lt;/li&gt;
+    &lt;li&gt;4.signTransaction&lt;/li&gt;
+    &lt;li&gt;5.sendTransaction&lt;/li&gt;
+    &lt;li&gt;6.unknown&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;strong&gt;构建交易数据&lt;/strong&gt; 和 &lt;strong&gt;智能合约调用。&lt;/strong&gt; 这两个步骤和原生的之间基本一致, 都是通过数据构建出&lt;code class=&quot;highlighter-rouge&quot;&gt;Transaction&lt;/code&gt;, 用来做交易准备。然后进行校验, 再调用智能合约。所以就不具体说明了, 请参照&lt;code class=&quot;highlighter-rouge&quot;&gt;原生App&lt;/code&gt;。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;交易回调处理。&lt;/strong&gt; 交易结果产生后, 也要回调至发起的模块, 来处理后续的业务。这里与&lt;code class=&quot;highlighter-rouge&quot;&gt;原生App&lt;/code&gt;区别是, 除了需要完成&lt;code class=&quot;highlighter-rouge&quot;&gt;原生App&lt;/code&gt;在成功或失败下完成的流程外, 还需要将交易结果再通知到&lt;code class=&quot;highlighter-rouge&quot;&gt;Web&lt;/code&gt;, 这样才能形成完整的闭环。所以, 无论回调结果如何, 都会通过&lt;code class=&quot;highlighter-rouge&quot;&gt;iOS原生&lt;/code&gt;调用&lt;code class=&quot;highlighter-rouge&quot;&gt;JS&lt;/code&gt;的方式通知&lt;code class=&quot;highlighter-rouge&quot;&gt;Web&lt;/code&gt;交易的具体情况。&lt;/p&gt;
+
+&lt;h4 id=&quot;交易流程图&quot;&gt;交易流程图&lt;/h4&gt;
+
+&lt;center&gt;
+	&lt;img src=&quot;https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/trustwallet-2/20181114151958473.png&quot; width=&quot;80%&quot; img=&quot;&quot; /&gt;
+&lt;/center&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;项目到这里基本就很清晰了, 这两篇文章虽然只是对&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust 
+wallet&lt;/code&gt;的解读, 很局限。但是由它们能延伸到的知识, 如以太坊的智能合约的知识、钱包和私钥管理的知识等等, 还有你对区块链的认知, 这些不是狭义的。所以无论你认为区块链是好是坏, 或者有没有实际的应用和市场的欢迎, 这门技术都带来了无限创新。&lt;/p&gt;
+
+&lt;p&gt;欢迎指正, &lt;a href=&quot;https://github.com/wangyanchang21&quot;&gt;wangyanchang21&lt;/a&gt;.&lt;/p&gt;
+
+</description>
+        <pubDate>Sun, 18 Nov 2018 07:07:17 +0800</pubDate>
+        <link>http://localhost:4000/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6/</link>
+        <guid isPermaLink="true">http://localhost:4000/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6/</guid>
+        
+        <category>区块链</category>
+        
+        
+        <category>区块链</category>
+        
+      </item>
+    
+      <item>
+        <title>以太坊钱包 Trust项目解读之架构和流程</title>
+        <description>&lt;p&gt;由于前阵子工作涉及到区块链方面的业务, 再加上自己对技术的热忱, 本人也是不断地学(恶)习(补)这方面的知识。在 github上的有很多优秀的开源钱包的代码, 比如说今天要分享的iOS版本的 &lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;, 还有这个月24号刚刚官宣开源的 &lt;code class=&quot;highlighter-rouge&quot;&gt;imToken&lt;/code&gt;。&lt;/p&gt;
 
 &lt;p&gt;文章中, 会涉及到一些区块链的基础知识如以太坊、智能合约、节点、Token、地址等等, 这些基础知识就不介绍了, 还请自行查阅吧。&lt;/p&gt;
 
-&lt;h1 id=&quot;以太坊钱包平台介绍&quot;&gt;以太坊钱包平台介绍&lt;/h1&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/wangyanchang21&quot;&gt;&lt;img src=&quot;https://img.shields.io/badge/contact-wangyanchang21-green.svg&quot; alt=&quot;Contact&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://wangyanchang21.github.io/2018/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85-Trust%E9%A1%B9%E7%9B%AE%E8%A7%A3%E8%AF%BB%E4%B9%8B%E6%9E%B6%E6%9E%84%E5%92%8C%E6%B5%81%E7%A8%8B&quot;&gt;以太坊钱包 Trust项目解读之架构和流程&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6&quot;&gt;由Trust Wallet理解以太坊钱包管理和智能合约&lt;/a&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;以太坊钱包平台介绍&quot;&gt;以太坊钱包平台介绍&lt;/h2&gt;
 
 &lt;p&gt;首先, 还是先介绍下市场上常用的一些以太坊钱包吧, 至少让大家了解一下这些平台。&lt;/p&gt;
 
-&lt;h2 id=&quot;mist&quot;&gt;Mist&lt;/h2&gt;
+&lt;h3 id=&quot;mist&quot;&gt;Mist&lt;/h3&gt;
 
 &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Mist&lt;/code&gt;是一个全节点的钱包, 以太坊的官方钱包。&lt;/p&gt;
 
 &lt;p&gt;官方地址: &lt;a href=&quot;https://ethereum.org/&quot;&gt;ethereum&lt;/a&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;parity&quot;&gt;Parity&lt;/h2&gt;
+&lt;h3 id=&quot;parity&quot;&gt;Parity&lt;/h3&gt;
 
 &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Parity&lt;/code&gt;也是一个全节点钱包, 原以太坊基金会部分成员开发的。&lt;/p&gt;
 
 &lt;p&gt;官方地址: &lt;a href=&quot;https://www.parity.io/&quot;&gt;Parity&lt;/a&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;trust&quot;&gt;Trust&lt;/h2&gt;
+&lt;h3 id=&quot;trust&quot;&gt;Trust&lt;/h3&gt;
 
 &lt;p&gt;在国外 App Store已经上架, 目前有 &lt;code class=&quot;highlighter-rouge&quot;&gt;iOS&lt;/code&gt;和 &lt;code class=&quot;highlighter-rouge&quot;&gt;Android&lt;/code&gt;移动端的应用, 应用中有 &lt;code class=&quot;highlighter-rouge&quot;&gt;Web3浏览器&lt;/code&gt;并支持很多 &lt;code class=&quot;highlighter-rouge&quot;&gt;DApp&lt;/code&gt;使用。&lt;/p&gt;
 
 &lt;p&gt;官方地址: &lt;a href=&quot;https://trustwalletapp.com/&quot;&gt;TrustWalletApp&lt;/a&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;imtoken&quot;&gt;imToken&lt;/h2&gt;
+&lt;h3 id=&quot;imtoken&quot;&gt;imToken&lt;/h3&gt;
 
 &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;imToken&lt;/code&gt;是一个中国团队开发的, 目前只有 &lt;code class=&quot;highlighter-rouge&quot;&gt;iOS&lt;/code&gt;和 &lt;code class=&quot;highlighter-rouge&quot;&gt;Android&lt;/code&gt;移动端的应用。&lt;/p&gt;
 
 &lt;p&gt;官方地址: &lt;a href=&quot;https://token.im/&quot;&gt;ImToken&lt;/a&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;myetherwallet&quot;&gt;MyEtherWallet&lt;/h2&gt;
+&lt;h3 id=&quot;myetherwallet&quot;&gt;MyEtherWallet&lt;/h3&gt;
 
 &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;MyEtherWallet&lt;/code&gt; 作为一个轻钱包，无需下载，直接在 Web端进行操作。&lt;/p&gt;
 
 &lt;p&gt;官方地址: &lt;a href=&quot;https://www.myetherwallet.com/&quot;&gt;MyEtherWallet&lt;/a&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;metamask&quot;&gt;MetaMask&lt;/h2&gt;
+&lt;h3 id=&quot;metamask&quot;&gt;MetaMask&lt;/h3&gt;
 
 &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;MetaMask&lt;/code&gt;是一个轻量级钱包, 以Chrome扩展程序存在的 Web端钱包。&lt;/p&gt;
 
 &lt;p&gt;官方地址: &lt;a href=&quot;https://metamask.io/&quot;&gt;MetaMask&lt;/a&gt;&lt;/p&gt;
 
-&lt;h1 id=&quot;trust-wallet&quot;&gt;Trust Wallet&lt;/h1&gt;
+&lt;h2 id=&quot;trust-wallet&quot;&gt;Trust Wallet&lt;/h2&gt;
 
 &lt;p&gt;了解过各种钱包平台后, 进入今天主要对应用 &lt;a href=&quot;https://github.com/TrustWallet/trust-wallet-ios&quot;&gt;trust-wallet-ios&lt;/a&gt;进行源码解析, 它在 github上已经是开源的了。并且在众多开源的虚拟货币钱包项目中，&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;已经十分完善和稳定了，已经在国外的 App Store上架了，对应的 Android版本也已开源(但貌似 Android版本并不是最新版本的)。&lt;/p&gt;
 
@@ -278,7 +493,7 @@
   &lt;/ul&gt;
 &lt;/blockquote&gt;
 
-&lt;h2 id=&quot;主要模块&quot;&gt;主要模块&lt;/h2&gt;
+&lt;h3 id=&quot;主要模块&quot;&gt;主要模块&lt;/h3&gt;
 
 &lt;center&gt;
 	&lt;img src=&quot;https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/trustwallet-1/20181031154630925.png&quot; width=&quot;40%&quot; img=&quot;&quot; /&gt;
@@ -298,7 +513,7 @@
 
 &lt;p&gt;第三个模块是设置模块, 包括钱包账户的切换, 安全管理, 当前货币种类, 浏览器设置, 社区分享, 开发者选项等等。&lt;/p&gt;
 
-&lt;h2 id=&quot;项目架构&quot;&gt;项目架构&lt;/h2&gt;
+&lt;h3 id=&quot;项目架构&quot;&gt;项目架构&lt;/h3&gt;
 
 &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;的 iOS项目在架构设计和代码风格、包括技术栈都是很不错的。我将会以架构模式和四层式架构来解析此项目。&lt;/p&gt;
 
@@ -318,7 +533,7 @@
 
 &lt;p&gt;&lt;strong&gt;业务层。&lt;/strong&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;的主要业务逻辑当然是有&lt;code class=&quot;highlighter-rouge&quot;&gt;ViewModel&lt;/code&gt;来承担的, 另外还配合了&lt;code class=&quot;highlighter-rouge&quot;&gt;Coordinator&lt;/code&gt;(或者说路由)的使用, 在页面之间的跳转逻辑上实现了统一管理。这样就减少了横向依赖, 也让跨层访问的业务更加容易开展。&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;网络层。&lt;/strong&gt; 项目中使用&lt;code class=&quot;highlighter-rouge&quot;&gt;Moya&lt;/code&gt;进行数据请求, &lt;code class=&quot;highlighter-rouge&quot;&gt;Moya&lt;/code&gt;已经做了足够多的工作了, 包括交付给给业务层封装成对象的数据、网络层的各种优化工作等。也使用了&lt;code class=&quot;highlighter-rouge&quot;&gt;JSONRPCKit&lt;/code&gt; + &lt;code class=&quot;highlighter-rouge&quot;&gt;APIKit&lt;/code&gt;的框架去进行数据请求, 这在&lt;a href=&quot;https://blog.csdn.net/wangyanchang21/article/details/83862016#t9&quot;&gt;接下来的文章&lt;/a&gt;中会具体分析, 这些请求就是关于智能合约调用的。&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;客户端在区块链中相当于一个轻量节点, 从公链上请求数据的话, 需要依靠某个全节点。就如图中的URL, 就可以理解为&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;客户端取链上数据所借助的全节点。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;网络层。&lt;/strong&gt; 项目中使用&lt;code class=&quot;highlighter-rouge&quot;&gt;Moya&lt;/code&gt;进行数据请求, &lt;code class=&quot;highlighter-rouge&quot;&gt;Moya&lt;/code&gt;已经做了足够多的工作了, 包括交付给给业务层封装成对象的数据、网络层的各种优化工作等。也使用了&lt;code class=&quot;highlighter-rouge&quot;&gt;JSONRPCKit&lt;/code&gt; + &lt;code class=&quot;highlighter-rouge&quot;&gt;APIKit&lt;/code&gt;的框架去进行数据请求, 这在&lt;a href=&quot;https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6&quot;&gt;接下来的文章&lt;/a&gt;中会具体分析, 这些请求就是关于智能合约调用的。&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;客户端在区块链中相当于一个轻量节点, 从公链上请求数据的话, 需要依靠某个全节点。就如图中的URL, 就可以理解为&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;客户端取链上数据所借助的全节点。&lt;/p&gt;
 
 &lt;center&gt;
 	&lt;img src=&quot;https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/trustwallet-1/20181031183501958.png&quot; width=&quot;70%&quot; img=&quot;&quot; /&gt;
@@ -326,7 +541,7 @@
 
 &lt;p&gt;&lt;strong&gt;数据层。&lt;/strong&gt; 主要的数据持有化方式使用Realm数据库, 这是个轻量级、高性能、高效率、可跨平台的移动数据库。核心数据如钱包账户、交易、&lt;code class=&quot;highlighter-rouge&quot;&gt;Token&lt;/code&gt;等都存储于此。另外, 也使用了&lt;code class=&quot;highlighter-rouge&quot;&gt;keychain&lt;/code&gt;来保存比较重要且轻量的数据, 如私钥、应用锁设置和密码、最近使用的钱包、&lt;code class=&quot;highlighter-rouge&quot;&gt;Browser&lt;/code&gt;的&lt;code class=&quot;highlighter-rouge&quot;&gt;cookies&lt;/code&gt;。还有一些数据, 如当前货币种类、启动次数、当前版本启动次数、是否分享、是否评分等等, 都是采用&lt;code class=&quot;highlighter-rouge&quot;&gt;UserDefaults&lt;/code&gt;的形式进行数据保存的。&lt;/p&gt;
 
-&lt;h2 id=&quot;项目流程&quot;&gt;项目流程&lt;/h2&gt;
+&lt;h3 id=&quot;项目流程&quot;&gt;项目流程&lt;/h3&gt;
 
 &lt;p&gt;从程序启动&lt;code class=&quot;highlighter-rouge&quot;&gt;APPDelegate&lt;/code&gt;开始, &lt;code class=&quot;highlighter-rouge&quot;&gt;AppCoordinator&lt;/code&gt;作为app间的路由, 判断当前app内是否有钱包账户, 若没有则进入以&lt;code class=&quot;highlighter-rouge&quot;&gt;WelcomeViewController&lt;/code&gt;为根控制器的页面进行钱包账户创建; 若有最近使用过的钱包账户, 则进入app内部的路由&lt;code class=&quot;highlighter-rouge&quot;&gt;InCoordinator&lt;/code&gt;。在这里, 钱包账号创建的页面和钱包使用页面已经划分为两条业务线。其实从业务角度来说, 可以也可以理解为这是&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;内部的两个应用。&lt;/p&gt;
 
@@ -336,7 +551,7 @@
 
 &lt;p&gt;进入&lt;code class=&quot;highlighter-rouge&quot;&gt;InCoordinator&lt;/code&gt;后, 才真正开始创建&lt;code class=&quot;highlighter-rouge&quot;&gt;TabBarController&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;NavigationController&lt;/code&gt;以及各个业务模块的&lt;code class=&quot;highlighter-rouge&quot;&gt;Coordinator&lt;/code&gt;和&lt;code class=&quot;highlighter-rouge&quot;&gt;VC&lt;/code&gt;。上图中明确表示了这个过程, 也对主要的业务模块的&lt;code class=&quot;highlighter-rouge&quot;&gt;Coordinator&lt;/code&gt;和其对应的&lt;code class=&quot;highlighter-rouge&quot;&gt;VC&lt;/code&gt;进行了说明, 且同颜色的之间是一一对应的。&lt;/p&gt;
 
-&lt;h2 id=&quot;主体框架的功能划分&quot;&gt;主体框架的功能划分&lt;/h2&gt;
+&lt;h3 id=&quot;主体框架的功能划分&quot;&gt;主体框架的功能划分&lt;/h3&gt;
 
 &lt;p&gt;本文前面介绍过项目的目录结构了, 但这里所说的框架并不是按照目录结构的角度, 而是延续上面的项目流程的角度。首先, 我将按源码进行原模原样的表述, 然后我将提出对于其功能划分的一些自己的建议。因为我认为某写业务模块的功能是应该出现在另一个业务模块中的。&lt;/p&gt;
 
@@ -344,18 +559,18 @@
 	&lt;img src=&quot;https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/trustwallet-1/20181102171757143.png&quot; width=&quot;70%&quot; img=&quot;&quot; /&gt;
 &lt;/center&gt;
 
-&lt;h3 id=&quot;appdelegate&quot;&gt;AppDelegate&lt;/h3&gt;
+&lt;h4 id=&quot;appdelegate&quot;&gt;AppDelegate&lt;/h4&gt;
 
 &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;AppDelegate&lt;/code&gt;需要承担的是程序的初始化以及整个应用生命周期的所影响的业务逻辑。
 &lt;strong&gt;ProtectionCoordinator。&lt;/strong&gt; 功能是在保护应用的方面, 如应用锁、解锁以及当应用失去焦点后保护应用内部页面不被暴露的功能。
 &lt;strong&gt;URLNavigatorCoordinator。&lt;/strong&gt; 功能是由 &lt;a href=&quot;https://github.com/devxoul/URLNavigator&quot;&gt;URLNavigator&lt;/a&gt;和 &lt;a href=&quot;https://github.com/BranchMetrics/ios-branch-deep-linking&quot;&gt;Branch&lt;/a&gt;的功能组成的。前者是对&lt;code class=&quot;highlighter-rouge&quot;&gt;Browser&lt;/code&gt;进行监听的, 并在检测到约定好的URL了进行映射和处理。后者是关于延迟深度链接(Deferred Deep Linking)的。
 &lt;strong&gt;Branch。&lt;/strong&gt; 和上面的&lt;code class=&quot;highlighter-rouge&quot;&gt;Branch&lt;/code&gt;是同一个, 在启动应用时进行初始化, 并将在应用程序生命周期中多次调用，当应用由后台向前台切换时也将调用。用于处理从外部跳转入后, 根据传入的参数要跳转进入指定的页面。
-&lt;strong&gt;EtherKeystore。&lt;/strong&gt; 应用的核心业务的处理类, 有钱包管理(创建、删除、导入、导出)、助记词转化、签名工作、私钥管理等功能。它的具体业务将会在&lt;a href=&quot;https://blog.csdn.net/wangyanchang21/article/details/83862016&quot;&gt;下篇文章&lt;/a&gt;中具体介绍。&lt;/p&gt;
+&lt;strong&gt;EtherKeystore。&lt;/strong&gt; 应用的核心业务的处理类, 有钱包管理(创建、删除、导入、导出)、助记词转化、签名工作、私钥管理等功能。它的具体业务将会在&lt;a href=&quot;https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6&quot;&gt;下篇文章&lt;/a&gt;中具体介绍。&lt;/p&gt;
 
 &lt;p&gt;在&lt;code class=&quot;highlighter-rouge&quot;&gt;AppDelegate&lt;/code&gt;中, &lt;code class=&quot;highlighter-rouge&quot;&gt;ProtectionCoordinator&lt;/code&gt;需要跟随应用的生命周期进行功能的调整。&lt;code class=&quot;highlighter-rouge&quot;&gt;URLNavigatorCoordinator&lt;/code&gt;中的&lt;code class=&quot;highlighter-rouge&quot;&gt;navigator&lt;/code&gt;用来处理响应&lt;a href=&quot;https://developer.apple.com/library/archive/featuredarticles/iPhoneURLScheme_Reference/Introduction/Introduction.html&quot;&gt;URL Scheme&lt;/a&gt;这种由其它 App的跳入, 而&lt;code class=&quot;highlighter-rouge&quot;&gt;Branch&lt;/code&gt;用来处理响应&lt;a href=&quot;https://developer.apple.com/ios/universal-links/&quot;&gt;Universal Links&lt;/a&gt;这种通用链接的跳入形式。
 而&lt;code class=&quot;highlighter-rouge&quot;&gt;EtherKeystore&lt;/code&gt;在这里只是作为一个&lt;code class=&quot;highlighter-rouge&quot;&gt;AppCoordinator&lt;/code&gt;初始化的一个参数, 并无实际使用。这也是我个人认为在这个业务模块并不应出现的类, 当然后面我也会细聊我为什么这么说? 我也将会给出我自己的建议。&lt;/p&gt;
 
-&lt;h3 id=&quot;appcoordinator&quot;&gt;AppCoordinator&lt;/h3&gt;
+&lt;h4 id=&quot;appcoordinator&quot;&gt;AppCoordinator&lt;/h4&gt;
 
 &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;AppCoordinator&lt;/code&gt;(或者说路由)在业务上一般可以分为 App间的路由和 App内的路由。而在此项目中, 因为还有&lt;code class=&quot;highlighter-rouge&quot;&gt;InCoordinator&lt;/code&gt;, 所以当前的&lt;code class=&quot;highlighter-rouge&quot;&gt;AppCoordinator&lt;/code&gt;是一个 App间的路由, 而&lt;code class=&quot;highlighter-rouge&quot;&gt;InCoordinator&lt;/code&gt;是一个App内的路由。所以在项目中&lt;code class=&quot;highlighter-rouge&quot;&gt;AppCoordinator&lt;/code&gt;承担了一些应用层的功能。&lt;/p&gt;
 
@@ -365,7 +580,7 @@
 &lt;strong&gt;PushNotificationsRegistrar。&lt;/strong&gt; 管理远程推送授权和注册相关的业务。
 &lt;strong&gt;BranchEventClosure。&lt;/strong&gt; 在从外部跳入当前 App后, 由&lt;code class=&quot;highlighter-rouge&quot;&gt;Branch&lt;/code&gt;的操作调起的, 在&lt;code class=&quot;highlighter-rouge&quot;&gt;BranchEventClosure&lt;/code&gt;的 block中, 由下层的&lt;code class=&quot;highlighter-rouge&quot;&gt;InCoordinator&lt;/code&gt;来控制将要跳入的目标页面。但我个人认为, 它并不应该出现在这里, 后面建议中会具体说明原因。&lt;/p&gt;
 
-&lt;h3 id=&quot;incoodinator&quot;&gt;InCoodinator&lt;/h3&gt;
+&lt;h4 id=&quot;incoodinator&quot;&gt;InCoodinator&lt;/h4&gt;
 
 &lt;p&gt;这是 App内的路由, 与具体业务模块有间接联系的路由, 负责创建和管理各个业务模块的&lt;code class=&quot;highlighter-rouge&quot;&gt;Coordinator&lt;/code&gt;和各个业务模块之间的跳转逻辑。&lt;/p&gt;
 
@@ -381,7 +596,7 @@
 &lt;strong&gt;Coordinators。&lt;/strong&gt; 指&lt;code class=&quot;highlighter-rouge&quot;&gt;InCoordinator&lt;/code&gt;所管理的具体业务模块的 Coordinator, 包括&lt;code class=&quot;highlighter-rouge&quot;&gt;BrowserCoordinator&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;TokensCoordinator&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;settingsCoordinator&lt;/code&gt;。
 &lt;strong&gt;TabBarController。&lt;/strong&gt; 创建上述&lt;code class=&quot;highlighter-rouge&quot;&gt;Coordinators&lt;/code&gt;中各个具体业务模块的 Coordinator所管理的&lt;code class=&quot;highlighter-rouge&quot;&gt;NavigationController&lt;/code&gt;和&lt;code class=&quot;highlighter-rouge&quot;&gt;ViewController&lt;/code&gt;。&lt;/p&gt;
 
-&lt;h3 id=&quot;直抒己见&quot;&gt;直抒己见&lt;/h3&gt;
+&lt;h4 id=&quot;直抒己见&quot;&gt;直抒己见&lt;/h4&gt;
 
 &lt;p&gt;在上面的文章中, 我也说过有一些地方, 我个人认为是可以做一些调整的。当然, 如果你没有我这样的强迫症, 可以略过。
 先来看一个理念。在没有使用&lt;code class=&quot;highlighter-rouge&quot;&gt;Coordinator&lt;/code&gt;的项目中, 其启动流程和各个&lt;code class=&quot;highlighter-rouge&quot;&gt;VC&lt;/code&gt;之间的创建应该是这样的(&lt;a href=&quot;https://medium.com/ios-os-x-development/ios-architecture-patterns-ecba4c38de52#.4g9db2ybm&quot;&gt;原图出处&lt;/a&gt;):&lt;/p&gt;
@@ -406,12 +621,13 @@
 	&lt;img src=&quot;https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/trustwallet-1/20181102171638114.png&quot; width=&quot;70%&quot; img=&quot;&quot; /&gt;
 &lt;/center&gt;
 
-&lt;p&gt;到此为止 Trust Wallet项目以 iOS的角度, 按照架构和主要功能对其源码解析完了。然后, 真正关于区块链的核心功能, 如智能合约调用、私钥公钥管理等, 会以&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;钱包为例让你逐步理解。具体请阅读下一篇&lt;a href=&quot;https://blog.csdn.net/wangyanchang21/article/details/83862016&quot;&gt;由Trust Wallet理解以太坊钱包管理和智能合约&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;到此为止 Trust Wallet项目以 iOS的角度, 按照架构和主要功能对其源码解析完了。然后, 真正关于区块链的核心功能, 如智能合约调用、私钥公钥管理等, 会以&lt;code class=&quot;highlighter-rouge&quot;&gt;Trust&lt;/code&gt;钱包为例让你逐步理解。具体请阅读下一篇&lt;a href=&quot;https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6&quot;&gt;由Trust Wallet理解以太坊钱包管理和智能合约&lt;/a&gt;。&lt;/p&gt;
 
+&lt;p&gt;欢迎指正, &lt;a href=&quot;https://github.com/wangyanchang21&quot;&gt;wangyanchang21&lt;/a&gt;.&lt;/p&gt;
 </description>
         <pubDate>Thu, 01 Nov 2018 02:44:45 +0800</pubDate>
-        <link>http://localhost:4000/2018/Trust/</link>
-        <guid isPermaLink="true">http://localhost:4000/2018/Trust/</guid>
+        <link>http://localhost:4000/2018/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85-Trust%E9%A1%B9%E7%9B%AE%E8%A7%A3%E8%AF%BB%E4%B9%8B%E6%9E%B6%E6%9E%84%E5%92%8C%E6%B5%81%E7%A8%8B/</link>
+        <guid isPermaLink="true">http://localhost:4000/2018/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85-Trust%E9%A1%B9%E7%9B%AE%E8%A7%A3%E8%AF%BB%E4%B9%8B%E6%9E%B6%E6%9E%84%E5%92%8C%E6%B5%81%E7%A8%8B/</guid>
         
         <category>区块链</category>
         

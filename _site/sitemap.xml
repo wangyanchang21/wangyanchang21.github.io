@@ -18,7 +18,22 @@
   
     
     <url>
-      <loc>http://localhost:4000/2018/Trust/</loc>
+      <loc>http://localhost:4000/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6/</loc>
+      
+        <lastmod>2018-11-18T07:07:17+08:00</lastmod>
+      
+      
+        <changefreq>monthly</changefreq>
+      
+      
+        <priority>0.5</priority>
+      
+    </url>
+    
+  
+    
+    <url>
+      <loc>http://localhost:4000/2018/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85-Trust%E9%A1%B9%E7%9B%AE%E8%A7%A3%E8%AF%BB%E4%B9%8B%E6%9E%B6%E6%9E%84%E5%92%8C%E6%B5%81%E7%A8%8B/</loc>
       
         <lastmod>2018-11-01T02:44:45+08:00</lastmod>
       
@@ -38,7 +53,7 @@
     <url>
       <loc>http://localhost:4000/feed.xml</loc>
       
-        <lastmod>2019-05-20T16:07:43+08:00</lastmod>
+        <lastmod>2019-05-20T17:31:37+08:00</lastmod>
       
       
         <changefreq>monthly</changefreq>
@@ -53,7 +68,7 @@
     <url>
       <loc>http://localhost:4000/humans.txt</loc>
       
-        <lastmod>2019-05-20T16:07:43+08:00</lastmod>
+        <lastmod>2019-05-20T17:31:37+08:00</lastmod>
       
       
         <changefreq>monthly</changefreq>
@@ -72,7 +87,7 @@
     <url>
       <loc>http://localhost:4000/css/main.css</loc>
       
-        <lastmod>2019-05-20T16:07:43+08:00</lastmod>
+        <lastmod>2019-05-20T17:31:37+08:00</lastmod>
       
       
         <changefreq>monthly</changefreq>
