@@ -1,0 +1,138 @@
+---
+title:  "WatchOS开发教程之一: Watch App架构及生命周期"
+date:   2018-07-05 17:48:50
+categories: [watchOS]
+tags: [watchOS]
+---
+
+Watch App的架构组成，以及生命周期。另外，还有Apple Watch和 WatchOS的发展历史。
+
+[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)   
+
+------
+
+**WatchOS 开发教程系列文章:**   
+[WatchOS开发教程之一: Watch App架构及生命周期](https://blog.csdn.net/wangyanchang21/article/details/80928126)   
+[WatchOS开发教程之二: 布局适配和系统Icon设计尺寸](https://blog.csdn.net/wangyanchang21/article/details/80938246)   
+[WatchOS开发教程之三: 导航方式和控件详解](https://blog.csdn.net/wangyanchang21/article/details/80975774)   
+[WatchOS开发教程之四: Watch与 iPhone的通信和数据共享](https://blog.csdn.net/wangyanchang21/article/details/81017017)   
+[WatchOS开发教程之五: 通知功能开发](https://blog.csdn.net/wangyanchang21/article/details/82149404)   
+[WatchOS开发教程之六: 表盘功能开发](https://blog.csdn.net/wangyanchang21/article/details/81072477)   
+
+----------
+
+
+## 写在前面
+
+在2014年苹果公布了第一代Apple Watch, 同年11月份又向开发者公开了WatchOS API, 再到2015年正式发布。至今Apple Watch也从 Series 1发展到Series 3了, 而且现在Series 2 官方都已经下架了。
+当然, WatchOS 1.0 也已经发展到目前正式版最新的 WatchOS 4.3了, 而且苹果在WWDC上已经公布了WatchOS 5。
+所以, WatchOS也已经很稳定了。很多的iOS App都开发出了对应的Watch App, 所以对于众多iOS开发者来说又多了一份学习和挑战的机会。
+
+
+## Watch App在项目中的结构
+
+在一个标准的Watch App的项目中, 工程目录至少会有下面这三个:
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-1/20180705145146564.png" width="50%" img/>
+</center>
+
+在目录中的三个主要的文件夹对应的分别是iOS App, Watch App和 WatchKit Extension。而且它们将会生成各自的可执行文件, 打包在iOS应用程序包中。它们之间是具有依赖关系的, 后者依赖于前者。
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-1/20180705145741998.png" width="65%" img/>
+</center>
+
+这张图片更是说明了iOS App和 Watch App在项目中的 Target结构, 恰恰也能说明可执行文件iOS App, Watch App和 WatchKit Extension的依赖关系。
+
+
+## Watch App架构
+
+从上面可以了解到一部分Watch App的架构, 从WatchOS 2.0以来详细的架构组成就如下图:
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-1/20180705151014898.png" width="65%" img/>
+</center>
+
+Watch App是由 Watch App和 WatchKit Extension两个 bundle组成的, 且Watch App包含了 Storyboard和一些资源文件, Watch Extension包含了 Watch App的代码和另外的一些资源文件。另外, 还可以通过`WatchConnectivity框架`在 iOS和 WatchOS之间进行通信。
+
+这个图中能很清晰的看到 Watch App的架构以及 Watch App与 iOS App间运行时的关系, 但不要与其在项目中的关系混淆。
+
+## Watch App的生命周期
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-1/20180705153301127.png" width="50%" img/>
+</center>
+
+此图说明了 Watch App从启动开始的状态变化, 以及`WKExtensionDelegate`中对应的状态变化的协议方法, 当然这与 iOS中 `AppDelegate`的协议方法是类似的。
+A: `applicationDidFinishLaunching`方法被调用。
+B: `applicationDidBecomeActive`或`applicationWillResignActive`方法被调用。
+C: `applicationWillEnterForeground`或`applicationDidEnterBackground`方法被调用。
+
+
+## WKInterfaceController的生命周期
+
+首先引入一个`WatchKit框架`下的主要类: `WKInterfaceController`。如果你不明白, 你可以把它想作做 iOS中的 `UIViewController`, 这样就很好理解了。`WKInterfaceController`的生命周期也与`UIViewController`的生命周期类似。
+
+
+### WKInterfaceController的加载
+
+先来看下 Watch App的启动过程中是如何加载一个`WKInterfaceController`的:
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-1/20180705155804838.png" width="80%" img/>
+</center>
+
+这里涉及到三个`WKInterfaceController`的方法, 其中`init`和`awakeWithContext:`方法是用来加载页面所必须的数据和初始化页面配置的。 而不要在`willActivate`方法中去初始化页面配置, 但它可以做一些页面更新的事情。 
+
+### WKInterfaceController的完整生命周期
+
+`WKInterfaceController`的完整生命周期如下:
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-1/20180705162239464.png" width="80%" img/>
+</center>
+
+只有在用户与 Apple Watch上的应用程序进行交互时，WatchKit Extension才会继续运行。当用户明确退出应用程序或停止与Apple Watch交互时，iOS将使控制器失活并暂停执行 WatchKit Extension。因此界面控制器应该是轻量级的，永远不会执行长时间运行的任务。
+
+### WKInterfaceController的生命周期方法
+
+`init`, `awakeWithContext`, `willActivate`方法在上面说过了, 还有三个方法:
+`didAppear`: 当前页面已经显示出来时被调用。
+`willDisappear`: 当前页面将要消失时被调用。
+`didDeactivate`: 这个方法与`willActivate`是相反的, 它在失活的情况才会被调用。它需要注意的是, 当此方法被调用时Controller已经失活了, 且不在安全了, 所以不要再进行页面上的更新等操作了。但它负责一些像`NSTimer`停用之类的处理是最合适不过了。
+
+#### willActivate和didDeactivate
+
+先举例说明下完整声明周期, 当你进入一个页面时, 设备会经历`init`->`awakeWithContext`->`willActivate`->`didAppear`。当你退出当前页面时, 设备会经历`willDisappear`->`didDeactivate`->`deinit`。这个过程很容易让我们联想到`UIViewController`的声明周期。
+
+所以你可以把`willActivate`看作iOS中的`willAppear`, 把`didDeactivate`看作`didDisappear`。但要理解它们本质上的区别, `willActivate`和`didDeactivate`只是在激活和失活时触发, 与页面显示其实本质上本无关系。
+
+再举个例子, 当你进入一个页面时, 设备会经历`init`->`awakeWithContext`->`willActivate`->`didAppear`。然后停止所有用户交互使其进入失活状态, 设备会经历`didDeactivate`。直到你再次与其交互, 设备会经历`willActivate`。所以, 这才是它们本质的区别。
+
+
+## 与 iOS的技术共性
+
+WatchOS可以访问 iOS应用程序中的许多相同技术。除了上面介绍过的共性外, 还有`UserDefault`, keychain的存储, `OpenURL:` 等等。但是，即使有技术可用，也可能无法以与 iPhone相同的方式使用它。以下是决定何时以及如何使用特定技术的一些指导原则：
+1.在 Watch App中想使用的一些功能需要授权的话, 必须在 iPhone上进行授权许可, 这样才能在 WatchKit Extension中使用这些技术。比如, Health, Core Location等等。所以这些隐私许可的设置只需要添加在iOS App的 info.plist中就可以了。
+2.不要使用后台执行模式的技术。一般的, Watch App可以视为前台应用程序, 它只在某个InterfaceController与用户交互时运行。所以 WatchKit Extension无法利用大多数后台执行模式来执行任务。但是, 有一些例外：
+
+ * ① 使用NSURLSession对象启动基于网络的数据传输。  
+ * ② 使用WKAudioFilePlayer类或WKAudioFileQueuePlayer类在后台播放音频文件。  
+ * ③ 使用HKWorkoutSession对象来开始和停止锻炼。  
+
+3.避免长时间运行的任务。由于与 Watch App的交互通常很简短, 因此在长时间运行的任务完成之前, 可能会暂停 WatchKit Extension。
+4.执行任何长时间运行任务的最佳解决方案是在 iOS App中执行该任务。例如, 不是在WatchKit Extension中启动位置服务, 而是在 iOS App中启动它并将更新信息发送到的 WatchKit Extension。
+
+其实, 很多功能和方法, WatchOS和 iOS是有共性的。 就像当时你在学`Swift`时会以OC代码为参考一样, 你也可以在 WatchOS中寻找与 iOS类似的功能和方法。
+
+
+
+相关资料:   
+[WatchOS 开发教程源码：Watch-App-Sampler](https://github.com/wangyanchang21/Watch-App-Sampler)   
+[Developing for Apple Watch](https://developer.apple.com/library/archive/documentation/General/Conceptual/WatchKitProgrammingGuide/index.html#//apple_ref/doc/uid/TP40014969-CH8-SW1)    
+
+------
+欢迎指正, [wangyanchang21](https://github.com/wangyanchang21).
+
+

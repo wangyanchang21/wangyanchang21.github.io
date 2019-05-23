@@ -1,0 +1,507 @@
+---
+title:  "WatchOS开发教程之三: 导航方式和控件详解"
+date:   2018-07-12 15:05:42
+categories: [watchOS]
+tags: [watchOS]
+---
+
+Watch App中两种导航样式的说明和各种控件基本介绍和使用。
+
+[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)   
+
+------
+
+**WatchOS 开发教程系列文章:**   
+[WatchOS开发教程之一: Watch App架构及生命周期](https://blog.csdn.net/wangyanchang21/article/details/80928126)   
+[WatchOS开发教程之二: 布局适配和系统Icon设计尺寸](https://blog.csdn.net/wangyanchang21/article/details/80938246)   
+[WatchOS开发教程之三: 导航方式和控件详解](https://blog.csdn.net/wangyanchang21/article/details/80975774)   
+[WatchOS开发教程之四: Watch与 iPhone的通信和数据共享](https://blog.csdn.net/wangyanchang21/article/details/81017017)   
+[WatchOS开发教程之五: 通知功能开发](https://blog.csdn.net/wangyanchang21/article/details/82149404)   
+[WatchOS开发教程之六: 表盘功能开发](https://blog.csdn.net/wangyanchang21/article/details/81072477)   
+
+----------
+
+
+## 导航方式
+
+Watch App中导航样式分为两种：分页样式(Page based) 和分层样式(Hierarchical), 这两种样式是互斥的，所以不能混合使用只能选择其一。`Hierarchical`方式可以通过`pushController`或者`presentController`来显示二级页面; 而`Page based`方式只能通过`presentController`来模态出新的二级页面。
+
+### Page based
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-3/20180710115232892.gif" width="25%" img/>
+</center>
+
+
+分页样式导航(Page-based)是一种呈现平面信息集合的方式, 其中所有页面都是平级的。在分页样式导航中, 用户水平滑动或者垂直滑动以在页面之间导航, 并且白点表示它们在页面集中的位置。由于浏览大量页面可能非常耗时, 因此请限制界面中包含的页数。
+
+### Hierarchical
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-3/2018071011532053.gif" width="25%" img/>
+</center>
+
+
+分层导航非常适合分层信息的应用程序。它还可以更轻松地扩展应用的新内容。当用户点击层次结构中的项目时，会出现一个新屏幕，显示有关该项目的详细信息。通过垂直基于页面的导航，用户还可以使用数字表冠或在详细视图上垂直滑动，在不同行的详细视图之间快速导航。但要尽量避免创建深度超过2-3级的层次结构。
+
+
+## 控件详解
+
+iOS中的大部分控件在 WatchOS中也在有, 比如: `WKInterfaceLabel`、`WKInterfaceImage`、`WKInterfaceButton`、`WKInterfacePicker`、`WKInterfaceTable`、`WKInterfaceSwitch`、`WKInterfaceSlider`、等类。还有一些 WatchOS特有的类, 比如: `WKInterfaceGroup`、`WKInterfaceSeparator`、`WKInterfaceMenu`、`WKInterfaceDate`、`WKInterfaceTimer`等类。下面我将对部分控件进行详细的使用说明。
+
+
+### WKInterfaceImage
+
+#### Image相关控件
+
+WatchOS中很多控件都可以与`WKInterfaceImage`类结合使用:   
+1.`WKInterfaceGroup`，`WKInterfaceButton`和`WKInterfaceController`类允许您指定图像作为其背景。  
+2.`WKInterfaceSlider`类可以显示增量和减量控件的自定义图像。  
+3.`WKInterfaceMovie`类显示视频或音频内容的海报图像。  
+4.`WKInterfacePicker`类显示可包含图像的项目。  
+
+#### Image性能
+
+关于图片的使用有一个坑需要注意, 当我们为`WKInterfaceImage`类添加图片时, 可能会遇到图片不显示的问题。这是因为所使用的方法和图片资源库是有一定的关系的。  
+1.当使用`setImageNamed:`或`setBackgroundImageNamed:`方法添加图片时, 应该使用 Watch App包内`Assets.xcassets`中的已有的图片资源。  
+2.当使用`setImage:`、`setImageData:`、`setBackgroundImage:`或`setBackgroundImageData:`方法添加图片时, 应该使用 WatchKit Extension包内`Assets.xcassets`中的图片资源。  
+
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-3/20180711185214546.png" width="40%" img/>
+</center>
+
+
+使用第2条的方式时, 会先在 WatchKit Extension中创建 Image, 然后在传输到 WatchKit App中进行显示。而在第1条中按名称指定图像更有效，因为只需要将名称字符串传输到您的Watch App中, 然后会在 Watch App包中搜索指定名称的图像文件, 并进行显示。所以指定图像的最有效方法是将它们存储在 Watch App包中，并使用`setImageNamed:`或`setBackgroundImageNamed:`适当地配置相应的对象。
+
+
+### WKInterfaceGroup
+
+`WKInterfaceGroup`在 WatchOS中的一个很特别的类, 它是一个容器性质的控件, 能为其他控件提供额外的布局。`Group`可以指定其所包含控件的排列方向, 横向或者纵向, 也可以设置间距和内嵌。它还能为自己添加背景图片, 作为一个种控件叠加的效果这是一个不错的选择, 因为在 WatchOS中是不允许控件相互重叠的, 除了像`Group`这样容器类的控件。
+
+`Group`中还有一些属性如下:
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-3/20180710165815831.png" width="30%" img/>
+</center>
+
+
+### WKAlertControllerStyle
+
+自 WatchOS 2.0开始, 就已经支持系统 Alert了, `WKAlertControllerStyle`枚举类型包含以下三种:
+
+``` swift
+public enum WKAlertControllerStyle : Int {
+    case alert
+    case sideBySideButtonsAlert
+    case actionSheet
+}
+```
+
+它们对应的样式是这样的:
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-3/20180710174004334.png" width="60%" img/>
+</center>
+
+#### 代码描述
+
+在当前页面创建三个按钮, 点击事件别分展示不同类型的 Alert。
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-3/20180710174102679.png" width="25%" img/>
+</center>
+
+
+具体代码如下:    
+
+``` swift
+@IBAction func presentAlertStyleAction() {
+    
+    let confirmAction = WKAlertAction(title: "Ok", style: .default) {
+        print("Ok")
+    }
+    let denyAction = WKAlertAction(title: "Deny", style: .destructive) {
+        print("Deny")
+    }
+    let cancelAction = WKAlertAction(title: "Cancel", style: .cancel) {
+        print("Cancel")
+    }
+    presentAlert(withTitle: "Tip", message: "Do you want to see it.", preferredStyle: .alert, actions: [confirmAction, denyAction, cancelAction])
+}
+
+@IBAction func presentSideBySideStyleAction() {
+    
+    let confirmAction = WKAlertAction(title: "Ok", style: .default) {
+        print("Ok")
+    }
+    let denyAction = WKAlertAction(title: "Deny", style: .destructive) {
+        print("Deny")
+    }
+    presentAlert(withTitle: "Tip", message: "Do you want to see it.", preferredStyle: .sideBySideButtonsAlert, actions: [confirmAction, denyAction])
+}
+
+@IBAction func presentSheetStyleAction() {
+    
+    let confirmAction = WKAlertAction(title: "Ok", style: .default) {
+        print("Ok")
+    }
+    let denyAction = WKAlertAction(title: "Deny", style: .destructive) {
+        print("Deny")
+    }
+    let cancelAction = WKAlertAction(title: "Custom Cancel", style: .cancel) {
+        print("Cancel")
+    }
+    presentAlert(withTitle: "Tip", message: "Do you want to see it.", preferredStyle: .actionSheet, actions: [confirmAction, denyAction, cancelAction])
+}
+```
+
+#### 运行效果
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-3/20180712150255672.png" width="70%" img/>
+</center>
+
+### WKInterfacePicker
+
+`WKInterfacePicker`的`Style属性`有三种, 分别是`List`、`Stack`、`Sequence`。`Focus Style属性`也有三种分别是`None`、`Outline`、`Outline with Caption`。
+
+在 Storyboard中我们先添加3个Picker, 然后要对它们进行设置不同的`Style属性`和`Focus Style属性`。目的是为了, 对比它们之前的区别。
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-3/20180710180544326.png" width="25%" img/>
+</center>
+
+
+#### 代码描述
+
+3个`Picker`关联到代码文件, 懒加载配置数据:
+
+``` swift
+@IBOutlet var listPicker: WKInterfacePicker!
+@IBOutlet var stackPicker: WKInterfacePicker!
+@IBOutlet var sequencePicker: WKInterfacePicker!
+
+lazy var itemArray: [WKPickerItem] = {
+    var its = [WKPickerItem]()
+    let titles = ["①", "②", "③", "④", "⑤"]
+    let captions = ["① is one", "② is two", "③ is three", "④ is four", "⑤ is five"]
+    
+    for i in 0...4 {
+        let item = WKPickerItem()
+        item.title = titles[i]
+        item.caption = captions[i]
+        let string = "item_type_\(i + 1)"
+        item.accessoryImage = WKImage(imageName: string)
+        item.contentImage = WKImage(imageName: string)
+        its.append(item)
+    }
+    return its
+}()	
+```
+
+初始化的时候, 对3个`Picker`进行配置:
+
+``` swift
+override func awake(withContext context: Any?) {
+    super.awake(withContext: context)
+    
+    listPicker.setItems(itemArray)
+    stackPicker.setItems(itemArray)
+    sequencePicker.setItems(itemArray)
+    
+    listPicker.focus()
+}
+```
+
+为`Picker`添加的Action: 
+
+``` swift
+@IBAction func listPickerSelect(_ value: Int) {
+    print(itemArray[value].title!)
+}
+
+@IBAction func stackPickerSelect(_ value: Int) {
+    print(itemArray[value].title!)
+}
+
+@IBAction func sequencePickerSelect(_ value: Int) {
+    print(itemArray[value].title!)
+}
+```
+
+重写在`WKInterfaceController`类中有关于`Picker`的方法, 当`Picker`获得焦点、失去焦点、选择保持稳定时会触发的方法: 
+
+``` swift
+override func pickerDidFocus(_ picker: WKInterfacePicker) {
+    if picker == listPicker {
+        print("ListPicker Did Focus")
+    } else if picker == stackPicker {
+        print("StackPicker Did Focus")
+    } else {
+        print("SequencePicker Did Focus")
+    }
+}
+
+override func pickerDidResignFocus(_ picker: WKInterfacePicker) {
+    if picker == listPicker {
+        print("ListPicker Did Resign Focus")
+    } else if picker == stackPicker {
+        print("StackPicker Did Resign Focus")
+    } else {
+        print("SequencePicker Did Resign Focus")
+    }
+}
+
+override func pickerDidSettle(_ picker: WKInterfacePicker) {
+    if picker == listPicker {
+        print("ListPicker Did Settle")
+    } else if picker == stackPicker {
+        print("StackPicker Did Settle")
+    } else {
+        print("SequencePicker settle")
+    }
+}
+```
+
+#### 运行效果
+
+`List` and `None`:
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-3/20180711113502823.gif" width="25%" img/>
+</center>
+
+
+`Stack` and `Outline`: 
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-3/20180711113558538.gif" width="25%" img/>
+</center>
+
+`Sequence` and `Outline with Caption`:
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-3/20180711113604414.gif" width="25%" img/>
+</center>
+
+
+### WKInterfaceTable
+
+
+#### WKInterfaceTable和 UITableView的区别
+
+在 iOS中的 `UITableView`使用范围是很广的, 它可以实现列表性质的复杂功能。那么在 WatchOS中对应的类是`WKInterfaceTable`, 但功能上来说相对简单了许多。
+1.`Table`只有行的概念, 没有分区, 没有头尾视图的概念。  
+2.`Table`通过Gruop进行自适应布局, 所以没有行高等设置。  
+3.`Table`没有代理, 所有行的数据都是采用静态配置的方式。  
+4.`Table`的点击事件也是依靠重写`WKInterfaceController`的方法来实现的。  
+5.`Table`中是通过自定义的`TableRowController`来进行控制 TableRow上显示的内容的。`TableRowController`是一个继承于NSObject的类, 其实从根本上与 iOS中的`UITableViewCell`类似。  
+
+#### 如何使用Table
+
+1.在Storyboard中, 为页面添加一个`Table`。  
+2.新建一个`TableRowController`类继承与 NSObject的 Cocoa Touch类。  
+3.在Storyboard中, 为添加的`Table`配置一个或多个`TableRowController`, 并设置ID。  
+3.在代码中, 为`Table`指定行数和`TableRowController`类型。  
+4.为`TableRowController`的每一行配置显示的数据。  
+
+#### 代码描述
+
+Storyboard中的配置:
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-3/20180711185741935.png" width="70%" img/>
+</center>
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-3/20180711185749584.png" width="70%" img/>
+</center>
+
+`Table`的配置及点击事件处理:
+
+``` swift
+    @IBOutlet var table: WKInterfaceTable!
+    let dataArray = {
+        return [
+            ["image": "item_type_0", "title": "Menu Action And Controller Life Cycle"],
+            ["image": "item_type_1", "title": "Media Player"],
+            ["image": "item_type_2", "title": "Picker Styles" ],
+            ["image": "item_type_3", "title": "Interactive Between iPhone And Watch"],
+            ["image": "item_type_3", "title": "Interactive Between iPhone And Watch"],
+          ]
+    }()
+
+
+    override func awake(withContext context: Any?) {
+        super.awake(withContext: context)
+        
+        // Set Row Number And Row Type
+        table.setNumberOfRows(dataArray.count, withRowType: "ItemRowController")
+        
+        for (i, info) in dataArray.enumerated() {
+            let cell = table.rowController(at: i) as! ItemRowController
+            cell.titleLabel.setText(info["title"])
+            cell.image.setImageNamed(info["image"])
+        }
+    }
+    
+    override func table(_ table: WKInterfaceTable, didSelectRowAt rowIndex: Int) {
+        print(dataArray[rowIndex]["title"]!)
+    }
+```
+
+#### 运行效果
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-3/20180712102409731.gif" width="25%" img/>
+</center>
+
+
+
+### WKInterfaceMenu
+
+Apple Watch的 Retina屏是支持 Force Touch功能的, 提供了一种新的交互方式。这是一个 WatchOS独有的类, 当页面中配置这 `Menu`时, 按压屏幕将会激活页面中的`Menu`。并且显示出`Menu`下的操作, 这些操作是另一个类型, `WKInterfaceMenuItem`。
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-3/20180712104044557.png" width="25%" img/>
+</center>
+
+
+`Menu`最多可显示四个`MenuItem`, 它们可以关联各自的点击事件, 从而进行你想要的各自操作。
+
+#### 代码描述
+
+在 Storyboard中为页面添加`WKInterfaceMenu`和`WKInterfaceMenuItem`, 并为`MenuItem`设置各自的`Image`和`title`。
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-3/2018071210504839.png" width="50%" img/>
+</center>
+
+代码关联:
+
+``` swift
+    @IBAction func menuActionInvest() {
+        print(#function)
+    }
+    
+    @IBAction func menuActionNotification() {
+        print(#function)
+    }
+    
+    @IBAction func menuActionQuestion() {
+        print(#function)
+    }
+    
+    @IBAction func menuActionShare() {
+        print(#function)
+    }
+```
+
+#### 运行效果
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-3/20180712105153886.gif" width="25%" img/>
+</center>
+
+
+### WKInterfaceController中的Present方法
+在 WatchOS中`WKInterfaceController`就相当于 iOS中的 `UIVIewController`, 同样具有类似生命周期和方法。 这里就不再赘述了, 想了解请查看第一篇文章:[Watch App架构及生命周期](https://blog.csdn.net/wangyanchang21/article/details/80928126)。
+
+在这里要说的是, 在`WKInterfaceController`中, 有许多重要的`Present方法`, 这些功能我们可以直接使用, 更加方便了我们的开发。
+像平时使用的`presentController`, 还有上面`Alert`中涉及到一个, 另外, 还有一些关于文字录入的, 音视频播放的, 音频录制的。
+
+``` swift
+open func presentController(withName name: String, context: Any?) // modal presentation
+
+@available(watchOS 2.0, *)
+open func presentAlert(withTitle title: String?, message: String?, preferredStyle: WKAlertControllerStyle, actions: [WKAlertAction])
+```
+
+#### 文字录入
+
+``` swift
+presentTextInputController(withSuggestions: ["Hello!", "When are you free?", "Yes."], allowedInputMode: .plain) { (inputText) in
+	if let stringArr = inputText {
+		print(stringArr)
+    }
+}
+```
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-3/20180712114927276.gif" width="25%" img/>
+</center>
+
+
+#### 音视频播放
+
+``` swift
+@IBAction func mp4PlayAction() {
+    playMedia(name: "music", ex: ".mp4")
+}
+
+func playMedia(name: String, ex: String) {
+    // MediaPlayer
+    let URL = Bundle.main.url(forResource: name, withExtension: ex)
+    let option = [WKMediaPlayerControllerOptionsAutoplayKey: true]
+
+    presentMediaPlayerController(with: URL!, options: option) { (isEnd, endTime, error) in
+        if error == nil {
+            print("endTime=\(endTime)");
+        } else {
+            print("error=\(error!)")
+        }
+    }
+}
+```
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-3/20180712131436714.gif" width="25%" img/>
+</center>
+
+#### 音频录制
+
+``` swift
+func textVoiceInput() {
+    let option2: [String: Any] = [WKAudioRecorderControllerOptionsActionTitleKey: "发送",
+WKAudioRecorderControllerOptionsAutorecordKey: true,
+WKAudioRecorderControllerOptionsMaximumDurationKey: 30]
+
+    // Use App Group URL
+    let uurl = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.watchAppSampler.record")
+    let uuurl = uurl!.appendingPathComponent("record.wav")
+    
+    presentAudioRecorderController(withOutputURL:uuurl , preset: .narrowBandSpeech, options: option2) { (didSave, error) in
+        if error == nil {
+            print("didSave=\(didSave)");
+        } else {
+            print("error=\(error!)")
+        }
+    }
+}
+```
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-3/20180712130654386.gif" width="25%" img/>
+</center>
+
+
+### WatchOS中的其它控件和类
+
+在 `WatchKit框架`中, 还有其它许多的控件和类, 这里就不在介绍了。附一张WatchOS 4.3版本下的所有类的全家福:
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-3/20180712152718147.png" width="25%" img/>
+</center>
+
+
+
+
+相关资料:  
+[WatchOS 开发教程源码：Watch-App-Sampler](https://github.com/wangyanchang21/Watch-App-Sampler)  
+[Interface Navigation](https://developer.apple.com/library/archive/documentation/General/Conceptual/WatchKitProgrammingGuide/InterfaceStyles.html#//apple_ref/doc/uid/TP40014969-CH12-SW1)  
+
+------
+欢迎指正, [wangyanchang21](https://github.com/wangyanchang21).
+
+

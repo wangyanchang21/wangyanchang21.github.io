@@ -1,0 +1,444 @@
+---
+title:  "WatchOS开发教程之六: 表盘功能开发"
+date:   2018-09-03 18:32:49
+categories: [watchOS]
+tags: [watchOS]
+---
+
+WatchOS表盘开发流程, 工作原理, 表盘类型和表盘模板类型总结。
+
+[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)   
+
+------
+
+**WatchOS 开发教程系列文章:**   
+[WatchOS开发教程之一: Watch App架构及生命周期](https://blog.csdn.net/wangyanchang21/article/details/80928126)   
+[WatchOS开发教程之二: 布局适配和系统Icon设计尺寸](https://blog.csdn.net/wangyanchang21/article/details/80938246)   
+[WatchOS开发教程之三: 导航方式和控件详解](https://blog.csdn.net/wangyanchang21/article/details/80975774)   
+[WatchOS开发教程之四: Watch与 iPhone的通信和数据共享](https://blog.csdn.net/wangyanchang21/article/details/81017017)   
+[WatchOS开发教程之五: 通知功能开发](https://blog.csdn.net/wangyanchang21/article/details/82149404)   
+[WatchOS开发教程之六: 表盘功能开发](https://blog.csdn.net/wangyanchang21/article/details/81072477)   
+
+----------
+
+
+## 表盘开发简介(Complications)
+
+`Complications`是 WatchOS 2.0引入的，它是表盘上展示的小元素，可以快速访问常用数据。当你的应用支持`Complications`功能开发后, 便可以在表盘展示你应用的指定的数据，且支持直接从表盘唤醒你的 App。系统提供了一些内置的`Complications`, 比如天气、日历、活动以及更多类型的数据提供内置复杂功能。
+
+**这里所指的表盘开发, 是对表盘元素(Complications)的开发, 而不是对整个表盘(Complication)的开发, 因为整个表盘的所属权是 WatchOS。**当然, `Complications`的大小和位置也是由 WatchOS决定，并基于所选表盘类型的可用空间。因为不同类型的表盘, `Complications`的模板类型、可用空间、大小也不尽相同。比如, 下图是某种表盘，包含的`Complications`有五个位置, 两种不同的模板类型。
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-6/20180831101702514.png" width="50%" img/>
+</center>
+
+
+
+### 表盘开发的好处
+
+`Complications`功能不是必须的，但苹果官方强烈推荐 App支持此功能, 即使只是作为 App的启动器也好。好处如下：  
+ * 1.当用户查看手表时, 它为你的 App提供了一个展示重要信息的机会。  
+ * 2.它会将 App暂停在内存中。这样，当用户点击`Complications`时，系统可以快速唤醒你的 App。  
+ * 3.它为你的 App的后台任务提供了更大的预算。  
+
+
+## 表盘和模板的类型
+
+要实现`Complications`功能，需要将`ClockKit`框架导入到 WatchKit Extension中。`ClockKit`框架定义了用于实现`Complications`功能的类, 以及用于提供 Apple Watch所需数据的类。比如`ClockKit`中的`CLKComplication`类, 它的实例就是一个表盘。
+
+
+### 表盘系列(Complication Family)
+
+表盘的实例只有一个属性就是`family`, 它代表了当前表盘的表盘系列(Complication Family), 或者理解为表盘的类型。Apple Watch支持多种`Complication Family`，也定义了表盘的大小和特征。下图展示了`Complication Family`以及它们在特定表盘上的显示方式。苹果官方也是鼓励 App支持所有可用`Complication Family`。
+
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-6/20180831112808766.png" width="50%" img/>
+</center>
+
+
+再具体些, 源码中`Complication Family`一共有`7种`系列。具体如下: 
+
+``` swift
+public enum CLKComplicationFamily : Int {
+    case modularSmall
+    case modularLarge
+
+    @available(watchOS 3.0, *)
+    case utilitarianSmallFlat /* subset of UtilitarianSmall */
+    
+    case utilitarianLarge
+    case circularSmall
+    @available(watchOS 3.0, *)
+    case extraLarge
+}
+```
+
+
+### 表盘模板(ComplicationTemplate)
+
+在给定某个表盘系列(Complication Family)中，都有多种不同的表盘模板(ComplicationTemplate)，你可以决定使用哪种模板来显示的数据。这些模板可以在可用空间中显示文本、图像或两者的组合, 只需要你提供数据就可以展示了。
+
+到目前 WatchOS 4.3, 共有`28种`表盘模板, WatchOS 5.0又加入了`15种`表盘模板，我做了一个表盘模板汇总。下面按照表盘系列对所有模板进行了一一例举, 你可以很清楚的看到各个模板的展示方式。
+
+
+#### CLKComplicationFamilyModularSmall
+
+① CLKComplicationTemplateModularSmallSimpleText
+<center>
+	<img src="https://img-blog.csdn.net/20180831145118539?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+② CLKComplicationTemplateModularSmallSimpleImage
+<center>
+	<img src="https://img-blog.csdn.net/2018083114541635?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+③ CLKComplicationTemplateModularSmallRingText
+<center>
+	<img src="https://img-blog.csdn.net/20180831150002497?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+④ CLKComplicationTemplateModularSmallRingImage
+<center>
+	<img src="https://img-blog.csdn.net/20180831150010279?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+⑤ CLKComplicationTemplateModularSmallStackText
+<center>
+	<img src="https://img-blog.csdn.net/20180831150019181?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+⑥ CLKComplicationTemplateModularSmallStackImage
+<center>
+	<img src="https://img-blog.csdn.net/20180831150028171?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+⑦ CLKComplicationTemplateModularSmallColumnsText
+<center>
+	<img src="https://img-blog.csdn.net/2018083115003699?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+
+#### CLKComplicationFamilyModularLarge
+
+① CLKComplicationTemplateModularLargeStandardBody
+<center>
+	<img src="https://img-blog.csdn.net/20180831151122732?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+② CLKComplicationTemplateModularLargeTallBody
+<center>
+	<img src="https://img-blog.csdn.net/20180831151131150?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+③ CLKComplicationTemplateModularLargeTable
+<center>
+	<img src="https://img-blog.csdn.net/20180831151141406?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+④ CLKComplicationTemplateModularLargeColumns
+<center>
+	<img src="https://img-blog.csdn.net/20180831151148639?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+
+#### CLKComplicationFamilyUtilitarianSmall
+
+① CLKComplicationTemplateUtilitarianSmallSquare
+<center>
+	<img src="https://img-blog.csdn.net/20180831151447299?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+② CLKComplicationTemplateUtilitarianSmallRingText
+<center>
+	<img src="https://img-blog.csdn.net/20180831151455696?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+③ CLKComplicationTemplateUtilitarianSmallRingImage
+<center>
+	<img src="https://img-blog.csdn.net/20180831151506150?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+
+#### CLKComplicationFamilyUtilitarianSmallFlat
+
+① CLKComplicationTemplateUtilitarianSmallFlat
+<center>
+	<img src="https://img-blog.csdn.net/20180831153123607?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+#### CLKComplicationFamilyUtilitarianLarge
+
+ ① CLKComplicationTemplateUtilitarianLargeFlat
+<center>
+	<img src="https://img-blog.csdn.net/20180831153134508?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+
+#### CLKComplicationFamilyCircularSmall
+
+① CLKComplicationTemplateCircularSmallSimpleText
+<center>
+	<img src="https://img-blog.csdn.net/20180831153536618?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+② CLKComplicationTemplateCircularSmallSimpleImage
+<center>
+	<img src="https://img-blog.csdn.net/20180831153544770?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+③ CLKComplicationTemplateCircularSmallRingText
+<center>
+	<img src="https://img-blog.csdn.net/20180831153552812?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+④ CLKComplicationTemplateCircularSmallRingImage
+<center>
+	<img src="https://img-blog.csdn.net/20180831153600634?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+⑤ CLKComplicationTemplateCircularSmallStackText
+<center>
+	<img src="https://img-blog.csdn.net/20180831153609309?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+#### CLKComplicationFamilyExtraLarge（watchOS 3.0）
+
+① CLKComplicationTemplateExtraLargeSimpleText
+<center>
+	<img src="https://img-blog.csdn.net/20180831154118897?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+② CLKComplicationTemplateExtraLargeSimpleImage
+<center>
+	<img src="https://img-blog.csdn.net/20180831154132231?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+③ CLKComplicationTemplateExtraLargeRingText
+<center>
+	<img src="https://img-blog.csdn.net/20180831154142991?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+④ CLKComplicationTemplateExtraLargeRingImage
+<center>
+	<img src="https://img-blog.csdn.net/20180831154201112?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+⑤ CLKComplicationTemplateExtraLargeStackText
+<center>
+	<img src="https://img-blog.csdn.net/20180831154211622?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+⑥ CLKComplicationTemplateExtraLargeStackImage
+<center>
+	<img src="https://img-blog.csdn.net/20180831154225832?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+⑦ CLKComplicationTemplateExtraLargeColumnsText
+<center>
+	<img src="https://img-blog.csdn.net/20180831154243918?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" width="50%" img/>
+</center>
+
+
+#### CLKComplicationFamilyGraphicCorner（watchOS 5.0）
+① CLKComplicationTemplateGraphicCornerGaugeText
+<center>
+	<img src="https://img-blog.csdnimg.cn/20190129165400866.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx,size_16,color_FFFFFF,t_70" width="50%" img/>
+</center>
+
+② CLKComplicationTemplateGraphicCornerGaugeImage<center>
+	<img src="https://img-blog.csdnimg.cn/20190129170123948.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx,size_16,color_FFFFFF,t_70" width="50%" img/>
+</center>
+
+③ CLKComplicationTemplateGraphicCornerTextImage
+<center>
+	<img src="https://img-blog.csdnimg.cn/20190129170221711.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx,size_16,color_FFFFFF,t_70" width="50%" img/>
+</center>
+
+④ CLKComplicationTemplateGraphicCornerStackText
+<center>
+	<img src="https://img-blog.csdnimg.cn/20190129170755394.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx,size_16,color_FFFFFF,t_70" width="50%" img/>
+</center>
+
+⑤ CLKComplicationTemplateGraphicCornerCircularImage
+<center>
+	<img src="https://img-blog.csdnimg.cn/20190129170803388.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx,size_16,color_FFFFFF,t_70" width="50%" img/>
+</center>
+
+#### CLKComplicationFamilyGraphicBezel（watchOS 5.0）
+① CLKComplicationTemplateGraphicBezelCircularText
+<center>
+	<img src="https://img-blog.csdnimg.cn/20190129170902925.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx,size_16,color_FFFFFF,t_70" width="50%" img/>
+</center>
+
+#### CLKComplicationFamilyGraphicCircular（watchOS 5.0）
+① CLKComplicationTemplateGraphicCircularImage
+<center>
+	<img src="https://img-blog.csdnimg.cn/20190129171111394.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx,size_16,color_FFFFFF,t_70" width="50%" img/>
+</center>
+
+② CLKComplicationTemplateGraphicCircularOpenGaugeRangeText
+<center>
+	<img src="https://img-blog.csdnimg.cn/20190129171240528.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx,size_16,color_FFFFFF,t_70" width="50%" img/>
+</center>
+
+③ CLKComplicationTemplateGraphicCircularOpenGaugeSimpleText
+<center>
+	<img src="https://img-blog.csdnimg.cn/20190129171309651.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx,size_16,color_FFFFFF,t_70" width="50%" img/>
+</center>
+
+④ CLKComplicationTemplateGraphicCircularOpenGaugeImage
+<center>
+	<img src="https://img-blog.csdnimg.cn/2019012917135064.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx,size_16,color_FFFFFF,t_70" width="50%" img/>
+</center>
+
+⑤ CLKComplicationTemplateGraphicCircularClosedGaugeText
+<center>
+	<img src="https://img-blog.csdnimg.cn/20190129171426312.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx,size_16,color_FFFFFF,t_70" width="50%" img/>
+</center>
+
+⑥ CLKComplicationTemplateGraphicCircularClosedGaugeImage
+<center>
+	<img src="https://img-blog.csdnimg.cn/20190129171450124.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx,size_16,color_FFFFFF,t_70" width="50%" img/>
+</center>
+
+#### CLKComplicationFamilyGraphicRectangular（watchOS 5.0）
+① CLKComplicationTemplateGraphicRectangularLargeImage
+<center>
+	<img src="https://img-blog.csdnimg.cn/20190129171826271.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx,size_16,color_FFFFFF,t_70" width="50%" img/>
+</center>
+
+② CLKComplicationTemplateGraphicRectangularStandardBody
+<center>
+	<img src="https://img-blog.csdnimg.cn/20190129171836456.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx,size_16,color_FFFFFF,t_70" width="50%" img/>
+</center>
+
+③ CLKComplicationTemplateGraphicRectangularTextGauge
+<center>
+	<img src="https://img-blog.csdnimg.cn/20190129171903833.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmd5YW5jaGFuZzIx,size_16,color_FFFFFF,t_70" width="50%" img/>
+</center>
+
+## 时间轴(TimeLine)
+
+表盘数据源对象, 它是一个`CLKComplicationDataSource`协议的遵循者, 实现了协议中的一些方法。此协议中的方法将与`ClockKit`产生交互, 可以返回的过去、现在和将来的条目(TimeLineEntry)用于构建表盘元素(Complications)数据的**时间轴**。
+
+每个时间轴条目(TimeLineEntry)都包含一个 `NSDate`对象和一个包含要显示的数据的表盘模板。当指定的日期和精确时间到达时，`ClockKit`会将相应模板中的数据渲染到`Complications`中。随着时间的推移，`ClockKit`会根据时间轴中的条目更新你的`Complications`。
+
+构建数据时间轴的另一个好处是，它允许用户在时间旅行(TimeTravel)期间查看更多数据。如果启用了`TimeTravel`，用户可以使用Digital Crown查看或预览向`Complications`提供的任何数据。
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-6/20180831170915426.png" width="70%" img/>
+</center>
+
+
+
+## 工作原理
+
+由于与表盘的交互很快发生并持续很短的时间，因此`ClockKit`必须提前发现表盘元素(Complications)，以确保它们能够及时显示。为了最大限度地降低功耗，`ClockKit`会要求你提供尽可能多的数据，然后缓存数据并在需要时呈现数据。
+
+当`ClockKit`需要来自表盘元素(Complications)的数据时，它会运行你的 WatchKit Extension并调用表盘数据源对象的方法以获得它所需的内容。表盘数据源对象遵循`CLKComplicationDataSource`协议，是你提供的对象, 系统默认是工程中的`ComplicationController`对象。可以使用此协议中的方法将数据返回到`ClockKit`，并提供要显示的过去、现在、将来的数据。表盘将展示这些提供的表盘数据。
+
+在更新表盘数据的时候, 有问题需要注意。如果表盘数据没有更新，请不要调用表盘数据更新的方法, 如`reloadTimelineForComplication:`或`extendTimelineForComplication:`方法。请注意，后台任务和表盘数据传输都是预算编制的。如果超出预算，则在恢复预算之前无法更新表盘数据。
+
+
+## 表盘开发流程
+
+要支持 App的表盘开发功能，请执行以下操作：  
+ * 1.配置 WatchKit Extension以告诉`ClockKit`支持表盘功能。  
+ * 2.确定需要在表盘中展示的数据内容。  
+ * 3.选择你的 App在每个系列中支持的模板。  
+ * 4.实现表盘数据源对象(遵循CLKComplicationDataSource协议), 以此向`ClockKit`提供数据。  
+
+
+### 配置 WatchKit Extension
+
+在创建新的 Watch App时，可以要求项目支持表盘功能开发。Xcode就会自动创建`Complications`所需的资源。Xcode提供了一个数据源类`ComplicationController`，并配置该项目以使用该类。如果在创建Watch App时未启用表盘功能，也可以稍后启用该功能。
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-6/20180831171803946.png" width="70%" img/>
+</center>
+
+### 设计表盘元素(Complications)
+
+在创建`Complications`之前，需要先确定`Complications`打算展示的内容。在确定打算展示的内容时，请考虑以下因素：  
+1.数据能够放入可用的表盘模板中吗？数据空间有限, 可能只有少量文本字符或小图像的空间。您可以使用可用空间将信息传达给用户吗？  
+2.否已使用通知向用户及时传达信息？如果使用通知向用户提供更新，则`Complications`可能并不比通知的方式更加显眼。  
+3.你可以提前提供多少数据？如果您的应用程序的数据经常更改，则可能难为`Complications`提供足够的数据。更糟糕的是，如果过于频繁地刷新`Complications`数据，则可能会超出后台执行或传输的预算。  
+4.表盘在活跃状态下, 具有`Complications`功能的 App可以为后台任务提供更大的预算，但每小时的后台执行时间仍然有限。或者，可以在用户的 ​​iPhone上生成`Complications`数据并将其传输到 Watch App，但每天只能进行`50次`表盘传输。具体可以参考另外一篇文章: [表盘数据传输](https://blog.csdn.net/wangyanchang21/article/details/81017017#t10)。  
+
+如果上述这些内容你都考虑好了, 那么你就可以制定表盘数据和选择表盘模板了。苹果官方依然还是很建议支持`Complications`功能的, 具体原因文章开头表明过, 故不再赘述。
+
+
+### 表盘数据源配置(ComplicationDataSource)
+
+
+先来看看关于`ComplicationDataSource`协议的一些方法: 
+
+``` swift
+public func getSupportedTimeTravelDirections(for complication: CLKComplication, withHandler handler: @escaping (CLKComplicationTimeTravelDirections) -> Swift.Void)
+```
+
+上面的方法, 定义了 TimeTravel 的方向, 过去还是未来, 或者两者都是。
+
+``` swift
+optional public func getTimelineStartDate(for complication: CLKComplication, withHandler handler: @escaping (Date?) -> Swift.Void)
+
+optional public func getTimelineEndDate(for complication: CLKComplication, withHandler handler: @escaping (Date?) -> Swift.Void)
+```
+
+上面的第一个方法, 定义提供时间轴条目(TimeLineEntry)的开始时间, 如果不支持过去可以设置为当前时间。若未实现此方法，则ClockKit不会在当前条目之前检索时间轴条目。
+
+上面的第二个方法, 定义提供时间轴条目(TimeLineEntry)的结束时间, 如果不支持过去可以设置为当前时间。若未实现此方法，则ClockKit不会在当前条目之后检索时间轴条目。
+
+``` swift
+public func getCurrentTimelineEntry(for complication: CLKComplication, withHandler handler: @escaping (CLKComplicationTimelineEntry?) -> Swift.Void)
+```
+
+上面的方法, 定义当前想要展示在表盘元素上的时间轴条目数据。若支持过去的时间轴条目，则从此方法返回的条目必须在getTimelineEntries（for：before：limit：withHandler :)方法提供的所有条目之后。
+
+``` swift
+optional public func getTimelineEntries(for complication: CLKComplication, before date: Date, limit: Int, withHandler handler: @escaping ([CLKComplicationTimelineEntry]?) -> Swift.Void)
+
+optional public func getTimelineEntries(for complication: CLKComplication, after date: Date, limit: Int, withHandler handler: @escaping ([CLKComplicationTimelineEntry]?) -> Swift.Void)
+```
+
+上面的第一个方法, 定义过去的时间轴条目。返回的条目必须从过去开始，且结束日期不能迟于给定参数date。 条目间必须相隔超过一分钟, 如果两个条目相隔不到一分钟，则ClockKit会丢弃其中一个条目。
+
+上面的第二个方法, 定义未来的时间轴条目。返回的条目必须在给定参数date之后开始。条目间必须相隔超过一分钟, 如果两个条目相隔不到一分钟，则ClockKit会丢弃其中一个条目。
+
+``` swift
+optional public func getLocalizableSampleTemplate(for complication: CLKComplication, withHandler handler: @escaping (CLKComplicationTemplate?) -> Swift.Void)
+```
+
+上面的方法, 获取本地化的表盘模板，该模板充当PlaceHolder的作用。当应用安装完成后, 系统会根据支持的表盘系列(ComplicationFamily)调用此方法一次，并缓存结果。
+
+
+### 更新表盘数据
+
+`ClockKit`提供了几种在运行时更新并发症数据的方法：  
+ * 1.WatchKit Extension运行时显式更新表盘数据。  
+ * 2.安排后台应用程序刷新任务以更新表盘数据。  
+ * 3.从 iOS App进行表盘数据传输来更新。  
+ * 4.使用推送通知更新表盘数据。  
+
+
+每当应用为`Complications`提供新数据时，请调用`CLKComplicationServer`对象的`reloadTimelineForComplication:`或`extendTimelineForComplication:`方法来更新时间轴。前者方法删除并替换整个时间轴，而后者方法将数据添加到现有时间轴的末尾。
+
+如果数据在可预测的时间发生变化，请考虑安排后台应用刷新任务以更新表盘数据。触发后台任务时，收集新数据（例如，使用NSURLSession后台传输）。只要您拥有更新的数据，请调用数据源reload或extend方法来更新时间轴，并安排下一个后台应用程序刷新任务。
+
+或者，您可以在 iOS App中执行更复杂或消耗过高的数据收集任务，然后将该数据传输到手表。使用`WatchConnectivity`框架通过`transferCurrentComplicationUserInfo:`方法将更新发送到手表。手表收到数据，就会调用会话代理的`session:didReceiveUserInfo:`方法。在此方法中，使用提供的用户信息字典更新表盘数据，然后调用数据源reload或extend方法来更新时间轴。
+
+
+
+
+相关资料:  
+[WatchOS 开发教程源码：Watch-App-Sampler](https://github.com/wangyanchang21/Watch-App-Sampler)  
+[Complication Essentials](https://developer.apple.com/library/archive/documentation/General/Conceptual/WatchKitProgrammingGuide/ComplicationEssentials.html#//apple_ref/doc/uid/TP40014969-CH27-SW1)  
+[Complications Guidelines](https://developer.apple.com/design/human-interface-guidelines/watchos/app-architecture/complications/)
+[Complication Images Guidelines](https://developer.apple.com/design/human-interface-guidelines/watchos/icons-and-images/complication-images/)  
+
+------
+欢迎指正, [wangyanchang21](https://github.com/wangyanchang21).
+
+

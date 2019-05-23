@@ -1,0 +1,262 @@
+---
+title:  "WatchOS开发教程之五: 通知功能开发"
+date:   2018-08-29 18:39:09
+categories: [watchOS]
+tags: [watchOS]
+---
+
+WatchOS通知静态和动态页面的开发、通知推送的分发规则、通知的授权和配置等。
+
+[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)   
+
+------
+
+**WatchOS 开发教程系列文章:**   
+[WatchOS开发教程之一: Watch App架构及生命周期](https://blog.csdn.net/wangyanchang21/article/details/80928126)   
+[WatchOS开发教程之二: 布局适配和系统Icon设计尺寸](https://blog.csdn.net/wangyanchang21/article/details/80938246)   
+[WatchOS开发教程之三: 导航方式和控件详解](https://blog.csdn.net/wangyanchang21/article/details/80975774)   
+[WatchOS开发教程之四: Watch与 iPhone的通信和数据共享](https://blog.csdn.net/wangyanchang21/article/details/81017017)   
+[WatchOS开发教程之五: 通知功能开发](https://blog.csdn.net/wangyanchang21/article/details/82149404)   
+[WatchOS开发教程之六: 表盘功能开发](https://blog.csdn.net/wangyanchang21/article/details/81072477)   
+
+----------
+
+
+## WatchOS 通知简介
+
+在之前的文章[Notification Icon、Notification Center Icon](https://blog.csdn.net/wangyanchang21/article/details/80938246#t5)中, 曾经简单的介绍过 WatchOS的通知究竟是何形态。今天将会以更加全面的角度和更加详尽的知识点来进行 WatchOS的通知开发。 
+
+从 WatchOS 2.0开始, 就支持接收和处理通知了。它最大的方便就是, 用户可以在 Watch上接收和处理从 iPhone转发过来的某些本地和远程的通知。到后来从 WatchOS 3.0(对应 iOS 10.0)开始, 通知就已经摒弃之前的通知机制, 从而开始使用`UserNotifications`框架了。
+
+### 短视界面(Short-Look)
+
+首先了解一下，Apple Watch上的通知分为两种：`short-look`和 `long-lock`。当Apple Watch首次收到通知时, 系统会显示短视界面, 如下图所示。`short-look`可以理解为一个简单的通知预览, 且`short-look`的通知界面我们不能自定义。故`short-look`界面是一个无法定制的非滚动屏幕, 系统使用展示 App名称、图标以及通知标题的模板。
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-5/2018082916285899.png" width="50%" img/>
+</center>
+
+如果用户继续查看通知，则系统会从`short-look`界面快速转换为`long-lock`界面。
+
+### 长视界面(Long-Look)
+
+长视界面是一个可滚动的屏幕，显示通知的内容和任何相关的操作按钮。如果没有提供自定义通知界面，Apple Watch会显示一个默认界面，其中包括应用程序图标、通知的标题和通知内容。如果提供了自定义通知界面，Apple Watch会显示自定义界面。
+
+长视通知界面分为三个区域：
+`sash区域`: 是覆盖式的，其中包含应用图标和应用名称。它的颜色是可以自定义的。
+`content区域`: 包含有关传入通知的详细信息, 这是主要的自定义区域。
+`bottom区域`: 包含关闭按钮以及在 iOS中注册的可操作按钮。
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-5/20180829165033181.png" width="50%" img/>
+</center>
+
+点击通知界面即可启动 Watch App。点击其中一个自定义的操作按钮可将选定的操作传递到 iOS App或 Watch App。具体点击后的传递逻辑, 请查考本文最后的响应可操作选项。
+
+
+## WatchOS 通知页面开发
+
+WatchOS 通知页面开发, 其实就是指对长视页面(Long-Look)通知界面的开发, 因为短视界面(Short-Look)是不可以自定义的。自定义长视(Long-Look)通知界面由两个独立的界面组成：一个是静态的(Static)，一个是动态的(Dynamic)。
+
+### 静态界面和动态界面
+
+首先, 静态界面(Static Interface)是必需的，是显示通知消息以及配置任何静态图像、文本的简单方法。动态界面(Dynamic Interface)是可选的，可提供一种在运行时自定义通知内容显示的方法。下图显示了`storyboard`中未修改的静态和动态界面场景:
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-5/20180829171520129.png" width="50%" img/>
+</center>
+
+#### 静态和动态的选择
+
+WatchOS会除了下面几个情况会显示静态界面(Static Interface)，除此之外都会显示动态界面(Dynamic Interface):
+
+ * 1.当动态界面不可用时  
+ * 2.没有足够的电量来保证显示动态界面时  
+ * 3.明确告诉 WatchOS不显示动态界面时  
+
+当做出选择后，WatchOS会加载相应的`storyboard`并准备界面。动态界面的加载过程与 Watch App的其它控制器的加载过程大致相同。唯一不同的就是处理通知有效负载除，该负载用于指定通知控制器。它的加载流程如下: 
+
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-5/20180829174920480.png" width="90%" img/>
+</center>
+
+
+
+### 自定义静态通知页面
+
+静态页面是必需的，使用静态通知界面定义自定义通知界面的简单版本。静态界面的目的是在 WatchKit Extension无法及时配置动态界面的情况下能提供稳定的界面。通知界面也会显示在通知中心中。
+
+创建静态界面的规则如下：
+ * 1.所有图片都必须位于 Watch App的包中。  
+ * 2.界面不得包含`control`、`table`、`map`或其它交互式控件。  
+ * 3.界面的`notificationAlertLabel`必须外连接到`Lable`上。`Label`的内容将会被设置为通知的消息。  
+
+
+### 自定义动态通知页面
+
+当你将你的静态界面的`Has Dynamic Interface`勾选时, 将会支持自定义动态界面。通过动态通知界面，可以为用户提供更丰富的通知体验。可以显示的不仅仅是通知消息, 还可以合并其他信息，显示动态生成的内容等。
+
+创建动态界面的规则如下：  
+ * 1.在大多数界面中使用`label`，`image`，`group`和`separator`。  
+ * 2.仅在界面中根据需要包括`table`和`map`。  
+ * 3.不要包括按钮、开关或其它交互式控件。  
+ * 4.使用`SpriteKit`场景，`SceneKit`场景或内嵌视频来生成视觉丰富的通知。  
+
+#### 运行时动态配置
+
+当相应类型的通知到达时，WatchOS会在`storybord`中显示相应的场景，并要求 WatchKit Extension实例化相应的`WKUserNotificationInterfaceController`类。初始化通知控制器后，WatchOS使用该`didReceiveNotification:withCompletion:`方法将有效负载数据传递给它。可以使用有效负载数据配置通知界面的其余部分，然后调用提供处理完成的block，让 WatchOS知道该通知控制器已准备就绪。
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-5/20180829182843750.png" width="90%" img/>
+</center>
+
+
+## 通知分发规则
+
+### 分发规细则
+
+Apple Watch和 iPhone是协同完成向用户分发通知的工作的。然而, 并不会在两个设备上同时显示，而会将通知显示在当前最有可能获取用户焦点的某一个设备上。系统根据通知的类型，通知的推送源以及哪个设备处于活动状态来决定哪个设备接收通知。大致的规则可以总结如下: 
+
+| 通知类型 | 通知推送源 | 通知接收者 | 
+| :-------: | :--------: | :----: | 
+| 本地(Local) | iOS App | Apple Watch 或 iPhone (取决于下方条件) | 
+| 本地(Local) | WatchKit Extension | 仅限Apple Watch | 
+| 远程(Remote) | 后台服务器 | Apple Watch 或 iPhone (取决于下方条件) | 
+| 静默(Slient) | 后台服务器 | 仅限iPhone | 
+
+
+### 如何判断活跃设备
+
+在通知的接收者中, 会有`Apple Watch 或 iPhone (取决于下方条件)`的情况。它就是一个过程条件, 系统去判断到底哪个设备是当前最有可能获取用户焦点的设备。具体的判断条件也很符合用户的日常习惯:  
+
+ * 1.当 iPhone处于未锁屏的状态时, 通知将会推送至 iPhone上。  
+ * 2.当 Apple Watch没有在用户的手腕上, 通知将会推送至 iPhone上。  
+ * 3.当 Apple Watch在用户的手腕上, 且 iPhone处于锁屏状态时, 通知将会推送至 Watch上。  
+ * 4.如果用户有多个 Apple Watch，通知则会推送到安装了相应 Watch App的那一台设备上。  
+ * 5.在推送远程通知时, 如果通知推送至 Watch上后, iPhone端是可以收到通知的, 但不会有任何提醒, 甚至屏幕都不会亮起。  
+ * 6.如果想在没有佩戴 Apple Watch时对其推送, 也可以在常规设置中禁用手腕检测选项。但需要确保 Apple Watch没在充电器上。  
+
+
+## WatchOS 通知授权和配置
+
+### 通知授权
+
+当 Watch App在执行涉及本地或远程通知的操作之前，必须要进行授权。因为 Watch App必须请求授权才能与用户进行交互, 而且就与 iOS中的通知授权一样。不仅如此, 就连流程和逻辑也是高度一致。第一次启动 Watch App或 iOS应用程序时，此方法会提示用户授予所请求的授权, 且应用程序的任何后续启动都不会再次提示用户。
+
+``` swift
+func configureNotification() {
+    let center = UNUserNotificationCenter.current()
+    center.delegate = self
+    center.requestAuthorization(options: [.alert, .sound]) { (granted, error) in
+        if granted {
+            print("授权成功")
+        } else {
+            print("授权失败")
+        }
+    }
+}
+```
+
+### 配置模拟通知
+
+当你把 Watch App的通知功能开启后, 会在文件目录中发现一个名为`PushNotificationPayload.apns`的文件, 这个文件里的代码就是配置 Watch App通知的模拟数据。当你想要模拟通知推送时, 去运行`Watch App (Notification)`的 target就可以了。当然, 这是 Watch App中才会有的功能, 在 iOS中是没有模拟通知的。 
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-5/20180829131428101.png" width="50%" img/>
+</center>
+
+`PushNotificationPayload.apns`中的模拟数据的例子: 
+
+``` swift
+{
+    "aps": {
+        "alert": {
+            "title": "I AM TITLE",
+            "body": "This is content, or call me body.",
+        },
+        "category": "customCategoryIdentifier"
+    },
+    "WatchKit Simulator Actions": [{
+                                   "title": "I Konw",
+                                   "identifier": "KonwID"
+                                   },
+                                   {
+                                   "title": "Don't Care",
+                                   "identifier": "NotCareID"
+                                   },
+                                   {
+                                   "title": "Don't Push",
+                                   "identifier": "NotPushID"
+                                   }],
+    
+    "customKey": "Use this file to define a testing payload for your notifications. The aps dictionary specifies the category, alert text and title. The WatchKit Simulator Actions array can provide info for one or more action buttons in addition to the standard Dismiss button. Any other top level keys are custom payload. If you have multiple such JSON files in your project, you'll be able to select them when choosing to debug the notification interface of your Watch App."
+}
+```
+
+字段`apn`对应的值是模拟普通通知的数据, 通知有个一个标识符`CategoryIdentifier`属性, 不同类型的通知可以设置不同的标识符进行区分。
+字段`WatchKit Simulator Actions`对应的值则模拟了可操作的通知选项(UNNotificationAction, 以下也简称Action)。当包含自定义操作(Action)时，系统会向通知界面添加按钮，每个按钮都具有一个自定义操作的标题。另外, `customKey`代表自定义的一些键值对数据。
+
+当运行这个含有可操作项的模拟数据后, 接收的通知如下:
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-5/20180829133018933.png" width="20%" img/>
+</center>
+
+
+### 配置真实通知
+
+在配置真实通知时, 配置`apn`中的数据与上面配置模拟数据相同。但是, 与配置模拟数据的区别在于, 无论你如何配置`WatchKit Simulator Actions`中的数据, 都不会有对应的Action的。当然你可以不需要这些自定义操作, 但如果你需要的话, 这就与 iOS 10.0之后的通知框架一样了, 所以你需要手动配置Action。而且, 需要配置在你的 iOS工程中, 它将会显示在你的通知接收设备上。
+
+#### 配置可操作通知
+
+真实通知要自定义可操作选项(Action)，请创建一个`UNNotificationAction`对象并将其添加到的指定的某个`UNNotificationCategory`对象中。每个Action都是一个按钮, 包含相应标题以及如何显示按钮和处理相关任务的选项。当用户选择操作时，系统会为您的应用程序提供操作的`actionIdentifirer`，然后就可以使用该标识进行区分执行不同的任务。 
+
+需要配置在你的 iOS工程中的代码:
+
+``` swift
+let generalCategory = UNNotificationCategory(identifier: "GENERAL",actions: [], intentIdentifiers: [], options: .customDismissAction)
+ 
+// Create the custom actions for the TIMER_EXPIRED category.
+let snoozeAction = UNNotificationAction(identifier: "SNOOZE_ACTION", title: "Snooze", options: UNNotificationActionOptions(rawValue: 0))
+let stopAction = UNNotificationAction(identifier: "STOP_ACTION", title: "Stop", options: .foreground)
+ 
+let expiredCategory = UNNotificationCategory(identifier: "TIMER_EXPIRED", actions: [snoozeAction, stopAction], intentIdentifiers: [], options: UNNotificationCategoryOptions(rawValue: 0))
+ 
+// Register the notification categories.
+let center = UNUserNotificationCenter.current()
+center.setNotificationCategories([generalCategory, expiredCategory])
+```
+
+#### 响应可操作选项
+
+当用户点击通知的可操作按钮时，用户的响应将传递到 iOS App或 Watch Extension中去处理。哪个应用程序收到响应取决于当前`Action`是`前台模式`还是`后台模式`。在创建时如果不指定`UNNotificationAction`为`UNNotificationActionOptionForeground`选项, 则Action默认为后台操作。
+
+对于前台模式的操作, 始终由响应操作的设备去处理。对于后台操作，操作的处理还取决于通知被推送到哪个设备上：  
+ * 1.对于前台模式的操作, 始终由响应操作的 App去处理。  
+ * 2.对于 Apple Watch上本地通知的后台模式操作，由 Watch App处理。  
+ * 3.对于在 iPhone上本地通知的后台模式操作，无论哪个设备显示通知，后台操作都是由 iOS App处理。  
+ * 4.于远程通知的后台模式操作，无论哪个设备显示通知，后台操作始终由 iOS App处理。  
+
+总结如下表格:   
+
+|      -	   | iPhone本地通知 | Watch本地通知 | 远程通知 |
+| :------: | :--------: | :-----: | :-----: |
+| Action(前台) | 响应设备处理 | 响应设备处理 | 响应设备处理 |
+| Action(后台) | iOS处理 | WatchOS处理 | iOS处理 |
+
+
+
+
+
+
+
+相关资料:  
+[WatchOS 开发教程源码：Watch-App-Sampler](https://github.com/wangyanchang21/Watch-App-Sampler)  
+[Notification Essentials](https://developer.apple.com/library/archive/documentation/General/Conceptual/WatchKitProgrammingGuide/BasicSupport.html#//apple_ref/doc/uid/TP40014969-CH18-SW1)  
+[Configuring Categories and Actionable Notifications](https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/SupportingNotificationsinYourApp.html#//apple_ref/doc/uid/TP40008194-CH4-SW1)  
+
+------
+欢迎指正, [wangyanchang21](https://github.com/wangyanchang21).
+
+

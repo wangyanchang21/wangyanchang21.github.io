@@ -1,0 +1,191 @@
+---
+title:  "WatchOS开发教程之二: 布局适配和系统Icon设计尺寸"
+date:   2018-07-09 17:14:30
+categories: [watchOS]
+tags: [watchOS]
+---
+
+本文涉及到 Apple Watch的布局方式和布局影响因素，以及不同尺寸屏幕的适配原理。另外，还有 Apple Watch系统 icon的设计尺寸和适配。
+
+[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)   
+
+------
+
+**WatchOS 开发教程系列文章:**   
+[WatchOS开发教程之一: Watch App架构及生命周期](https://blog.csdn.net/wangyanchang21/article/details/80928126)   
+[WatchOS开发教程之二: 布局适配和系统Icon设计尺寸](https://blog.csdn.net/wangyanchang21/article/details/80938246)   
+[WatchOS开发教程之三: 导航方式和控件详解](https://blog.csdn.net/wangyanchang21/article/details/80975774)   
+[WatchOS开发教程之四: Watch与 iPhone的通信和数据共享](https://blog.csdn.net/wangyanchang21/article/details/81017017)   
+[WatchOS开发教程之五: 通知功能开发](https://blog.csdn.net/wangyanchang21/article/details/82149404)   
+[WatchOS开发教程之六: 表盘功能开发](https://blog.csdn.net/wangyanchang21/article/details/81072477)   
+
+----------
+
+
+## 布局和适配
+
+
+### 布局方式和布局因素
+
+在 iOS App开发时, 我们可以选择纯代码工程或者`Storyboard`也或者`xib`, 但在 Watch App开发时必须要用`Storyboard`为基础来进行开发, 是不可以用纯代码进行实现的。
+
+先来看一下, 下面的布局结果: 
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-2/20180706111219905.png" width="40%" img/>
+</center>
+
+
+WatchOS 中的布局方式和 iOS是不相同的, 在控件上的可操作性要比 iOS中少, 所以 WatchOS的布局要比 iOS中的简单许多。我们可以通过`Storyboard`中属性面板来调整各个控件的一些布局因素, 也有部分的布局因素是可以通过代码来设置的。布局的因素也主要有下面几种:   
+
+ * 1.在 WatchOS中 Xcode会自动为我们把添加的控件垂直的排列在InterfaceController的不同的行上。  
+ * 2.位置和大小。而大小还包括固定大小和相对大小, 相对大小是指当前控件相对父视图的正比例大小。  
+ * 3.排列对齐方式(Alignment)。WatchOS中布局因素中有很重要的一个就是在横向上和纵向上的排列对齐方式, 两个方向上有左、中、右和上、中、下各三个选项。  
+ * 4.间距(Spacing)。调整当前容器性质的控件内既定方向上各个控件之间的距离, 默认值是4.0。  
+ * 5.内嵌(Insets)。调整当前容器性质的控件内的上、下、左、右距各边的距离, 默认值是UIEdgeInsetsMake(0.0, 1.0, 0.0, 1.0)。  
+ * 6.`WKInterfaceGroup`。WatchOS中的一个很特别的类, 它是一个容器性质的控件, 能为其他控件提供额外的布局。`Group`可以指定其所包含控件的排列方向, 横向或者纵向或者重叠, 也可以设置间距和内嵌。它还能为自己添加背景图片, 作为一个种控件叠加的效果这是一个不错的选择, 因为在 WatchOS中是不允许控件相互重叠的, 除了像`Group`这样容器类的控件。  
+
+
+### Apple Watch的尺寸和适配
+
+首先我们需要知道Apple Watch有两种尺寸: 38mm和 42mm。
+
+在 WatchOS开发做适配时有两种方式可行, 第一种方式与 iOS开发类似, 在`Storyboard`页面下方有个`Device面板`可以去选择不同尺寸的设备进行不同的页面布局。如下图:
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-2/2018070611574665.png" width="60%" img/>
+</center>
+
+第二种方式是通过属性面板上对不同尺寸的设备进行不同的数值设置, 来做到适配。如下图:
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-2/20180706141229250.png" width="30%" img/>
+</center>
+
+就像上图这样, 本来`Text`属性只能设置一个值Value, 但当我们点击左侧的`+号`时, 就能选择添加两种尺寸的设备分别设置数值了。当我们不需要的时候, 还可以点击`x号`将其关闭。
+
+
+## 系统icon设计尺寸
+
+两种 Apple Watch屏幕尺寸所对应的像素大小是这样的:
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-2/20180706144911279.png" width="50%" img/>
+</center>
+
+然后我们先来认知一下下面这几种icon, `Home Screen Icon`, `Short-look Notification Icon`, `Long-look Notification Icon`, `Setting Icon `, `Content Menu Icon`:
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-2/2018070614475754.png" width="70%" img/>
+</center>
+
+
+### Home Screen Icon
+
+这是 Watch App在 Apple Watch主屏幕上的 icon, 没有任何辅助文本或标签, 主要用于承载 App的识别度和目的。
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-2/20180706150406815.png" width="50%" img/>
+</center>
+
+
+对于`38mm`和`42mm`的两种设备来说, 主屏幕上的icon尺寸是相同的, 都是`80x80`像素的2倍图。
+
+### Short-look Notification Icon
+
+首先了解一下，Apple Watch上的通知分为两种：`short-look`和 `long-lock`。当Apple Watch首次收到通知时, 系统会显示短视界面, 如下图所示。`short-look`界面是一个无法定制的非滚动屏幕, 系统使用展示 App名称、图标以及通知标题的模板。如果用户继续查看通知，则系统会从`short-look`界面快速转换为`long-lock`界面。
+
+简而言之，`short-look`可以理解为一个简单的通知预览, 当Apple Watch首次收到通知时，系统会显示短视界面。`short-look`的通知界面我们不能自定义。
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-2/20180706150835188.png" width="50%" img/>
+</center>
+
+
+Short-look Notification Icon在`38mm`设备下是`172x172`像素, 在`42mm`设备下是`196x196`像素, 且都是2倍图。
+
+### Long-look Notification Icon
+
+当正在显示`short-look`页面时, 如果用户继续查看这个通知，则系统会从`short-look`页面转换为`long-look`界面。
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-2/20180706150903136.png" width="50%" img/>
+</center>
+
+
+Long-look Notification Icon在`38mm`设备下是`80x80`像素, 在`42mm`设备下是`88x88`像素, 且都是2倍图。
+
+### Notification Center Icon
+
+通知中心中显示的 icon如下:
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-2/20180709154118619.png" width="20%" img/>
+</center>
+
+
+Notification Center Icon在`38mm`设备下是`48x48`像素, 在`42mm`设备下是`55x55`像素, 且都是2倍图。
+
+
+### Content Menu Icon
+
+`WatchKit`中有个类`WKInterfaceMenu`, 它其中可以包含多个`WKInterfaceMenuItem`。`MenuItem`可以设置 title和 image, 且其 image的尺寸就如下图所示: 
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-2/20180709153749548.png" width="50%" img/>
+</center>
+
+
+Content Menu Icon在`38mm`设备下是`70x70`像素, 在`42mm`设备下是`80x80`像素, 且都是2倍图。
+
+
+### Watch App Icon On iPhone
+
+除了 Watch App使用的 icon外, 运行在 iPhone上的 Apple Watch App也需要一个相应的 icon。因为在 iPhone上显示, 所以既需要2倍图又需要3倍图了。
+App Icon On iPhone在 iPhone上需要的尺寸是 `29x29`pt, 即2倍图 `58x58`像素, 3倍图`87x87`像素。
+
+### App Store
+
+App Store 也需要提交一个 App Icon, 用于进行展示。尺寸为`1024x1024`像素, 且为1倍图。
+
+
+### 线条像素
+
+针对不同的设计场景, 苹果建议使用如下线宽：
+
+<center>
+	<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/watchcourse-2/20180709163410345.png" width="100%" img/>
+</center>
+
+
+
+### 总结
+
+| Asset | Watch(38mm) | Watch(42mm) | iPhone | App Store |
+| :-----: | :-----: | :-----: | :-----: | :-----: |
+| Home Screen Icon | 80 pixels | 80 pixels | - | - |
+| Short-look Notification Icon | 172 pixels | 196 pixels |  - | - |
+| Long-look Notification Icon | 80 pixels | 88 pixels |  - | - |
+| Notification Center Icon | 48 pixels | 55 pixels |  - | - |
+| Content Menu Icon | 70 pixels | 80 pixels |  - | - |
+| Watch App Icon On iPhone | - | - |  58 pixels(@2x)/87 pixels(@3x) | - |
+| App Store | - | - | - | 1024 pixels |
+
+
+### 注意
+
+1.Apple Watch仅使用2倍图, 所以上述所有 App Icon尺寸都是@2x图片。  
+2.如果还有不近详细的地方, 请查阅苹果官方文档 [Icons And Images For Apple Watch](https://developer.apple.com/design/human-interface-guidelines/watchos/icons-and-images/home-screen-icons/)。  
+
+
+
+
+相关资料:  
+[WatchOS 开发教程源码：Watch-App-Sampler](https://github.com/wangyanchang21/Watch-App-Sampler)  
+[Watch app icon设计终极指南](http://www.cocoachina.com/design/20150519/11740.html)  
+[UI Essentials](https://developer.apple.com/library/archive/documentation/General/Conceptual/WatchKitProgrammingGuide/CreatingtheUserInterface.html#//apple_ref/doc/uid/TP40014969-CH4-SW1)  
+[Human Interface Guidelines For Apple Watch](https://developer.apple.com/design/human-interface-guidelines/watchos/icons-and-images/home-screen-icons/)  
+
+
+------
+欢迎指正, [wangyanchang21](https://github.com/wangyanchang21).
+
+
