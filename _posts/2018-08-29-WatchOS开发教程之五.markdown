@@ -12,19 +12,19 @@ WatchOS通知静态和动态页面的开发、通知推送的分发规则、通�
 ------
 
 **WatchOS 开发教程系列文章:**   
-[WatchOS开发教程之一: Watch App架构及生命周期](https://blog.csdn.net/wangyanchang21/article/details/80928126)   
-[WatchOS开发教程之二: 布局适配和系统Icon设计尺寸](https://blog.csdn.net/wangyanchang21/article/details/80938246)   
-[WatchOS开发教程之三: 导航方式和控件详解](https://blog.csdn.net/wangyanchang21/article/details/80975774)   
-[WatchOS开发教程之四: Watch与 iPhone的通信和数据共享](https://blog.csdn.net/wangyanchang21/article/details/81017017)   
-[WatchOS开发教程之五: 通知功能开发](https://blog.csdn.net/wangyanchang21/article/details/82149404)   
-[WatchOS开发教程之六: 表盘功能开发](https://blog.csdn.net/wangyanchang21/article/details/81072477)   
+[WatchOS开发教程之一: Watch App架构及生命周期](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%B8%80)   
+[WatchOS开发教程之二: 布局适配和系统Icon设计尺寸](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%BA%8C)   
+[WatchOS开发教程之三: 导航方式和控件详解](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%B8%89)   
+[WatchOS开发教程之四: Watch与 iPhone的通信和数据共享](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E5%9B%9B)   
+[WatchOS开发教程之五: 通知功能开发](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%BA%94)   
+[WatchOS开发教程之六: 表盘功能开发](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E5%85%AD)    
 
 ----------
 
 
 ## WatchOS 通知简介
 
-在之前的文章[Notification Icon、Notification Center Icon](https://blog.csdn.net/wangyanchang21/article/details/80938246#t5)中, 曾经简单的介绍过 WatchOS的通知究竟是何形态。今天将会以更加全面的角度和更加详尽的知识点来进行 WatchOS的通知开发。 
+在之前的文章[Notification Icon、Notification Center Icon](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%BA%8C)中, 曾经简单的介绍过 WatchOS的通知究竟是何形态。今天将会以更加全面的角度和更加详尽的知识点来进行 WatchOS的通知开发。 
 
 从 WatchOS 2.0开始, 就支持接收和处理通知了。它最大的方便就是, 用户可以在 Watch上接收和处理从 iPhone转发过来的某些本地和远程的通知。到后来从 WatchOS 3.0(对应 iOS 10.0)开始, 通知就已经摒弃之前的通知机制, 从而开始使用`UserNotifications`框架了。
 

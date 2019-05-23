@@ -12,19 +12,19 @@ Watch与 iPhone之间的通信、WatchConnectivity通信框架、数据共享等
 ------
 
 **WatchOS 开发教程系列文章:**   
-[WatchOS开发教程之一: Watch App架构及生命周期](https://blog.csdn.net/wangyanchang21/article/details/80928126)   
-[WatchOS开发教程之二: 布局适配和系统Icon设计尺寸](https://blog.csdn.net/wangyanchang21/article/details/80938246)   
-[WatchOS开发教程之三: 导航方式和控件详解](https://blog.csdn.net/wangyanchang21/article/details/80975774)   
-[WatchOS开发教程之四: Watch与 iPhone的通信和数据共享](https://blog.csdn.net/wangyanchang21/article/details/81017017)   
-[WatchOS开发教程之五: 通知功能开发](https://blog.csdn.net/wangyanchang21/article/details/82149404)   
-[WatchOS开发教程之六: 表盘功能开发](https://blog.csdn.net/wangyanchang21/article/details/81072477)   
-
+[WatchOS开发教程之一: Watch App架构及生命周期](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%B8%80)   
+[WatchOS开发教程之二: 布局适配和系统Icon设计尺寸](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%BA%8C)   
+[WatchOS开发教程之三: 导航方式和控件详解](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%B8%89)   
+[WatchOS开发教程之四: Watch与 iPhone的通信和数据共享](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E5%9B%9B)   
+[WatchOS开发教程之五: 通知功能开发](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%BA%94)   
+[WatchOS开发教程之六: 表盘功能开发](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E5%85%AD)   
+ 
 ----------
 
 
 ## Apple Watch与iPhone之间的通信
 
-在第一篇文章[Watch App架构及生命周期](https://blog.csdn.net/wangyanchang21/article/details/80928126)的最后, 我们提到过: 避免长时间运行的任务。由于与 Watch App的交互通常很简短, 因此在长时间运行的任务完成之前, 可能会暂停 WatchKit Extension。 执行任何长时间运行任务的最佳解决方案是在 iOS App中执行该任务, 然后将数据传输给 Apple Watch。
+在第一篇文章[Watch App架构及生命周期](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%B8%80)的最后, 我们提到过: 避免长时间运行的任务。由于与 Watch App的交互通常很简短, 因此在长时间运行的任务完成之前, 可能会暂停 WatchKit Extension。 执行任何长时间运行任务的最佳解决方案是在 iOS App中执行该任务, 然后将数据传输给 Apple Watch。
 
 所以, 今天来说一说Apple Watch与iPhone之间的通信是如何实现的。
 

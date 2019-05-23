@@ -12,12 +12,13 @@ Watch App中两种导航样式的说明和各种控件基本介绍和使用。
 ------
 
 **WatchOS 开发教程系列文章:**   
-[WatchOS开发教程之一: Watch App架构及生命周期](https://blog.csdn.net/wangyanchang21/article/details/80928126)   
-[WatchOS开发教程之二: 布局适配和系统Icon设计尺寸](https://blog.csdn.net/wangyanchang21/article/details/80938246)   
-[WatchOS开发教程之三: 导航方式和控件详解](https://blog.csdn.net/wangyanchang21/article/details/80975774)   
-[WatchOS开发教程之四: Watch与 iPhone的通信和数据共享](https://blog.csdn.net/wangyanchang21/article/details/81017017)   
-[WatchOS开发教程之五: 通知功能开发](https://blog.csdn.net/wangyanchang21/article/details/82149404)   
-[WatchOS开发教程之六: 表盘功能开发](https://blog.csdn.net/wangyanchang21/article/details/81072477)   
+[WatchOS开发教程之一: Watch App架构及生命周期](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%B8%80)   
+[WatchOS开发教程之二: 布局适配和系统Icon设计尺寸](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%BA%8C)   
+[WatchOS开发教程之三: 导航方式和控件详解](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%B8%89)   
+[WatchOS开发教程之四: Watch与 iPhone的通信和数据共享](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E5%9B%9B)   
+[WatchOS开发教程之五: 通知功能开发](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%BA%94)   
+[WatchOS开发教程之六: 表盘功能开发](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E5%85%AD)   
+ 
 
 ----------
 
@@ -406,7 +407,7 @@ Apple Watch的 Retina屏是支持 Force Touch功能的, 提供了一种新的交
 
 
 ### WKInterfaceController中的Present方法
-在 WatchOS中`WKInterfaceController`就相当于 iOS中的 `UIVIewController`, 同样具有类似生命周期和方法。 这里就不再赘述了, 想了解请查看第一篇文章:[Watch App架构及生命周期](https://blog.csdn.net/wangyanchang21/article/details/80928126)。
+在 WatchOS中`WKInterfaceController`就相当于 iOS中的 `UIVIewController`, 同样具有类似生命周期和方法。 这里就不再赘述了, 想了解请查看第一篇文章:[Watch App架构及生命周期](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%B8%80)。
 
 在这里要说的是, 在`WKInterfaceController`中, 有许多重要的`Present方法`, 这些功能我们可以直接使用, 更加方便了我们的开发。
 像平时使用的`presentController`, 还有上面`Alert`中涉及到一个, 另外, 还有一些关于文字录入的, 音视频播放的, 音频录制的。

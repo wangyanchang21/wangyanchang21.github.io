@@ -280,12 +280,12 @@ let trustAPI = URL(string: "https://public.trustwalletapp.com")
 **交易发起。** 在`Web3`浏览器中的`DApp`中, 发起转账交易, 发起方式就是`JS`调用`iOS原生`。通过传入的数据, 在`BrowserCoordinator`模块中, 将数据进行解析。
 
 **解析。** 通过`DAppAction`、`DappCommand`、`DAppRequester`等类进行解析, 完成后, 封装入`DAppAction`内, 来决定需要进行哪种操作、需要调用合约中的哪种API。它有6种响应事件, 分别是: 
-> * 1.signMessage
-> * 2.signPersonalMessage 
-> * 3.signTypedMessage
-> * 4.signTransaction
-> * 5.sendTransaction
-> * 6.unknown
+* 1.signMessage
+* 2.signPersonalMessage 
+* 3.signTypedMessage
+* 4.signTransaction
+* 5.sendTransaction
+* 6.unknown
 
 
 
