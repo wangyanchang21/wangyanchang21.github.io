@@ -7,13 +7,12 @@ tags: [区块链]
 
 在前一篇文章中, 已经介绍过`Trust`的项目架构、业务流程等了。这篇文章将会解读一些核心的功能, 包括前一篇文章提到的`EtherKeystore`这个业务类, 还有网络层的如何调用智能合约、其它调用合约的方式, 以及以太坊交易的结构和流程等。
 
-[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)
+[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)  
 
 ------
 
-[以太坊钱包 Trust项目解读之架构和流程](https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6)
-
-[由Trust Wallet理解以太坊钱包管理和智能合约](https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6)
+[以太坊钱包 Trust项目解读之架构和流程](https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6)  
+[由Trust Wallet理解以太坊钱包管理和智能合约](https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6)  
 
 ------
 
@@ -31,7 +30,7 @@ tags: [区块链]
 #### 创建公钥私钥
 
 创建钱包就相当于生成一对密钥, 公钥(PublicKey)和私钥(PrivateKey)。公钥其实就相当于你账户在区块链中的地址(Address); 私钥就相当于你钱包的账号密码, 它是证明你是钱包主人的唯一证明, 一旦丢失就不可找回。当然, 公钥并不完全等于地址, 地址是由公钥经过一系列的算法生成的, 需要经过`SHA3-256`(Keccak)哈希然后转化为符合`EIP55`规则的字符串。
-```
+``` swift
  (sk, pk) = generateKeys(keysize) 
  ```
 上面这段伪代码中, generateKeys方法把 keysize作为输入, 来产生一对公钥和私钥。私钥sk被安全保存## ，并用来签名一段消息；公钥pk是人人都可以找到的，拿到它，就可以用来验证你的签名。下图是`TrustCore`中对以太坊私钥和地址的`keysize`定义, 私钥是32字节, 公钥地址是20字节, 所以十六进制的私钥长度为64位, 而公钥地址长度为40位。
@@ -212,7 +211,7 @@ var remoteURL: URL {
 ### 网络层其他请求
 
 在`Trust`中, 获取区块链上的数据, 其实分为两种, 一种是上面提到的直接通过智能合约获取的数据。另一种就是`Trust`官网已经封装过的一些接口, 它们是关于多币种的, 大多需要在区块链中去查找, 接口不单一且有大工作量的请求, 如transactions, getTokes等。这些接口是直接使用网络库`Moya`进行封装的, 而没有调用智能合约。而这些`HTTP`请求的服务器是: 
-```
+``` swift
 let trustAPI = URL(string: "https://public.trustwalletapp.com")
 ```
 
@@ -305,7 +304,7 @@ let trustAPI = URL(string: "https://public.trustwalletapp.com")
 wallet`的解读, 很局限。但是由它们能延伸到的知识, 如以太坊的智能合约的知识、钱包和私钥管理的知识等等, 还有你对区块链的认知, 这些不是狭义的。所以无论你认为区块链是好是坏, 或者有没有实际的应用和市场的欢迎, 这门技术都带来了无限创新。
 
 
-
+-------
 
 欢迎指正, [wangyanchang21](https://github.com/wangyanchang21).
 

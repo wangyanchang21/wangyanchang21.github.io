@@ -9,13 +9,12 @@ tags: [区块链]
 
 文章中, 会涉及到一些区块链的基础知识如以太坊、智能合约、节点、Token、地址等等, 这些基础知识就不介绍了, 还请自行查阅吧。
 
-[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)
+[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)  
 
 -------
 
-[以太坊钱包 Trust项目解读之架构和流程](https://wangyanchang21.github.io/2018/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85-Trust%E9%A1%B9%E7%9B%AE%E8%A7%A3%E8%AF%BB%E4%B9%8B%E6%9E%B6%E6%9E%84%E5%92%8C%E6%B5%81%E7%A8%8B)
-
-[由Trust Wallet理解以太坊钱包管理和智能合约](https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6)
+[以太坊钱包 Trust项目解读之架构和流程](https://wangyanchang21.github.io/2018/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85-Trust%E9%A1%B9%E7%9B%AE%E8%A7%A3%E8%AF%BB%E4%B9%8B%E6%9E%B6%E6%9E%84%E5%92%8C%E6%B5%81%E7%A8%8B)  
+[由Trust Wallet理解以太坊钱包管理和智能合约](https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6)  
    
 -------
 
@@ -26,38 +25,32 @@ tags: [区块链]
 
 ### Mist
 
-`Mist`是一个全节点的钱包, 以太坊的官方钱包。
-
+`Mist`是一个全节点的钱包, 以太坊的官方钱包。  
 官方地址: [ethereum](https://ethereum.org/)
 
 ### Parity
 
-`Parity`也是一个全节点钱包, 原以太坊基金会部分成员开发的。
-
+`Parity`也是一个全节点钱包, 原以太坊基金会部分成员开发的。  
 官方地址: [Parity](https://www.parity.io/)
 
 ### Trust
 
-在国外 App Store已经上架, 目前有 `iOS`和 `Android`移动端的应用, 应用中有 `Web3浏览器`并支持很多 `DApp`使用。
-
+在国外 App Store已经上架, 目前有 `iOS`和 `Android`移动端的应用, 应用中有 `Web3浏览器`并支持很多 `DApp`使用。  
 官方地址: [TrustWalletApp](https://trustwalletapp.com/)
 
 ### imToken
 
-`imToken`是一个中国团队开发的, 目前只有 `iOS`和 `Android`移动端的应用。
-
+`imToken`是一个中国团队开发的, 目前只有 `iOS`和 `Android`移动端的应用。  
 官方地址: [ImToken](https://token.im/)
 
 ### MyEtherWallet
 
-`MyEtherWallet` 作为一个轻钱包，无需下载，直接在 Web端进行操作。
-
+`MyEtherWallet` 作为一个轻钱包，无需下载，直接在 Web端进行操作。  
 官方地址: [MyEtherWallet](https://www.myetherwallet.com/)
 
 ### MetaMask
 
-`MetaMask`是一个轻量级钱包, 以Chrome扩展程序存在的 Web端钱包。
-
+`MetaMask`是一个轻量级钱包, 以Chrome扩展程序存在的 Web端钱包。  
 官方地址: [MetaMask](https://metamask.io/)
 
 
@@ -213,5 +206,6 @@ tags: [区块链]
 到此为止 Trust Wallet项目以 iOS的角度, 按照架构和主要功能对其源码解析完了。然后, 真正关于区块链的核心功能, 如智能合约调用、私钥公钥管理等, 会以`Trust`钱包为例让你逐步理解。具体请阅读下一篇[由Trust Wallet理解以太坊钱包管理和智能合约](https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6)。
 
 
+-------
 
 欢迎指正, [wangyanchang21](https://github.com/wangyanchang21).
