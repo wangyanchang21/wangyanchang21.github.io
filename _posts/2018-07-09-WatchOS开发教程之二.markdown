@@ -5,7 +5,7 @@ categories: [watchOS]
 tags: [watchOS]
 ---
 
-本文涉及到 Apple Watch的布局方式和布局影响因素，以及不同尺寸屏幕的适配原理。另外，还有 Apple Watch系统 icon的设计尺寸和适配。
+Apple Watch的布局方式和布局影响因素，以及不同尺寸屏幕的适配原理。另外，还有 Apple Watch系统 icon的设计尺寸和适配。
 
 [![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)   
 
