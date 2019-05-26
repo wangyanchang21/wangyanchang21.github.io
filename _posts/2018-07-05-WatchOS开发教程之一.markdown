@@ -117,9 +117,9 @@ WatchOS可以访问 iOS应用程序中的许多相同技术。除了上面介绍
 1.在 Watch App中想使用的一些功能需要授权的话, 必须在 iPhone上进行授权许可, 这样才能在 WatchKit Extension中使用这些技术。比如, Health, Core Location等等。所以这些隐私许可的设置只需要添加在iOS App的 info.plist中就可以了。
 2.不要使用后台执行模式的技术。一般的, Watch App可以视为前台应用程序, 它只在某个InterfaceController与用户交互时运行。所以 WatchKit Extension无法利用大多数后台执行模式来执行任务。但是, 有一些例外：
 
- * ① 使用NSURLSession对象启动基于网络的数据传输。  
- * ② 使用WKAudioFilePlayer类或WKAudioFileQueuePlayer类在后台播放音频文件。  
- * ③ 使用HKWorkoutSession对象来开始和停止锻炼。  
+ - ① 使用NSURLSession对象启动基于网络的数据传输。  
+ - ② 使用WKAudioFilePlayer类或WKAudioFileQueuePlayer类在后台播放音频文件。  
+ - ③ 使用HKWorkoutSession对象来开始和停止锻炼。  
 
 3.避免长时间运行的任务。由于与 Watch App的交互通常很简短, 因此在长时间运行的任务完成之前, 可能会暂停 WatchKit Extension。
 4.执行任何长时间运行任务的最佳解决方案是在 iOS App中执行该任务。例如, 不是在WatchKit Extension中启动位置服务, 而是在 iOS App中启动它并将更新信息发送到的 WatchKit Extension。

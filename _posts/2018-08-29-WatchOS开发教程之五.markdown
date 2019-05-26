@@ -70,9 +70,9 @@ WatchOS 通知页面开发, 其实就是指对长视页面(Long-Look)通知界�
 
 WatchOS会除了下面几个情况会显示静态界面(Static Interface)，除此之外都会显示动态界面(Dynamic Interface):
 
- * 1.当动态界面不可用时  
- * 2.没有足够的电量来保证显示动态界面时  
- * 3.明确告诉 WatchOS不显示动态界面时  
+ - 1.当动态界面不可用时  
+ - 2.没有足够的电量来保证显示动态界面时  
+ - 3.明确告诉 WatchOS不显示动态界面时  
 
 当做出选择后，WatchOS会加载相应的`storyboard`并准备界面。动态界面的加载过程与 Watch App的其它控制器的加载过程大致相同。唯一不同的就是处理通知有效负载除，该负载用于指定通知控制器。它的加载流程如下: 
 
@@ -88,9 +88,9 @@ WatchOS会除了下面几个情况会显示静态界面(Static Interface)，除�
 静态页面是必需的，使用静态通知界面定义自定义通知界面的简单版本。静态界面的目的是在 WatchKit Extension无法及时配置动态界面的情况下能提供稳定的界面。通知界面也会显示在通知中心中。
 
 创建静态界面的规则如下：
- * 1.所有图片都必须位于 Watch App的包中。  
- * 2.界面不得包含`control`、`table`、`map`或其它交互式控件。  
- * 3.界面的`notificationAlertLabel`必须外连接到`Lable`上。`Label`的内容将会被设置为通知的消息。  
+ - 1.所有图片都必须位于 Watch App的包中。  
+ - 2.界面不得包含`control`、`table`、`map`或其它交互式控件。  
+ - 3.界面的`notificationAlertLabel`必须外连接到`Lable`上。`Label`的内容将会被设置为通知的消息。  
 
 
 ### 自定义动态通知页面
@@ -98,10 +98,10 @@ WatchOS会除了下面几个情况会显示静态界面(Static Interface)，除�
 当你将你的静态界面的`Has Dynamic Interface`勾选时, 将会支持自定义动态界面。通过动态通知界面，可以为用户提供更丰富的通知体验。可以显示的不仅仅是通知消息, 还可以合并其他信息，显示动态生成的内容等。
 
 创建动态界面的规则如下：  
- * 1.在大多数界面中使用`label`，`image`，`group`和`separator`。  
- * 2.仅在界面中根据需要包括`table`和`map`。  
- * 3.不要包括按钮、开关或其它交互式控件。  
- * 4.使用`SpriteKit`场景，`SceneKit`场景或内嵌视频来生成视觉丰富的通知。  
+ - 1.在大多数界面中使用`label`，`image`，`group`和`separator`。  
+ - 2.仅在界面中根据需要包括`table`和`map`。  
+ - 3.不要包括按钮、开关或其它交互式控件。  
+ - 4.使用`SpriteKit`场景，`SceneKit`场景或内嵌视频来生成视觉丰富的通知。  
 
 #### 运行时动态配置
 
@@ -130,12 +130,12 @@ Apple Watch和 iPhone是协同完成向用户分发通知的工作的。然而, 
 
 在通知的接收者中, 会有`Apple Watch 或 iPhone (取决于下方条件)`的情况。它就是一个过程条件, 系统去判断到底哪个设备是当前最有可能获取用户焦点的设备。具体的判断条件也很符合用户的日常习惯:  
 
- * 1.当 iPhone处于未锁屏的状态时, 通知将会推送至 iPhone上。  
- * 2.当 Apple Watch没有在用户的手腕上, 通知将会推送至 iPhone上。  
- * 3.当 Apple Watch在用户的手腕上, 且 iPhone处于锁屏状态时, 通知将会推送至 Watch上。  
- * 4.如果用户有多个 Apple Watch，通知则会推送到安装了相应 Watch App的那一台设备上。  
- * 5.在推送远程通知时, 如果通知推送至 Watch上后, iPhone端是可以收到通知的, 但不会有任何提醒, 甚至屏幕都不会亮起。  
- * 6.如果想在没有佩戴 Apple Watch时对其推送, 也可以在常规设置中禁用手腕检测选项。但需要确保 Apple Watch没在充电器上。  
+ - 1.当 iPhone处于未锁屏的状态时, 通知将会推送至 iPhone上。  
+ - 2.当 Apple Watch没有在用户的手腕上, 通知将会推送至 iPhone上。  
+ - 3.当 Apple Watch在用户的手腕上, 且 iPhone处于锁屏状态时, 通知将会推送至 Watch上。  
+ - 4.如果用户有多个 Apple Watch，通知则会推送到安装了相应 Watch App的那一台设备上。  
+ - 5.在推送远程通知时, 如果通知推送至 Watch上后, iPhone端是可以收到通知的, 但不会有任何提醒, 甚至屏幕都不会亮起。  
+ - 6.如果想在没有佩戴 Apple Watch时对其推送, 也可以在常规设置中禁用手腕检测选项。但需要确保 Apple Watch没在充电器上。  
 
 
 ## WatchOS 通知授权和配置
@@ -233,10 +233,10 @@ center.setNotificationCategories([generalCategory, expiredCategory])
 当用户点击通知的可操作按钮时，用户的响应将传递到 iOS App或 Watch Extension中去处理。哪个应用程序收到响应取决于当前`Action`是`前台模式`还是`后台模式`。在创建时如果不指定`UNNotificationAction`为`UNNotificationActionOptionForeground`选项, 则Action默认为后台操作。
 
 对于前台模式的操作, 始终由响应操作的设备去处理。对于后台操作，操作的处理还取决于通知被推送到哪个设备上：  
- * 1.对于前台模式的操作, 始终由响应操作的 App去处理。  
- * 2.对于 Apple Watch上本地通知的后台模式操作，由 Watch App处理。  
- * 3.对于在 iPhone上本地通知的后台模式操作，无论哪个设备显示通知，后台操作都是由 iOS App处理。  
- * 4.于远程通知的后台模式操作，无论哪个设备显示通知，后台操作始终由 iOS App处理。  
+ - 1.对于前台模式的操作, 始终由响应操作的 App去处理。  
+ - 2.对于 Apple Watch上本地通知的后台模式操作，由 Watch App处理。  
+ - 3.对于在 iPhone上本地通知的后台模式操作，无论哪个设备显示通知，后台操作都是由 iOS App处理。  
+ - 4.于远程通知的后台模式操作，无论哪个设备显示通知，后台操作始终由 iOS App处理。  
 
 总结如下表格:   
 

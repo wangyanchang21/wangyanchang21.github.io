@@ -11,7 +11,7 @@ Watch与 iPhone之间的通信、WatchConnectivity通信框架、数据共享等
 
 ------
 
-**WatchOS 开发教程系列文章:**   
+**WatchOS 开发教程系列文章:**    
 [WatchOS开发教程之一: Watch App架构及生命周期](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%B8%80)   
 [WatchOS开发教程之二: 布局适配和系统Icon设计尺寸](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%BA%8C)   
 [WatchOS开发教程之三: 导航方式和控件详解](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%B8%89)   

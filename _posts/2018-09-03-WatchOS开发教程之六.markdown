@@ -37,9 +37,9 @@ WatchOS表盘开发流程, 工作原理, 表盘类型和表盘模板类型总结
 ### 表盘开发的好处
 
 `Complications`功能不是必须的，但苹果官方强烈推荐 App支持此功能, 即使只是作为 App的启动器也好。好处如下：  
- * 1.当用户查看手表时, 它为你的 App提供了一个展示重要信息的机会。  
- * 2.它会将 App暂停在内存中。这样，当用户点击`Complications`时，系统可以快速唤醒你的 App。  
- * 3.它为你的 App的后台任务提供了更大的预算。  
+ - 1.当用户查看手表时, 它为你的 App提供了一个展示重要信息的机会。  
+ - 2.它会将 App暂停在内存中。这样，当用户点击`Complications`时，系统可以快速唤醒你的 App。  
+ - 3.它为你的 App的后台任务提供了更大的预算。  
 
 
 ## 表盘和模板的类型
@@ -345,10 +345,10 @@ public enum CLKComplicationFamily : Int {
 ## 表盘开发流程
 
 要支持 App的表盘开发功能，请执行以下操作：  
- * 1.配置 WatchKit Extension以告诉`ClockKit`支持表盘功能。  
- * 2.确定需要在表盘中展示的数据内容。  
- * 3.选择你的 App在每个系列中支持的模板。  
- * 4.实现表盘数据源对象(遵循CLKComplicationDataSource协议), 以此向`ClockKit`提供数据。  
+ - 1.配置 WatchKit Extension以告诉`ClockKit`支持表盘功能。  
+ - 2.确定需要在表盘中展示的数据内容。  
+ - 3.选择你的 App在每个系列中支持的模板。  
+ - 4.实现表盘数据源对象(遵循CLKComplicationDataSource协议), 以此向`ClockKit`提供数据。  
 
 
 ### 配置 WatchKit Extension
@@ -417,10 +417,10 @@ optional public func getLocalizableSampleTemplate(for complication: CLKComplicat
 ### 更新表盘数据
 
 `ClockKit`提供了几种在运行时更新并发症数据的方法：  
- * 1.WatchKit Extension运行时显式更新表盘数据。  
- * 2.安排后台应用程序刷新任务以更新表盘数据。  
- * 3.从 iOS App进行表盘数据传输来更新。  
- * 4.使用推送通知更新表盘数据。  
+ - 1.WatchKit Extension运行时显式更新表盘数据。  
+ - 2.安排后台应用程序刷新任务以更新表盘数据。  
+ - 3.从 iOS App进行表盘数据传输来更新。  
+ - 4.使用推送通知更新表盘数据。  
 
 
 每当应用为`Complications`提供新数据时，请调用`CLKComplicationServer`对象的`reloadTimelineForComplication:`或`extendTimelineForComplication:`方法来更新时间轴。前者方法删除并替换整个时间轴，而后者方法将数据添加到现有时间轴的末尾。
