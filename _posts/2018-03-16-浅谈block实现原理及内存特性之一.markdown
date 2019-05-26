@@ -1,0 +1,193 @@
+---
+title:  "浅谈block实现原理及内存特性之一: 内部结构和类型"
+date:   2018-03-16 17:01:20
+categories: [iOS, block]
+tags: [iOS, block]
+---
+
+block在ARC和MRC下的几种类型，block的内部结构和作用。
+
+[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)  
+
+------
+
+**浅谈block实现原理及内存特性系列文章:**   
+[浅谈block实现原理及内存特性之一: 内部结构和类型](https://blog.csdn.net/wangyanchang21/article/details/79525394)   
+[浅谈block实现原理及内存特性之二: 持有变量](https://blog.csdn.net/wangyanchang21/article/details/79785274)   
+[浅谈block实现原理及内存特性之三: copy过程分析](https://blog.csdn.net/wangyanchang21/article/details/79785308)   
+ 
+-------
+
+
+## 什么是block?
+
+`block`和函数类似, 只不过是直接定义在另一个函数里的, 和定义它的那个函数共享同一个范围内的东西。`block`可以实现闭包, 有些人也称它作`块`。
+
+
+## block 的内部结构和作用
+
+`block`是个什么东西呢, 对象? 结构体? 还是其它的什么东西?让我们来看一下`block`的内部结构:
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/blockexplore/20180312115212317.png" width="70%" img/>
+</center>
+
+当然, 这些Block官方源码我已经整理在我的博客资源中了, 可以在文章最后下载[Block官方源码](https://blog.csdn.net/wangyanchang21/article/details/79525394#t6), 然后在`Block_private.h` 查看, 这个结构和上图的结构一致代码中是这么定义`block`的:
+
+``` swift
+struct Block_layout {
+    void *isa;
+    int flags;
+    int reserved; 
+    void (*invoke)(void *, ...);
+    struct Block_descriptor *descriptor;
+    // imported variables
+};
+
+struct Block_descriptor {
+    unsigned long int reserved;
+    unsigned long int size;
+    void (*copy)(void *dst, void *src);
+    void (*dispose)(void *);
+};
+```
+
+
+通过上面的结构, 可以看出一个 `block` 实例的构成实际上有6个部分： 
+  
+ - 1.`isa指针`: 所有对象都有该指针，用于实现对象相关的功能。   
+ - 2.`flags`: 附加标识位, 在`copy`和`dispose`等情况下可以用到。   
+ - 3.`reserved`:保留变量。   
+ - 4.`invoke`: 函数指针，指向 `block`的实现代码, 也可以说是函数调用地址。   
+ - 5.`descriptor`:  表示该 `block`的附加描述信息，主要是 `size`，以及 `copy`和 `dispose`函数的指针。这两个辅助函数在拷贝及丢弃块对象时运行, 其中会执行一些操作, 比方说, 前者要保留捕获的对象,而后者则将之释放。   
+ - 6.`variables`: 捕获的变量，`block`能够访问它外部的局部变量，就是因为将这些变量复制到了结构体中。   
+
+
+## block的类型
+
+`block`其实是有类型的, 且一共有3种类型, `全局块`, `栈块`, `堆块`:   
+1.`__NSGlobalBlock__`: 存储在全局/静态的 block，不会捕获任何外部变量。  
+2.`__NSStackBlock__`: 存储在栈中的 block，当函数返回时会被销毁。   
+3.`__NSMallocBlock__`: 存储在堆中的 block，当引用计数为0时会被销毁。    
+
+这些类型是可以通过打印`block对象`来获取的类型信息。但是还有一些, 是不允许我们使用的原始数据类型, 他们只允许被编译器使用或者内部使用。这些Block官方源码我已经整理在我的博客资源中了, 可以在文章最后下载[Block官方源码](https://blog.csdn.net/wangyanchang21/article/details/79525394#t6), 然后在`Block_private.h` 文件中查看:
+
+``` swift
+// the raw data space for runtime classes for blocks
+// class+meta used for stack, malloc, and collectable based blocks
+BLOCK_EXPORT void * _NSConcreteGlobalBlock[32];
+BLOCK_EXPORT void * _NSConcreteStackBlock[32];
+BLOCK_EXPORT void * _NSConcreteMallocBlock[32];
+BLOCK_EXPORT void * _NSConcreteAutoBlock[32];
+BLOCK_EXPORT void * _NSConcreteFinalizingBlock[32];
+BLOCK_EXPORT void * _NSConcreteWeakBlockVariable[32];
+```
+
+这里的`_NSConcreteGlobalBlock`, `_NSConcreteStackBlock`, `_NSConcreteMallocBlock`就是上面那三种类型对应的原始类型。你只需要认识这几种原始类型就好, 我下面就按照之前三种类型来进行举例。 
+
+
+### NSGlobalBlock
+
+这种块不会捕捉任何变量, 运行时也无须有状态来参与。全局块声明在全局内存里, 在编译期已经完全确定了。所以, 无论是`ARC`还是`MRC`下, 如下代码中的 `block`都是全局静态的。
+
+``` swift
+// NSGlobalBlock
+- (void)globalBlock {
+    void (^block)(void) = ^{
+        NSLog(@"GlobalBlock内部");               // 全局静态区
+    };
+    block();
+    NSLog(@"GlobalBlock：%@", block);           // 全局静态区
+}
+```
+
+无论是`ARC`还是`MRC`下, 打印结果都一致如下:
+
+```
+// ARC下 和 MRC下
+GlobalBlock内部
+GlobalBlock：<__NSGlobalBlock__: 0x108e070d0>
+```
+
+可以看出block存储于全局静态区, 是`NSGlobalBlock`类型。
+
+
+### NSStackBlock 和 NSMallocBlock
+
+为什么把它们两者放在一起来说呢? `栈块`和`堆块`的表现可能比较复杂一些。而且, 下面这些代码在`ARC`和`MRC`的表现效果是不同的。还是先来看代码吧。
+
+``` swift
+// ARC下为NSMallocBlock(堆区), MRC下为NSStackBlock(栈区)
+- (void)stackBlockInMRCAndHeapBlockInARC {
+    __block int a = 0;
+    void (^block)(void) = ^{
+        a = 1;
+        NSLog(@"Block内部：%p", &a);
+    };
+    block();
+    NSLog(@"Block：%@", block);
+}
+```
+
+打印结果:
+
+```
+// MRC下
+Block内部：0x7ffee2bdaa58
+Block：<__NSStackBlock__: 0x7ffee2bdaa10>
+// ARC下
+Block内部：0x600000233e98
+Block：<__NSMallocBlock__: 0x60000025d8b0>
+```
+
+因此, 可以看出来在`MRC`下, block是存储于栈区的, 是`NSStackBlock`类型的。而在`ARC`下, block存储于堆区, 是`NSMallocBlock`类型的。
+
+要问`MRC`下有没有存储于堆区的block, 当然有了。但`block`默认会分配在栈区, 需要保留的话, 也可以手动改到堆区, 这样它就是`堆块`了。
+
+``` swift
+// MRC下为NSMallocBlock(堆区), ARC下为NSMallocBlock(堆区)
+- (void)heapBlock {
+    __block int a = 0;
+    void (^block)(void) = [^{
+        a = 1;
+        NSLog(@"MallocBlock内部：%p", &a);
+    } copy];
+    block();
+    NSLog(@"MallocBlock：%@", block);
+}
+```
+
+打印结果:
+
+```
+// MRC 下
+MallocBlock内部：0x600000229818
+MallocBlock：<__NSMallocBlock__: 0x600000446d20>
+// ARC 下
+MallocBlock内部：0x6000004250b8
+MallocBlock：<__NSMallocBlock__: 0x600000446e40>
+```
+
+由地址可以看出, block在`ARC`和`MRC`下都是存储于堆区的, 所以其类型是`NSMallocBlock`的。
+
+为了解决`栈块`在其变量作用域结束之后被释放的问题，我们需要把block `copy`到堆中，延长其生命周期。在开启ARC时，编译器会判断其是不是全局块, 若不是全局块则需要将block从栈`copy`到堆中，并自动生成相应代码。所以, 上面的例子中, 本不用手动添加`copy`代码的, `ARC`会帮我们来做这个事情。
+
+
+### block类型总结
+
+总结一下, 在`MRC`中, 可能有三种`block`, 就是`全局块`, `栈块`和`堆块`。 但是在`ARC`中, 一版情况下只有两种`block`, 即`全局块`和`堆块`。由于`ARC`已经能很好地处理对象的生命周期的管理, 所以都放到堆上管理, 不在使用`栈块`管理了, 所以就没有`栈块`的。
+
+而且捕获了变量的`block`默认会分配在栈区, 在`MRC`中需要保留的话, 可以手动改到堆区; 在`ARC`中, `block`也是在栈区的, 但编译器会并自动将其`copy`到堆中, 所以会存储在堆区。
+
+但是有一种例外情况，就是所创建的`block`没有被外部指针所持有的时候，编译器就不会做出将其拷贝的堆区的操作。所以这种情况下，是存在`栈块`的。
+
+
+## 相关资源下载
+
+[Demo下载: Block实现原理及内存特性](https://download.csdn.net/download/wangyanchang21/11042129)   
+[block官方源码: libclosure-38](https://download.csdn.net/download/wangyanchang21/10293026)
+
+-------
+
+欢迎指正, [wangyanchang21](https://github.com/wangyanchang21).
+

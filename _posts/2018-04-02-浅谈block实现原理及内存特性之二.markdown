@@ -1,0 +1,428 @@
+---
+title:  "浅谈block实现原理及内存特性之二: 持有变量"
+date:   2018-04-02 10:10:52 
+categories: [iOS, block]
+tags: [iOS, block]
+---
+
+block是如何进行持有变量的，__block是如何进行工作的。
+
+[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)  
+
+------
+
+**浅谈block实现原理及内存特性系列文章:**   
+[浅谈block实现原理及内存特性之一: 内部结构和类型](https://blog.csdn.net/wangyanchang21/article/details/79525394)   
+[浅谈block实现原理及内存特性之二: 持有变量](https://blog.csdn.net/wangyanchang21/article/details/79785274)   
+[浅谈block实现原理及内存特性之三: copy过程分析](https://blog.csdn.net/wangyanchang21/article/details/79785308)   
+ 
+----------
+
+
+## block如何持有变量
+
+我们在上面说过, `block`的结构体中有专门的内存区域是用来存储捕获的变量的。接下来说一下, 这些变量是如何持有的, 以及`__block`的作用原理是什么。
+
+### 通过clang工具分析代码实现
+
+这里, 在最前面说下, 我是使用`clang`工具来进行对`block`代码过程的分析的。 `clang` 可以将 Objetive-C的代码改写成 C语言的代码存在一个`.cpp`文件中，因此可以用参考其源码的实现方式。具体的命令行是:
+
+```
+$ cd 当前文件夹
+$ clang -rewrite-objc SomeFile.m
+```
+
+如果你在执行这个命令的时候出错了, 在我的另一篇博客中有一个解决方案: [fatal error: 'UIKit/UIKit.h' file not found](http://blog.csdn.net/wangyanchang21/article/details/79608668)。
+
+
+### block捕获局域变量
+
+#### 例子和打印结果
+
+先来看block捕获没有被`__block`修饰的局域变量的例子:
+
+``` swift
+- (void)captureVariable {
+    int a = 100;
+    NSLog(@"Block前：%p", &a);             // 栈区
+    void (^block)(void) = ^{
+        NSLog(@"Block内部：%p", &a);       // ARC下存储于堆区, MRC下存储于栈区
+    };
+    block();
+    NSLog(@"Block后：%p", &a);             // 栈区
+}
+```
+
+打印结果如下:
+
+```
+// MRC 下
+Block前：0x7ffee3ac9a5c
+Block内部：0x7ffee3ac9a48
+Block后：0x7ffee3ac9a5c
+// ARC 下: 
+Block前：0x7ffee4d91a5c
+Block内部：0x6000002590d0
+Block后：0x7ffee4d91a5c
+```
+
+由打印结果, 你可以发现一个现象, `block前`和`block后`的地址是相同的, 且与`block内部`的地址不同。因为默认情况下, block捕获的变量是不可以在`block内部`进行修改的。若想修改捕获的变量需要加`__block`进行修饰。
+
+另外, 在`MRC`下, 捕获的变量地址是在栈中的; 在`ARC`下, 捕获的变量地址是在堆中的。这恰恰就如我们上面所说的一样, block会将捕获了的变量会复制到自己的结构体中, 所以捕获的变量的内存区域与block所存储的内存区域一致。
+
+#### 原理分析
+
+首先, 我是在`MRC`! `MRC`! `MRC`! 环境下进行测试的, 通过`clang`转化后`block`的关键代码如下:
+
+``` swift
+struct __block_impl {
+  void *isa;
+  int Flags;
+  int Reserved;
+  void *FuncPtr;
+};
+struct __ViewController__captureVariable_block_impl_0 {
+  struct __block_impl impl;
+  struct __ViewController__captureVariable_block_desc_0* Desc;
+  int a;
+  __ViewController__captureVariable_block_impl_0(void *fp, struct __ViewController__captureVariable_block_desc_0 *desc, int _a, int flags=0) : a(_a) {
+    impl.isa = &_NSConcreteStackBlock;
+    impl.Flags = flags;
+    impl.FuncPtr = fp;
+    Desc = desc;
+  }
+};
+static void __ViewController__captureVariable_block_func_0(struct __ViewController__captureVariable_block_impl_0 *__cself) {
+  int a = __cself->a; // bound by copy
+
+        printf("Block内部：%p", &a);
+    }
+
+static struct __ViewController__captureVariable_block_desc_0 {
+  size_t reserved;
+  size_t Block_size;
+} __ViewController__captureVariable_block_desc_0_DATA = { 0, sizeof(struct __ViewController__captureVariable_block_impl_0)};
+
+static void _I_ViewController_captureVariable(ViewController * self, SEL _cmd) {
+    int a = 100;
+    printf("Block前：%p", &a);
+
+    void (*block)(void) = ((void (*)())&__ViewController__captureVariable_block_impl_0((void *)__ViewController__captureVariable_block_func_0, &__ViewController__captureVariable_block_desc_0_DATA, a));
+    ((void (*)(__block_impl *))((__block_impl *)block)->FuncPtr)((__block_impl *)block);
+    printf("Block后：%p", &a);
+}
+```
+
+在我所写的Demo中, 由于文件和方法名称比较冗长, 你也可以用一个`main函数`中的例子来代替, 这样阅读起来比较清晰。
+
+先来整体的分析一波, 对比文章开头提到的`block结构体`。   
+1.`__ViewController__captureVariable_block_impl_0` 就是该 `block`的实现, 它主要由一个 `isa`, 一个 `impl`和一个 `descriptor`组成。   
+2.`isa`指向`_NSConcreteStackBlock`, 说明block是分配在栈区的。   
+3.`impl`是实际的函数指针, 本例中它指向 `__ViewController__captureVariable_block_func_0`。这里的`impl` 就相当于之前的`invoke`变量, 只是`clang编译器`对变量的命名不一样。   
+4.`Desc` 是描述当前block附加信息的, 包括结构体的大小, 需要`capture`和`dispose`的变量列表等。   
+5.当block捕获到一些变量(如上例的`变量a`)的时候, 这些变量会加到`Desc`的后面, 使`__ViewController__captureVariable_block_impl_0`结构体变大。这也是为什么`Desc`中需要`size`的原因。   
+6.`_I_ViewController_captureVariable`函数就是我Demo中所写的`captureVariable`方法对应的函数。   
+
+下面继续说回来, 在`MRC`中`block`捕获了局域变量是个怎样的过程?
+
+通过上面的转化后的代码和分析, 可以看出局域变量a被捕获了, 并将局域变量a复制到`block`的结构体内。在`block内部`打印的变量a是复制到`block`的结构体内的变量a, 所以才会有`block前`和`block后`的地址是相同的, 且与`block内部`的地址不同。我们就能理解, 在block内部修改变量a的内容, 不会影响外部的实际变量a。
+
+
+### block捕获由__block修饰的变量
+
+#### 例子和打印结果
+
+block捕获由`__block`修饰的变量的例子:
+
+``` swift
+- (void)capture__blockVariable {
+    __block int a = 0;
+    NSLog(@"Block前：%p", &a);            // 栈区
+    void (^block)(void) = ^{
+        NSLog(@"Block内部：%p", &a);      // ARC下存储于堆区, MRC下存储于栈区
+    };
+    block();
+    NSLog(@"Block后：%p", &a);            // ARC下存储于堆区, MRC下存储于栈区
+}
+```
+
+打印结果如下:
+
+```
+// MRC 下
+Block前：0x7ffee0110a58
+Block内部：0x7ffee0110a58
+Block后：0x7ffee0110a58
+// ARC 下
+Block前：0x7ffee4d91a58
+Block内部：0x600000233578
+Block后：0x600000233578
+```
+
+当使用`__block`修饰后, 在`block内部`便可以修改捕获的变量了。先来看在`ARC`下, `block内部`和`block后`的地址是相同的都存在于堆中, 且与`block前`的地址不同。再来看在`MRC`下, `block前`, `block后`与`block内部`的地址是相同的, 且都是在栈中的。
+
+#### 原理分析
+
+在`MRC`环境下进行测试的, 通过`clang`转化后`block`的关键代码如下:
+
+``` swift
+struct __block_impl {
+  void *isa;
+  int Flags;
+  int Reserved;
+  void *FuncPtr;
+};
+struct __Block_byref_a_0 {
+  void *__isa;
+__Block_byref_a_0 *__forwarding;
+ int __flags;
+ int __size;
+ int a;
+};
+
+struct __ViewController__capture__blockVariable_block_impl_0 {
+  struct __block_impl impl;
+  struct __ViewController__capture__blockVariable_block_desc_0* Desc;
+  __Block_byref_a_0 *a; // by ref
+  __ViewController__capture__blockVariable_block_impl_0(void *fp, struct __ViewController__capture__blockVariable_block_desc_0 *desc, __Block_byref_a_0 *_a, int flags=0) : a(_a->__forwarding) {
+    impl.isa = &_NSConcreteStackBlock;
+    impl.Flags = flags;
+    impl.FuncPtr = fp;
+    Desc = desc;
+  }
+};
+static void __ViewController__capture__blockVariable_block_func_0(struct __ViewController__capture__blockVariable_block_impl_0 *__cself) {
+  __Block_byref_a_0 *a = __cself->a; // bound by ref
+
+        printf("Block内部：%p\n", &(a->__forwarding->a));
+    }
+static void __ViewController__capture__blockVariable_block_copy_0(struct __ViewController__capture__blockVariable_block_impl_0*dst, struct __ViewController__capture__blockVariable_block_impl_0*src) {_Block_object_assign((void*)&dst->a, (void*)src->a, 8/*BLOCK_FIELD_IS_BYREF*/);}
+
+static void __ViewController__capture__blockVariable_block_dispose_0(struct __ViewController__capture__blockVariable_block_impl_0*src) {_Block_object_dispose((void*)src->a, 8/*BLOCK_FIELD_IS_BYREF*/);}
+
+static struct __ViewController__capture__blockVariable_block_desc_0 {
+  size_t reserved;
+  size_t Block_size;
+  void (*copy)(struct __ViewController__capture__blockVariable_block_impl_0*, struct __ViewController__capture__blockVariable_block_impl_0*);
+  void (*dispose)(struct __ViewController__capture__blockVariable_block_impl_0*);
+} __ViewController__capture__blockVariable_block_desc_0_DATA = { 0, sizeof(struct __ViewController__capture__blockVariable_block_impl_0), __ViewController__capture__blockVariable_block_copy_0, __ViewController__capture__blockVariable_block_dispose_0};
+
+static void _I_ViewController_capture__blockVariable(ViewController * self, SEL _cmd) {
+    __attribute__((__blocks__(byref))) __Block_byref_a_0 a = {(void*)0,(__Block_byref_a_0 *)&a, 0, sizeof(__Block_byref_a_0), 0};
+    printf("Block前：%p\n", &(a.__forwarding->a));
+    void (*block)(void) = ((void (*)())&__ViewController__capture__blockVariable_block_impl_0((void *)__ViewController__capture__blockVariable_block_func_0, &__ViewController__capture__blockVariable_block_desc_0_DATA, (__Block_byref_a_0 *)&a, 570425344));
+    ((void (*)(__block_impl *))((__block_impl *)block)->FuncPtr)((__block_impl *)block);
+    printf("Block后：%p\n", &(a.__forwarding->a));
+}
+```
+
+与[block捕获局域变量例子](https://blog.csdn.net/wangyanchang21/article/details/79785274#t2)中作对比后, 会发现:   
+1.block中增加一个名为`__Block_byref_a_0`的结构体, 用来保存我们捕获并且要修改的变量a。   
+2.`__ViewController__capture__blockVariable_block_impl_0`中引用的是`__Block_byref_a_0`的结构体指针, 这样就可以达到修改外部变量的作用。   
+3.我们要负责`__Block_byref_a_0`结构体相关的内存管理, 所以在`__ViewController__capture__blockVariable_block_desc_0`中增加了`copy`和`dispose`函数指针, 对于在调用前后修改相应变量的引用计数。   
+4.经过`__block`修饰后的变量a, 在`block前`, `block后`与`block内部`都是取自于`a.__forwarding->a`或者`a->__forwarding->a`(它俩其实是同一个东西, 只因为由于前者和后者的类型不同, 需要的取值方式不同罢了)所以在`MRC`下, 打印变量a地址相同, 且都在栈区。但在`ARC`下是不同的, 因为`ARC`开启后, 编译器会自动进行一次`copy`, 将block存储于堆区了。   
+
+
+#### __block的作用
+
+在[block捕获局域变量例子](https://blog.csdn.net/wangyanchang21/article/details/79785274#t2)的`_I_ViewController_captureVariable`函数中, 首先定义变量`int a = 100`, 然后在构建block的时候(即构建`__ViewController__captureVariable_block_impl_0`), 传入的捕获变量是变量a的值(即传入a)。 所以对于block捕获的变量, block默认是将其复制到其数据结构中来实现访问的,  且block捕获的变量是在`block内部`进行修改是不会影响外部变量的。
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/blockexplore/20180315162231956.png" width="50%" img/>
+</center>
+
+在[block捕获由__block修饰的变量例子](https://blog.csdn.net/wangyanchang21/article/details/79785274#t5)的`_I_ViewController_capture__blockVariable`函数中, 首先定义了`__Block_byref_a_0`类型的变量a, 紧接着在构建block时(即构建`__ViewController__capture__blockVariable_block_impl_0`), 传入捕获变量a的地址(即传入&a)。所以对于block捕获的`__block`修饰的变量，block是复制其引用地址来实现访问的。自然就可以在`block内部`修改变量从而影响外部的变量了, 且block内外打印其地址都是同一个地址。
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/blockexplore/20180315162240775.png" width="50%" img/>
+</center>
+
+
+这就是为什么`__block`修饰后, 才可以修改捕获变量的原因。当然这是在`MRC`中, 在`ARC`中原理与此相同。 不同的是`ARC`下编译器会自动为我们`copy`当前block至堆区, 过程中又会有怎么样的区别呢? 那我们继续来看上面提到的一个变量`__forwarding`, 在后面[浅谈block实现原理及内存特性之三: copy过程分析](https://blog.csdn.net/wangyanchang21/article/details/79785308)中会详细讲到。
+
+### block捕获当前类的属性
+
+###例子和打印结果
+
+当属性变量被block捕获时, 原理与`捕获局域变量`和`捕获由__block修饰的变量`不完全相同。下面以捕获ViewController中的属性为例:
+
+``` swift
+// 捕获当前类的属性变量
+- (void)captureProperty {
+    _a = 100;
+    printf("Block前：%p\n", &_a);            // 栈区
+    void (^block)(void) = ^{
+        printf("Block内部：%p\n", &_a);       // 栈区
+    };
+    block();
+    printf("Block后：%p\n", &_a);            // 栈区
+}
+```
+
+打印结果:
+
+```
+// ARC下 和 MRC下
+Block前：0x7f89ef52ca90
+Block内部：0x7f89ef52ca90
+Block后：0x7f89ef52ca90
+```
+
+捕获当前类的属性变量, 打印的结果竟然都是在栈区, 无论是`ARC`还是`MRC`。来看下这是为何?
+
+#### 原理分析
+
+在MRC环境下进行测试的, 通过clang转化后block的关键代码如下:
+
+``` swift
+struct __ViewController__captureProperty_block_impl_0 {
+  struct __block_impl impl;
+  struct __ViewController__captureProperty_block_desc_0* Desc;
+  ViewController *self;
+  __ViewController__captureProperty_block_impl_0(void *fp, struct __ViewController__captureProperty_block_desc_0 *desc, ViewController *_self, int flags=0) : self(_self) {
+    impl.isa = &_NSConcreteStackBlock;
+    impl.Flags = flags;
+    impl.FuncPtr = fp;
+    Desc = desc;
+  }
+};
+static void __ViewController__captureProperty_block_func_0(struct __ViewController__captureProperty_block_impl_0 *__cself) {
+  ViewController *self = __cself->self; // bound by copy
+
+        printf("Block内部：%p\n", &(*(int *)((char *)self + OBJC_IVAR_$_ViewController$_a)));
+    }
+static void __ViewController__captureProperty_block_copy_0(struct __ViewController__captureProperty_block_impl_0*dst, struct __ViewController__captureProperty_block_impl_0*src) {_Block_object_assign((void*)&dst->self, (void*)src->self, 3/*BLOCK_FIELD_IS_OBJECT*/);}
+
+static void __ViewController__captureProperty_block_dispose_0(struct __ViewController__captureProperty_block_impl_0*src) {_Block_object_dispose((void*)src->self, 3/*BLOCK_FIELD_IS_OBJECT*/);}
+
+static struct __ViewController__captureProperty_block_desc_0 {
+  size_t reserved;
+  size_t Block_size;
+  void (*copy)(struct __ViewController__captureProperty_block_impl_0*, struct __ViewController__captureProperty_block_impl_0*);
+  void (*dispose)(struct __ViewController__captureProperty_block_impl_0*);
+} __ViewController__captureProperty_block_desc_0_DATA = { 0, sizeof(struct __ViewController__captureProperty_block_impl_0), __ViewController__captureProperty_block_copy_0, __ViewController__captureProperty_block_dispose_0};
+
+static void _I_ViewController_captureProperty(ViewController * self, SEL _cmd) {
+    (*(int *)((char *)self + OBJC_IVAR_$_ViewController$_a)) = 100;
+    printf("Block前：%p\n", &(*(int *)((char *)self + OBJC_IVAR_$_ViewController$_a)));
+    void (*block)(void) = ((void (*)())&__ViewController__captureProperty_block_impl_0((void *)__ViewController__captureProperty_block_func_0, &__ViewController__captureProperty_block_desc_0_DATA, self, 570425344));
+    ((void (*)(__block_impl *))((__block_impl *)block)->FuncPtr)((__block_impl *)block);
+    printf("Block后：%p\n", &(*(int *)((char *)self + OBJC_IVAR_$_ViewController$_a)));
+}
+```
+
+与`捕获局域变量`和`捕获由__block修饰的变量`相比:   
+1.在`__ViewController__captureProperty_block_impl_0`结构体中既不是`int a`, 也不是`__Block_byref_a_0 *a`。而是有一个`ViewController *self`, 即所捕获属性所属类的实例对象作为这个结构体的一部分。   
+2.在`block前`和`block后`打印属性其实是`(*(int *)((char *)self + OBJC_IVAR_$_ViewController$_a))`。   
+3.在`_I_ViewController_captureProperty`函数中, 构建block时, 传入的是当前的`self`。在`block内部`修改属性也是修改的当前传入的self的属性。这也是为什么打印`_a`的地址不管在`MRC`还是`ARC`中, 都是栈区的同一地址的原因。只因为它们指向同一个地址, 就是当前类的属性的地址。   
+
+
+### block捕获由__block修饰的对象
+
+这个情景实质上与[block捕获由__block修饰的变量](https://blog.csdn.net/wangyanchang21/article/details/79785274#t5)是相同的。区别就在于存储的变量不同, 之前是一个变量, 现在是一个对象, 而对象是具有指针地址和存储地址(即指针指向地址)的。既然我们在说内存特性, 干脆也将其总结一下, 还可以巩固对上面的知识认知。
+
+#### 例子和打印结果
+
+block捕获由`__block`修饰的对象变量的例子:
+
+``` swift
+- (void)capture__blockObject {
+    __block id a = [NSObject new];
+    NSLog(@"block前: a指向的地址%p, a指针的地址%p", a, &a);    // 指针存储于栈区, 指针指向堆区
+    void(^block)(void) = ^{
+        NSLog(@"block内: a指向的地址%p, a指针的地址%p", a, &a);    // 指针存储于栈区, 指针指向堆区
+    };
+    block();
+    NSLog(@"block后: a指向的地址%p, a指针的地址%p", a, &a);    // 指针存储于栈区, 指针指向堆区
+}
+```
+
+打印结果如下:
+
+```
+// MRC 下
+block前: a指向的地址0x6000002021f0, a指针的地址0x7ffee417ea58
+block内: a指向的地址0x6000002021f0, a指针的地址0x7ffee417ea58
+block后: a指向的地址0x6000002021f0, a指针的地址0x7ffee417ea58
+// ARC 下
+block前: a指向的地址0x6000000034b0, a指针的地址0x7ffee67c2a58
+block内: a指向的地址0x6000000034b0, a指针的地址0x60000005a938
+block后: a指向的地址0x6000000034b0, a指针的地址0x60000005a938
+```
+
+block捕获由`__block`修饰的对象变量后, 观察`block前`, `block后`与`block内部`打印结果。在`MRC`下, a指针指向的地址是相同的, 指向堆区的某区域; a指针的地址也是相同的, 是栈区的某区域。在`ARC`下, a指针指向的地址是相同的, 指向堆区的某区域; a指针在`block内部`和`block后`的地址是相同的都存在于堆中, 且与`block前`的地址不同。而且在[block捕获由__block修饰的变量](https://blog.csdn.net/wangyanchang21/article/details/79785274#t5)中变量a的地址和现在a指针的地址的表现形式是一致的。
+
+#### 原理分析
+
+在MRC环境下进行测试的, 通过clang转化后block的关键代码如下:
+
+``` swift
+struct __block_impl {
+  void *isa;
+  int Flags;
+  int Reserved;
+  void *FuncPtr;
+};
+struct __Block_byref_a_0 {
+  void *__isa;
+__Block_byref_a_0 *__forwarding;
+ int __flags;
+ int __size;
+ void (*__Block_byref_id_object_copy)(void*, void*);
+ void (*__Block_byref_id_object_dispose)(void*);
+ id a;
+};
+
+struct __ViewController__capture__blockObject_block_impl_0 {
+  struct __block_impl impl;
+  struct __ViewController__capture__blockObject_block_desc_0* Desc;
+  __Block_byref_a_0 *a; // by ref
+  __ViewController__capture__blockObject_block_impl_0(void *fp, struct __ViewController__capture__blockObject_block_desc_0 *desc, __Block_byref_a_0 *_a, int flags=0) : a(_a->__forwarding) {
+    impl.isa = &_NSConcreteStackBlock;
+    impl.Flags = flags;
+    impl.FuncPtr = fp;
+    Desc = desc;
+  }
+};
+static void __ViewController__capture__blockObject_block_func_0(struct __ViewController__capture__blockObject_block_impl_0 *__cself) {
+  __Block_byref_a_0 *a = __cself->a; // bound by ref
+
+        printf("block内: a指向的地址%p, a指针的地址%p\n", (a->__forwarding->a), &(a->__forwarding->a));
+    }
+static void __ViewController__capture__blockObject_block_copy_0(struct __ViewController__capture__blockObject_block_impl_0*dst, struct __ViewController__capture__blockObject_block_impl_0*src) {_Block_object_assign((void*)&dst->a, (void*)src->a, 8/*BLOCK_FIELD_IS_BYREF*/);}
+
+static void __ViewController__capture__blockObject_block_dispose_0(struct __ViewController__capture__blockObject_block_impl_0*src) {_Block_object_dispose((void*)src->a, 8/*BLOCK_FIELD_IS_BYREF*/);}
+
+static struct __ViewController__capture__blockObject_block_desc_0 {
+  size_t reserved;
+  size_t Block_size;
+  void (*copy)(struct __ViewController__capture__blockObject_block_impl_0*, struct __ViewController__capture__blockObject_block_impl_0*);
+  void (*dispose)(struct __ViewController__capture__blockObject_block_impl_0*);
+} __ViewController__capture__blockObject_block_desc_0_DATA = { 0, sizeof(struct __ViewController__capture__blockObject_block_impl_0), __ViewController__capture__blockObject_block_copy_0, __ViewController__capture__blockObject_block_dispose_0};
+
+static void _I_ViewController_capture__blockObject(ViewController * self, SEL _cmd) {
+    __attribute__((__blocks__(byref))) __Block_byref_a_0 a = {(void*)0,(__Block_byref_a_0 *)&a, 33554432, sizeof(__Block_byref_a_0), __Block_byref_id_object_copy_131, __Block_byref_id_object_dispose_131, ((NSObject *(*)(id, SEL))(void *)objc_msgSend)((id)objc_getClass("NSObject"), sel_registerName("new"))};
+    printf("block前: a指向的地址%p, a指针的地址%p\n", (a.__forwarding->a), &(a.__forwarding->a));
+    void(*block)(void) = ((void (*)())&__ViewController__capture__blockObject_block_impl_0((void *)__ViewController__capture__blockObject_block_func_0, &__ViewController__capture__blockObject_block_desc_0_DATA, (__Block_byref_a_0 *)&a, 570425344));
+    ((void (*)(__block_impl *))((__block_impl *)block)->FuncPtr)((__block_impl *)block);
+    printf("block后: a指向的地址%p, a指针的地址%p\n", (a.__forwarding->a), &(a.__forwarding->a));
+}
+```
+
+与前一个例子clang后的代码作对比后, 会发现其实改变的代码并不多, 主要的改变是结构体`__Block_byref_a_0`中的捕获变量类型。区别只在于结构体`__Block_byref_a_0`中的捕获变量a的类型, 这个例子中用`id类型`替换了之前例子中的`int类型`。这就是为什么上个例子中变量a的地址和现在例子中a指针地址的表现形式一致的原因。具体的实现过程就不絮述了, 与上个例子中的原理分析是相同的。
+
+再来说为什么无论是`MRC`还是`ARC`中, a指针指向的地址在`block前`, `block后`与`block内部`都是相同的, 且都是在堆区的。在`MRC`中, 变量a(即a指针)都是取自于初始定义对象a时的那个指针地址(指针当然是存储于栈中的了), 所以a指针的地址都是相同的。取出来的都是同一个指针, 所以指针指向的地址一定是相同的, 且指向堆区某块区域(对象存储于堆中)。
+
+在`ARC`中,  `block前`打印的变量a是取自于初始定义对象a时的那个指针地址; `block后`与`block内部`都是取自于block在`copy`至堆区之后的捕获变量a的地址。所以a指针在`block内部`和`block后`的地址是相同的都存在于堆中, 且与`block前`的地址不同。但是, 无论怎么改变, 这里的`copy`, 都是浅拷贝, 就是所谓的指针拷贝, 所以a指针指向的内存地址还是之前定义对象a的某块堆区区域。
+
+
+## 相关资源下载
+
+[Demo下载: Block实现原理及内存特性](https://download.csdn.net/download/wangyanchang21/11042129)   
+[block官方源码: libclosure-38](https://download.csdn.net/download/wangyanchang21/10293026)   
+
+-------
+
+欢迎指正, [wangyanchang21](https://github.com/wangyanchang21).
+
+

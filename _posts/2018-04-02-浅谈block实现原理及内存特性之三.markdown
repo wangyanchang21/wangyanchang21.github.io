@@ -1,0 +1,269 @@
+---
+title:  "浅谈block实现原理及内存特性之三: copy过程分析"
+date:   2018-04-02 10:12:53 
+categories: [iOS, block]
+tags: [iOS, block]
+---
+
+__block和__forwarding的原理，以及block是如何进行自身copy的。
+
+[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)  
+
+------
+
+**浅谈block实现原理及内存特性系列文章:**   
+[浅谈block实现原理及内存特性之一: 内部结构和类型](https://blog.csdn.net/wangyanchang21/article/details/79525394)   
+[浅谈block实现原理及内存特性之二: 持有变量](https://blog.csdn.net/wangyanchang21/article/details/79785274)   
+[浅谈block实现原理及内存特性之三: copy过程分析](https://blog.csdn.net/wangyanchang21/article/details/79785308)   
+
+-----
+
+## block是如何进行copy
+
+### block由栈copy到堆的过程
+
+`ARC`下编译器自动`copy`当前block至堆区的过程。默认分配在栈上的block, 如果其所属的作用域结束, 该block就被释放, 当然, block中的所有变量也会被释放。为了解决`栈块`在其变量作用域结束之后被释放的问题，我们需要把block `copy`到堆中，延长其生命周期。在开启ARC时，编译器会判断其是不是全局块, 若不是全局块则需要将block从栈`copy`到堆中，并自动生成相应代码。这样, 栈中的block就可以释放了, 我们可以通过堆中的block来继续进行一系列操作。
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/blockexplore/2018031517042415.png" width="80%" img/>
+</center>
+
+### __forwarding
+
+了解上面的过程后, 再来说一说`__forwarding`, 它是结构体`__Block_byref_a_0`的组成部分, 且它的类型是`__Block_byref_a_0 *`。
+
+``` swift
+struct __Block_byref_a_0 {
+  void *__isa;
+__Block_byref_a_0 *__forwarding;
+ int __flags;
+ int __size;
+ int a;
+};
+```
+
+已知在`MRC`下[block捕获由__block修饰的变量的例子](https://blog.csdn.net/wangyanchang21/article/details/79785274#t5)中, 打印变量a是都是取自于`a.__forwarding->a`或者`a->__forwarding->a`(它俩其实是同一个东西, 只因为由于前者和后者的类型不同, 需要的取值方式不同罢了)。当然在`ARC`中也是一样的从`a.__forwarding->a`或者`a->__forwarding->a`中取值, 但区别在于, `__forwarding`所指向的地址不同。
+
+先看看上面在`MRC`的例子中, `_I_ViewController_capture__blockVariable`函数中, 变量a是这么定义的:
+
+``` swift
+__attribute__((__blocks__(byref))) __Block_byref_a_0 a = {(void*)0,(__Block_byref_a_0 *)&a, 0, sizeof(__Block_byref_a_0), 0};
+```
+
+在结合`__Block_byref_a_0`的结构体组成, 可以看出定义变量a时, `__forwarding`传入的值是&a, 也就是变量a本身。所以`a->__forwarding->a`取出来的值与`a->a`相同的。所以在`MRC`下, `block前`, `block后`与`block内部`的地址是相同的, 且都是在栈中的。
+
+原理如下图表示:
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/blockexplore/2018031518461222.png" width="80%" img/>
+</center>
+
+如果同样的代码放到`ARC`中, 再来看一看`__forwarding`所指向的地址。如下图所示, 在栈上的`__block变量`被复制到堆上之后，原栈中block的成员变量`__forwarding`将会指向拷贝到堆上之后的`__Block_byref_a_0`变量。所以在`ARC`下, `block内部`和`block后`的地址是相同的都存在于堆中, 且与`block前`的地址不同。
+原理如下图表示:
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/blockexplore/20180315184628513.png" width="80%" img/>
+</center>
+
+
+我们来验证下, 在栈上`copy`后的block中的`__forwarding`到底是不是指向堆上的`__Block_byref_a_0`变量。
+
+``` swift
+// MRC 下验证__forwarding的指向
+- (void)verify__forwarding {
+    __block int a = 100;
+    printf("Block前：%p\n", &a);                  // 栈区
+    void (^stackBlock)(void) = ^{
+        printf("Block内部：%p\n", &a);
+    };
+    stackBlock();
+    void (^heapBlock)(void) = [stackBlock copy];
+    printf("StackBlock：%p\n", stackBlock);       // 栈区
+    printf("HeapBlock：%p\n", heapBlock);        // 堆区
+    stackBlock();
+    heapBlock();
+}
+```
+
+打印结果如下:
+
+```
+Block前：0x7ffeeac8ba58			// 1
+Block内部：0x7ffeeac8ba58		// 2
+StackBlock：0x7ffeeac8ba00		// 3
+HeapBlock：0x600000248130		// 4
+Block内部：0x60000023acb8		// 5
+Block内部：0x60000023acb8		// 6
+```
+
+例子中的关键代码是, 将`stackBlock`拷贝给`heapBlock`前后对`stackBlock()`调用的打印结果, 即第2行和第5行。可以看到打印block内部捕获的变量a, 之前是栈区的, 而之后是堆区的。 在联系我们上面的原理分析的代码, 打印变量a其实是打印的`a->__forwarding->a`。恰恰可以证明, 在block拷贝后, `stackBlock`的`__forwarding`指向了`heapBlock`的`__Block_byref_a_0`变量。
+
+### Block_copy()的源码探究
+
+在`Block.h`中对block的`copy`有以下定义：
+
+``` swift
+BLOCK_EXPORT void *_Block_copy(const void *aBlock)
+    __OSX_AVAILABLE_STARTING(__MAC_10_6, __IPHONE_3_2);
+```
+
+然后, 找出block的源码`libclosure-38`, 其中的`runtime.c`中有具体的实现:
+
+``` swift
+void *_Block_copy(const void *arg) {
+    return _Block_copy_internal(arg, WANTS_ONE);
+}
+
+// Copy, or bump refcount, of a block.  If really copying, call the copy helper if present.
+static void *_Block_copy_internal(const void *arg, const int flags) {
+    struct Block_layout *aBlock;
+    const bool wantsOne = (WANTS_ONE & flags) == WANTS_ONE;
+
+    //printf("_Block_copy_internal(%p, %x)\n", arg, flags);	
+    if (!arg) return NULL;
+    
+    
+    // The following would be better done as a switch statement
+    aBlock = (struct Block_layout *)arg;
+    if (aBlock->flags & BLOCK_NEEDS_FREE) {
+        // latches on high
+        latching_incr_int(&aBlock->flags);
+        return aBlock;
+    }
+    else if (aBlock->flags & BLOCK_IS_GC) {
+        // GC refcounting is expensive so do most refcounting here.
+        if (wantsOne && ((latching_incr_int(&aBlock->flags) & BLOCK_REFCOUNT_MASK) == 1)) {
+            // Tell collector to hang on this - it will bump the GC refcount version
+            _Block_setHasRefcount(aBlock, true);
+        }
+        return aBlock;
+    }
+    else if (aBlock->flags & BLOCK_IS_GLOBAL) {
+        return aBlock;
+    }
+
+    // Its a stack block.  Make a copy.
+    if (!isGC) {
+        struct Block_layout *result = malloc(aBlock->descriptor->size);
+        if (!result) return (void *)0;
+        memmove(result, aBlock, aBlock->descriptor->size); // bitcopy first
+        // reset refcount
+        result->flags &= ~(BLOCK_REFCOUNT_MASK);    // XXX not needed
+        result->flags |= BLOCK_NEEDS_FREE | 1;
+        result->isa = _NSConcreteMallocBlock;
+        if (result->flags & BLOCK_HAS_COPY_DISPOSE) {
+            //printf("calling block copy helper %p(%p, %p)...\n", aBlock->descriptor->copy, result, aBlock);
+            (*aBlock->descriptor->copy)(result, aBlock); // do fixup
+        }
+        return result;
+    }
+    else {
+        // Under GC want allocation with refcount 1 so we ask for "true" if wantsOne
+        // This allows the copy helper routines to make non-refcounted block copies under GC
+        unsigned long int flags = aBlock->flags;
+        bool hasCTOR = (flags & BLOCK_HAS_CTOR) != 0;
+        struct Block_layout *result = _Block_allocator(aBlock->descriptor->size, wantsOne, hasCTOR);
+        if (!result) return (void *)0;
+        memmove(result, aBlock, aBlock->descriptor->size); // bitcopy first
+        // reset refcount
+        // if we copy a malloc block to a GC block then we need to clear NEEDS_FREE.
+        flags &= ~(BLOCK_NEEDS_FREE|BLOCK_REFCOUNT_MASK);   // XXX not needed
+        if (wantsOne)
+            flags |= BLOCK_IS_GC | 1;
+        else
+            flags |= BLOCK_IS_GC;
+        result->flags = flags;
+        if (flags & BLOCK_HAS_COPY_DISPOSE) {
+            //printf("calling block copy helper...\n");
+            (*aBlock->descriptor->copy)(result, aBlock); // do fixup
+        }
+        if (hasCTOR) {
+            result->isa = _NSConcreteFinalizingBlock;
+        }
+        else {
+            result->isa = _NSConcreteAutoBlock;
+        }
+        return result;
+    }
+}
+```
+
+这部分代码的逻辑是这样的:   
+1.如果传入的`参数arg`为`NULL`, 则返回`NULL`。   
+2.将`参数arg`转换为指向`aBlock`的结构体指针(struct Block_layout *)。内部数据结构组成了一个块，其中包含一个指向块的实现函数和各种元数据的指针。   
+3.如果块的标志包含`BLOCK_NEEDS_FREE`, 那么该块是一个堆块。在这种情况下，所需要做的就是引用计数需要递增，然后返回相同的块。   
+4.如果块的标志包含`BLCOK_IS_GC`, 这是MAC开发, 且是`Mac Os X 10.8`之前的版本。 因为从`Mac Os X 10.8`开始, 垃圾收集器(garbage collector)已经正式废弃了, 以Objective-C代码编写`Mac OS X`程序时不应再使用它, 而iOS从未支持过垃圾收集。因为这里我们之研究iOS, 所以与GC相关的部分就不分析了。   
+5.如果块的标志包含`BLOCK_IS_GLOBAL`, 那么该块是一个全局块，那么直接返回相同的块。这是因为全局块即时对其`copy`也不会有什么变化的原因。   
+6.然后, GC的情况下我们不做讨论。如果不是GC的话, 那么块必须是一个栈区的块。在这种情况下，块需要被复制到堆中。在这第一步中，`malloc()`用于创建所需大小的一部分内存。如果创建失败，那么会`NULL`。   
+7.`memmove()`用于将当前栈块按位复制到刚刚分配给堆块的内存中。这只是确保所有元数据都被复制。   
+8.然后更新块的标志。`BLOCK_REFCOUNT_MASK`那行是确保引用计数被设置为0的。注释表明这一行不是必需的。下一行设置`BLOCK_NEEDS_FREE`标志。这表明它是一个堆块，并且支持它的内存会一旦引用计数下降到0就需要释放。在`| 1`这一行设置块为1的引用计数。   
+9.这里块的`isa指针`被设置为`_NSConcreteMallocBlock`，这也意味着它是一个堆块。
+10.如果块有一个复制辅助函数，则调用它。如果需要，编译器将生成复制辅助功能。例如，它需要捕获对象的块。在这种情况下，副本辅助功能将保留捕获的对象。   
+
+## 其它block源码
+
+在上面的代码中, 可以看到block的`flags`用到了很多, 它的枚举中有如下几种:
+
+``` swift
+enum {
+    BLOCK_REFCOUNT_MASK =     (0xffff),
+    BLOCK_NEEDS_FREE =        (1 << 24),
+    BLOCK_HAS_COPY_DISPOSE =  (1 << 25),
+    BLOCK_HAS_CTOR =          (1 << 26), // helpers have C++ code
+    BLOCK_IS_GC =             (1 << 27),
+    BLOCK_IS_GLOBAL =         (1 << 28),
+    BLOCK_HAS_DESCRIPTOR =    (1 << 29),
+};
+```
+
+上面讲过了`Block_copy()`的源码, 还有在文章初始提到的辅助函数`dispose`, 如下:
+
+``` swift
+void _Block_object_dispose(const void *object, const int flags) {
+    //printf("_Block_object_dispose(%p, %x)\n", object, flags);
+    if (flags & BLOCK_FIELD_IS_BYREF)  {
+        // get rid of the __block data structure held in a Block
+        _Block_byref_release(object);
+    }
+    else if ((flags & (BLOCK_FIELD_IS_BLOCK|BLOCK_BYREF_CALLER)) == BLOCK_FIELD_IS_BLOCK) {
+        // get rid of a referenced Block held by this Block
+        // (ignore __block Block variables, compiler doesn't need to call us)
+        _Block_destroy(object);
+    }
+    else if ((flags & (BLOCK_FIELD_IS_WEAK|BLOCK_FIELD_IS_BLOCK|BLOCK_BYREF_CALLER)) == BLOCK_FIELD_IS_OBJECT) {
+        // get rid of a referenced object held by this Block
+        // (ignore __block object variables, compiler doesn't need to call us)
+        _Block_release_object(object);
+    }
+}
+```
+
+当`Blocks`或`Block_byrefs`保存对象时，它们的销毁辅助程序调用此入口点来帮助处理内容，这些内容最初仅用于`__attribute __((NSObject))`标记的指针。
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/blockexplore/20180323111909313.png" width="40%" img/>
+</center>
+
+
+本文在最后就不做总结了, 如果总结也是一个复述式的总结。但本文的目录结构足以说明一切, 就权当一个层次复述吧。对`block`的研究和探讨就到这里, 若有疑问, 欢迎来[我的博客](http://blog.csdn.net/wangyanchang21)进行指正。
+
+
+
+## 参考资料及下载
+
+下载资料:   
+[Demo下载: Block实现原理及内存特性](https://download.csdn.net/download/wangyanchang21/11042129)   
+[block官方源码: libclosure-38](https://download.csdn.net/download/wangyanchang21/10293026)   
+
+参考资料:    
+[Effective OC之块与大中枢派发(Block和GCD)](https://blog.csdn.net/wangyanchang21/article/details/80340873)   
+[Block Implementation Specification](https://clang.llvm.org/docs/Block-ABI-Apple.html)   
+[How blocks are implemented (and the consequences)](https://www.cocoawithlove.com/2009/10/how-blocks-are-implemented-and.html)
+[A look inside blocks: Episode 3 (Block_copy)](http://www.galloway.me.uk/2013/05/a-look-inside-blocks-episode-3-block-copy/)   
+[谈Objective-C block的实现](http://blog.devtang.com/2013/07/28/a-look-inside-blocks/)   
+
+-----
+
+欢迎指正, [wangyanchang21](https://github.com/wangyanchang21).
+
+
