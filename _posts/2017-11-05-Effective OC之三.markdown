@@ -11,14 +11,14 @@ Objective-C的命名规则及命名空间，私有方法的处理。另外，还
 
 ------
 
-**高效 OC开发系列文章：**   
-[高效 OC开发之熟悉Objective-C](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%80)  
-[高效 OC开发之对象、消息、运行时](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%BA%8C)  
-[高效 OC开发之接口与API设计](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%89)  
-[高效 OC开发之协议与分类](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E5%9B%9B)  
-[高效 OC开发之内存管理](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%BA%94)  
-[高效 OC开发之Block和GCD](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E5%85%AD)  
-[高效 OC开发之系统框架](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%B8%83)  
+- [⑮ 用前缀避免命名空间冲突](#-用前缀避免命名空间冲突)
+- [⑯ 提供“全能初始化方法”](#-提供全能初始化方法)
+- [⑰ 实现description方法](#-实现description方法)
+- [⑱ 尽量使用不可变对象](#-尽量使用不可变对象)
+- [⑲ 使用清晰而协调的命名方式](#-使用清晰而协调的命名方式)
+- [⑳ 为私有方法名加前缀](#-为私有方法名加前缀)
+- [㉑ 理解Objective-C 错误模型](#-理解objective-c-错误模型)
+- [㉒ 理解NSCopying协议](#-理解nscopying协议)
 
 -------
 
@@ -240,6 +240,18 @@ Objective-C语言现在所采用的办法是: 只在极其罕见的情况下抛�
  - 2.如果自定义的对象分为可变版本和不可变版本，那么就要同时实现`NSCopying`与`NSMutableCopying`协议
  - 3.复制对象时需决定采用浅拷贝还是深拷贝，一般情况下应该尽量执行浅拷贝
  - 4.如果你写的对象需要深拷贝，那么可考虑新增一个专门执行深拷贝的方法
+
+
+
+
+相关资料：   
+[高效 OC开发之熟悉Objective-C](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%80)  
+[高效 OC开发之对象、消息、运行时](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%BA%8C)  
+[高效 OC开发之接口与API设计](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%89)  
+[高效 OC开发之协议与分类](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E5%9B%9B)  
+[高效 OC开发之内存管理](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%BA%94)  
+[高效 OC开发之Block和GCD](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E5%85%AD)  
+[高效 OC开发之系统框架](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%B8%83)  
 
 -------
 

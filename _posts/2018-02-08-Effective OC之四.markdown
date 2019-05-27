@@ -11,14 +11,12 @@ tags: [iOS, Effective OC]
 
 ------
 
-**高效 OC开发系列文章：**   
-[高效 OC开发之熟悉Objective-C](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%80)  
-[高效 OC开发之对象、消息、运行时](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%BA%8C)  
-[高效 OC开发之接口与API设计](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%89)  
-[高效 OC开发之协议与分类](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E5%9B%9B)  
-[高效 OC开发之内存管理](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%BA%94)  
-[高效 OC开发之Block和GCD](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E5%85%AD)  
-[高效 OC开发之系统框架](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%B8%83)  
+- [㉓ 通过委托与数据源协议进行对象间通信](#-通过委托与数据源协议进行对象间通信)
+- [㉔ 将类的实现代码分散到便于管理的数个分类之中](#-将类的实现代码分散到便于管理的数个分类之中)
+- [㉖ 勿在分类中声明属性](#-勿在分类中声明属性)
+- [㉗ 使用“Extension扩展”隐藏实现细节](#-使用extension扩展隐藏实现细节)
+- [㉘ 通过协议提供匿名对象](#-通过协议提供匿名对象)  
+
 
 -------
 
@@ -297,7 +295,7 @@ OC中的`Extension`, 即扩展, 也被称为`class-continuation`分类。这是�
  - 4.若想使类所遵循的协议不为人所知, 则可于`Extension扩展`中声明。
 
 
-## 通过协议提供匿名对象
+## ㉘ 通过协议提供匿名对象
 
 我们可以用协议把自己所写的API之中的实现细节隐藏起来, 将返回的对象设计为遵从此协议的纯`id类型`。这样的话, 想要隐藏的类名就不会出现在API之中了。若是接口背后有多个不同的实现类,而你又不想指明具体使用哪个类, 那么可以考虑使用这个方法。
 
@@ -328,6 +326,17 @@ OC中的`Extension`, 即扩展, 也被称为`class-continuation`分类。这是�
  - 2.使用匿名对象来隐藏类型名称(或类名)
  - 3.如果具体类型不重要，重要的是对象能够响应特定方法，那么可以是使用匿名对象来表示。
 
+
+
+
+相关资料：   
+[高效 OC开发之熟悉Objective-C](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%80)  
+[高效 OC开发之对象、消息、运行时](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%BA%8C)  
+[高效 OC开发之接口与API设计](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%89)  
+[高效 OC开发之协议与分类](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E5%9B%9B)  
+[高效 OC开发之内存管理](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%BA%94)  
+[高效 OC开发之Block和GCD](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E5%85%AD)  
+[高效 OC开发之系统框架](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%B8%83)  
 
 -------
 

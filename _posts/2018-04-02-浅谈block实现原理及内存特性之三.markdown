@@ -11,10 +11,12 @@ __block和__forwarding的原理，以及block是如何进行自身copy的。
 
 ------
 
-**浅谈block实现原理及内存特性系列文章:**   
-[浅谈block实现原理及内存特性之一: 内部结构和类型](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%B8%80)   
-[浅谈block实现原理及内存特性之二: 持有变量](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%BA%8C)   
-[浅谈block实现原理及内存特性之三: copy过程分析](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%B8%89)    
+- [block是如何进行copy](#block是如何进行copy)
+	- [block由栈copy到堆的过程](#block由栈copy到堆的过程)
+	- [__forwarding](#__forwarding)
+	- [Block_copy()的源码探究](#block_copy的源码探究)
+- [其它block源码](#其它block源码)
+- [相关资料](#相关资料)
 
 -----
 
@@ -249,18 +251,17 @@ void _Block_object_dispose(const void *object, const int flags) {
 
 
 
-## 参考资料及下载
+## 相关资料
 
-下载资料:   
-[Demo下载: Block实现原理及内存特性](https://download.csdn.net/download/wangyanchang21/11042129)   
-[block官方源码: libclosure-38](https://download.csdn.net/download/wangyanchang21/10293026)   
-
-参考资料:    
-[Effective OC之块与大中枢派发(Block和GCD)](https://blog.csdn.net/wangyanchang21/article/details/80340873)   
+[浅谈block实现原理及内存特性之一: 内部结构和类型](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%B8%80)    
+[浅谈block实现原理及内存特性之二: 持有变量](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%BA%8C)   
+[浅谈block实现原理及内存特性之三: copy过程分析](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%B8%89)   
 [Block Implementation Specification](https://clang.llvm.org/docs/Block-ABI-Apple.html)   
 [How blocks are implemented (and the consequences)](https://www.cocoawithlove.com/2009/10/how-blocks-are-implemented-and.html)
 [A look inside blocks: Episode 3 (Block_copy)](http://www.galloway.me.uk/2013/05/a-look-inside-blocks-episode-3-block-copy/)   
 [谈Objective-C block的实现](http://blog.devtang.com/2013/07/28/a-look-inside-blocks/)   
+[Demo下载: Block实现原理及内存特性](https://download.csdn.net/download/wangyanchang21/11042129)   
+[block官方源码: libclosure-38](https://download.csdn.net/download/wangyanchang21/10293026) 
 
 -----
 

@@ -11,14 +11,15 @@ tags: [iOS, Effective OC]
 
 ------
 
-**高效 OC开发系列文章：**   
-[高效 OC开发之熟悉Objective-C](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%80)  
-[高效 OC开发之对象、消息、运行时](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%BA%8C)  
-[高效 OC开发之接口与API设计](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%89)  
-[高效 OC开发之协议与分类](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E5%9B%9B)  
-[高效 OC开发之内存管理](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%BA%94)  
-[高效 OC开发之Block和GCD](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E5%85%AD)  
-[高效 OC开发之系统框架](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%B8%83)  
+- [⑥ 理解属性的概念](#-理解属性的概念)
+- [⑦ 在对象内部尽量直接访问实例变量](#-在对象内部尽量直接访问实例变量)
+- [⑧ 理解"对象等同性"](#-理解对象等同性)
+- [⑨ 以"类簇模式"隐藏实现细节](#-以类簇模式隐藏实现细节)
+- [⑩ 在既有类中使用关联对象存放自定义数据](#-在既有类中使用关联对象存放自定义数据)
+- [⑪ 理解objc_msgSend的作用](#-理解objc_msgsend的作用)
+- [⑫ 理解消息转发机制](#-理解消息转发机制)
+- [⑬ 用“方法调配技术”调试“黑盒方法”](#-用方法调配技术调试黑盒方法)
+- [⑭ 理解“类对象”的用意](#-理解类对象的用意)
 
 -------
 
@@ -698,6 +699,16 @@ if ([object class] == [EOCSomeClassclass]) {
  - 1.每个实例都有一个指向Class对象的指针，用以表明其类型，而这些Class对象则构成了类的继承体系。
  - 2.如果对象类型无法在编译期确定，那么就应该使用类型信息查询方法来探知。
  - 3,尽量使用类型信息查询方法来确定对象类型，而不要直接比较类对象，因为某些对象可能实现了消息转发功能。
+
+
+相关资料：   
+[高效 OC开发之熟悉Objective-C](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%80)  
+[高效 OC开发之对象、消息、运行时](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%BA%8C)  
+[高效 OC开发之接口与API设计](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%89)  
+[高效 OC开发之协议与分类](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E5%9B%9B)  
+[高效 OC开发之内存管理](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%BA%94)  
+[高效 OC开发之Block和GCD](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E5%85%AD)  
+[高效 OC开发之系统框架](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%B8%83)  
 
 -------
 

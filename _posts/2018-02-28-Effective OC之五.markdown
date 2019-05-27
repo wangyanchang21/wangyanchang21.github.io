@@ -11,14 +11,14 @@ tags: [iOS, Effective OC]
 
 ------
 
-**高效 OC开发系列文章：**   
-[高效 OC开发之熟悉Objective-C](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%80)  
-[高效 OC开发之对象、消息、运行时](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%BA%8C)  
-[高效 OC开发之接口与API设计](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%89)  
-[高效 OC开发之协议与分类](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E5%9B%9B)  
-[高效 OC开发之内存管理](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%BA%94)  
-[高效 OC开发之Block和GCD](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E5%85%AD)  
-[高效 OC开发之系统框架](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%B8%83)  
+- [㉙ 理解引用计数](#-理解引用计数)
+- [㉚ 以ARC简化引用计数](#-以arc简化引用计数)
+- [㉛ 在dealloc方法中只释放引用并解除监听](#-在-dealloc方法中只释放引用并解除监听)
+- [㉜ 编写“异常安全代码”时留意内存管理问题](#-编写异常安全代码时留意内存管理问题)
+- [㉝ 以弱引用避免保留环](#-以弱引用避免保留环)
+- [㉞ 以“自动释放池块”降低内存峰值](#-以自动释放池块降低内存峰值)
+- [㉟ 用“僵尸对象”调试内存管理问题](#-用僵尸对象调试内存管理问题)
+- [㊱ 不要使用 retain Count](#-不要使用-retain-count)
 
 -------
 
@@ -502,6 +502,18 @@ after release: 18446744073709551615
  - 1.对象的保留计数看似有用，实则不然，因为任何给定时间点上的`绝对保留计数`(absolute retain count)都无法反映对象生命期的全貌。
  - 2.我们不应该总是依赖保留计数的具体值来编码。
  - 3.引入`ARC`之后，retainCount方法就正式废止了，在`ARC`下调用该方法会导致编译器报错。
+
+
+
+
+相关资料：   
+[高效 OC开发之熟悉Objective-C](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%80)  
+[高效 OC开发之对象、消息、运行时](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%BA%8C)  
+[高效 OC开发之接口与API设计](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%89)  
+[高效 OC开发之协议与分类](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E5%9B%9B)  
+[高效 OC开发之内存管理](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%BA%94)  
+[高效 OC开发之Block和GCD](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E5%85%AD)  
+[高效 OC开发之系统框架](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%B8%83)  
 
 
 -------

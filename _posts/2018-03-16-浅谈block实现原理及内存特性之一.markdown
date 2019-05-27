@@ -11,10 +11,13 @@ block在ARC和MRC下的几种类型，block的内部结构和作用。
 
 ------
 
-**浅谈block实现原理及内存特性系列文章:**   
-[浅谈block实现原理及内存特性之一: 内部结构和类型](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%B8%80)   
-[浅谈block实现原理及内存特性之二: 持有变量](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%BA%8C)   
-[浅谈block实现原理及内存特性之三: copy过程分析](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%B8%89)   
+- [什么是block?](#什么是block)
+- [block 的内部结构和作用](#block-的内部结构和作用)
+- [block的类型](#block的类型)
+	- [NSGlobalBlock](#nsglobalblock)
+	- [NSStackBlock 和 NSMallocBlock](#nsstackblock-和-nsmallocblock)
+	- [block类型总结](#block类型总结)
+- [相关资料](#相关资料)
  
 -------
 
@@ -182,10 +185,13 @@ MallocBlock：<__NSMallocBlock__: 0x600000446e40>
 但是有一种例外情况，就是所创建的`block`没有被外部指针所持有的时候，编译器就不会做出将其拷贝的堆区的操作。所以这种情况下，是存在`栈块`的。
 
 
-## 相关资源下载
+## 相关资料
 
+[浅谈block实现原理及内存特性之一: 内部结构和类型](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%B8%80)    
+[浅谈block实现原理及内存特性之二: 持有变量](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%BA%8C)   
+[浅谈block实现原理及内存特性之三: copy过程分析](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%B8%89)   
 [Demo下载: Block实现原理及内存特性](https://download.csdn.net/download/wangyanchang21/11042129)   
-[block官方源码: libclosure-38](https://download.csdn.net/download/wangyanchang21/10293026)
+[block官方源码: libclosure-38](https://download.csdn.net/download/wangyanchang21/10293026)   
 
 -------
 

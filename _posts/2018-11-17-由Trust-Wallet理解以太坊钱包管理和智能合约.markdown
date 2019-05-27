@@ -11,8 +11,19 @@ tags: [区块链]
 
 ------
 
-[以太坊钱包 Trust项目解读之架构和流程](https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6)  
-[由Trust Wallet理解以太坊钱包管理和智能合约](https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6)  
+- [钱包管理](#钱包管理)
+	- [钱包创建](#钱包创建)
+	- [钱包的导入](#钱包的导入)
+	- [钱包导出、删除等](#钱包导出删除等)
+	- [EtherKeystore 模块结构图](#etherkeystore-模块结构图)
+- [智能合约](#智能合约)
+	- [合约调用方式](#合约调用方式)
+	- [合约调用](#合约调用)
+	- [网络层其他请求](#网络层其他请求)
+- [交易](#交易)
+	- [交易的结构](#交易的结构)
+	- [交易的流程](#交易的流程)
+- [相关资料](#相关资料)
 
 ------
 
@@ -303,6 +314,12 @@ let trustAPI = URL(string: "https://public.trustwalletapp.com")
 `Trust`项目到这里基本就很清晰了, 这两篇文章虽然只是对`Trust 
 wallet`的解读, 很局限。但是由它们能延伸到的知识, 如以太坊的智能合约的知识、钱包和私钥管理的知识等等, 还有你对区块链的认知, 这些不是狭义的。所以无论你认为区块链是好是坏, 或者有没有实际的应用和市场的欢迎, 这门技术都带来了无限创新。
 
+
+
+# 相关资料
+
+[以太坊钱包 Trust项目解读之架构和流程](https://wangyanchang21.github.io/2018/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85-Trust%E9%A1%B9%E7%9B%AE%E8%A7%A3%E8%AF%BB%E4%B9%8B%E6%9E%B6%E6%9E%84%E5%92%8C%E6%B5%81%E7%A8%8B)  
+[由Trust Wallet理解以太坊钱包管理和智能合约](https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6) 
 
 -------
 

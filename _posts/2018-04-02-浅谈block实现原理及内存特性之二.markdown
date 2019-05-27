@@ -11,11 +11,14 @@ block是如何进行持有变量的，__block是如何进行工作的。
 
 ------
 
-**浅谈block实现原理及内存特性系列文章:**   
-[浅谈block实现原理及内存特性之一: 内部结构和类型](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%B8%80)   
-[浅谈block实现原理及内存特性之二: 持有变量](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%BA%8C)   
-[浅谈block实现原理及内存特性之三: copy过程分析](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%B8%89)   
-
+- [block如何持有变量](#block如何持有变量)
+	- [通过clang工具分析代码实现](#通过clang工具分析代码实现)
+	- [block捕获局域变量](#block捕获局域变量)
+	- [block捕获由__block修饰的变量](#block捕获由__block修饰的变量)
+	- [block捕获当前类的属性](#block捕获当前类的属性)
+	- [block捕获由__block修饰的对象](#block捕获由__block修饰的对象)
+- [相关资料](#相关资料)
+ 
 ----------
 
 
@@ -416,8 +419,11 @@ static void _I_ViewController_capture__blockObject(ViewController * self, SEL _c
 在`ARC`中,  `block前`打印的变量a是取自于初始定义对象a时的那个指针地址; `block后`与`block内部`都是取自于block在`copy`至堆区之后的捕获变量a的地址。所以a指针在`block内部`和`block后`的地址是相同的都存在于堆中, 且与`block前`的地址不同。但是, 无论怎么改变, 这里的`copy`, 都是浅拷贝, 就是所谓的指针拷贝, 所以a指针指向的内存地址还是之前定义对象a的某块堆区区域。
 
 
-## 相关资源下载
+## 相关资料
 
+[浅谈block实现原理及内存特性之一: 内部结构和类型](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%B8%80)    
+[浅谈block实现原理及内存特性之二: 持有变量](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%BA%8C)   
+[浅谈block实现原理及内存特性之三: copy过程分析](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%B8%89)   
 [Demo下载: Block实现原理及内存特性](https://download.csdn.net/download/wangyanchang21/11042129)   
 [block官方源码: libclosure-38](https://download.csdn.net/download/wangyanchang21/10293026)   
 

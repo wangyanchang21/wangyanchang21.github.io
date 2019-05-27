@@ -11,14 +11,12 @@ tags: [iOS, Effective OC]
 
 ------
 
-**高效 OC开发系列文章：**   
-[高效 OC开发之熟悉Objective-C](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%80)  
-[高效 OC开发之对象、消息、运行时](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%BA%8C)  
-[高效 OC开发之接口与API设计](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%89)  
-[高效 OC开发之协议与分类](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E5%9B%9B)  
-[高效 OC开发之内存管理](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%BA%94)  
-[高效 OC开发之Block和GCD](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E5%85%AD)  
-[高效 OC开发之系统框架](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%B8%83)  
+- [㊼ 熟悉系统框架](#-熟悉系统框架)
+- [㊽ 多用块枚举，少用for循环](#-多用块枚举少用for循环)
+- [㊾ 对自定义其内存管理语义的collection使用无缝桥接](#-对自定义其内存管理语义的collection使用无缝桥接)
+- [㊿ 构建缓存时选用NSCache而非NSDictionary](#-构建缓存时选用nscache而非nsdictionary)
+- [⑤① 精简initialize与load的实现代码](#-精简initialize与load的实现代码)
+- [⑤② 别忘了NSTimer会持有其目标对象](#-别忘了nstimer会持有其目标对象) 
 
 -------
 
@@ -349,6 +347,18 @@ NSMutableDictionary *anNSDictinary =
  - 1.`NSTimer`对象会保留其目标，直到计时器本身失效为止，调用`invalidate方法`可令计时器失效，另外，一次性的计时器在触发完任务之后也会失效。
  - 2.反复执行任务的计时器，很容易引入保留环，如果这种计时器的目标对象又保留了计时器本身，那肯定会导致保留环。这种环状保留关系，可能是直接发生的，也可能是通过对象图里的其他对象间接发生的。
  - 3.可以扩充`NSTimer`的功能，用`块`来打破保留环。不过，除非`NSTimer`将来在公共接口里提供此功能，否则必须创建分类，将相关实现代码加入其中。
+
+
+
+
+相关资料：   
+[高效 OC开发之熟悉Objective-C](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%80)  
+[高效 OC开发之对象、消息、运行时](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%BA%8C)  
+[高效 OC开发之接口与API设计](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%89)  
+[高效 OC开发之协议与分类](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E5%9B%9B)  
+[高效 OC开发之内存管理](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%BA%94)  
+[高效 OC开发之Block和GCD](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E5%85%AD)  
+[高效 OC开发之系统框架](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%B8%83)  
 
 
 -------

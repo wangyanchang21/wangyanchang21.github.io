@@ -11,14 +11,16 @@ block, GCD，NSOperationQueue等实现多线程。
 
 ------
 
-**高效 OC开发系列文章：**   
-[高效 OC开发之熟悉Objective-C](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%80)  
-[高效 OC开发之对象、消息、运行时](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%BA%8C)  
-[高效 OC开发之接口与API设计](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%89)  
-[高效 OC开发之协议与分类](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E5%9B%9B)  
-[高效 OC开发之内存管理](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%BA%94)  
-[高效 OC开发之Block和GCD](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E5%85%AD)  
-[高效 OC开发之系统框架](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%B8%83)  
+- [㊲ 理解"块"的概念](#-理解块的概念)
+- [㊳ 为常用的块类型创建 typedef](#-为常用的块类型创建-typedef)
+- [㊴ 用handler块降低代码分散程度](#-用handler块降低代码分散程度)
+- [㊵ 用块引用其所属对象时不要出现保留环](#-用块引用其所属对象时不要出现保留环)
+- [㊶ 多用派发队列, 少用同步锁](#-多用派发队列-少用同步锁)
+- [㊷ 多用GCD,少用performSelector系列方法](#-多用gcd-少用performselector系列方法)
+- [㊸ 掌握GCD及操作队列的使用时机](#-掌握gcd及操作队列的使用时机)
+- [㊹ 通过Dispatch Group机制,根据系统资源状况来执行任务](#-通过dispatch-group机制-根据系统资源状况来执行任务)
+- [㊺ 使用dispatch_once来执行只需执行一次的线程安全代码](#-使用dispatch_once来执行只需执行一次的线程安全代码)
+- [㊻ 不要使用dispatch_get_current_queue](#-不要使用dispatch_get_current_queue)  
 
 -------
 
@@ -413,6 +415,18 @@ if(retrievedValue){
  - 1.`dispatch_get_current_queue`函数的行为常常与开发者所预期的不同。此函数已经废弃，只应做调试之用。
  - 2.由于派发队列是按层级来组织的，所以无法单用某个队列对象来描述`当前队列`这一概念。
  - 3.`dispatch_get_current_queue`函数用于解决由不可重入的代码所引发的死锁，然而能用此函数解决的问题，通常也能改用`队列特定数据`来解决。
+
+
+
+
+相关资料：   
+[高效 OC开发之熟悉Objective-C](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%80)  
+[高效 OC开发之对象、消息、运行时](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%BA%8C)  
+[高效 OC开发之接口与API设计](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%89)  
+[高效 OC开发之协议与分类](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E5%9B%9B)  
+[高效 OC开发之内存管理](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%BA%94)  
+[高效 OC开发之Block和GCD](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E5%85%AD)  
+[高效 OC开发之系统框架](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%B8%83)  
 
 
 -------
