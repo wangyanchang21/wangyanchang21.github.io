@@ -16,7 +16,7 @@ tags: [iOS, Effective OC]
 - [㉖ 勿在分类中声明属性](#-勿在分类中声明属性)
 - [㉗ 使用“Extension扩展”隐藏实现细节](#-使用extension扩展隐藏实现细节)
 - [㉘ 通过协议提供匿名对象](#-通过协议提供匿名对象)  
-
+- [相关资料](#相关资料)
 
 -------
 
@@ -328,8 +328,8 @@ OC中的`Extension`, 即扩展, 也被称为`class-continuation`分类。这是�
 
 
 
+## 相关资料
 
-相关资料：   
 [高效 OC开发之熟悉Objective-C](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%80)  
 [高效 OC开发之对象、消息、运行时](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%BA%8C)  
 [高效 OC开发之接口与API设计](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%89)  

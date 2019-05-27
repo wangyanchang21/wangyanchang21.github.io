@@ -20,6 +20,7 @@ tags: [iOS, Effective OC]
 - [⑫ 理解消息转发机制](#-理解消息转发机制)
 - [⑬ 用“方法调配技术”调试“黑盒方法”](#-用方法调配技术调试黑盒方法)
 - [⑭ 理解“类对象”的用意](#-理解类对象的用意)
+- [相关资料](#相关资料)
 
 -------
 
@@ -701,7 +702,8 @@ if ([object class] == [EOCSomeClassclass]) {
  - 3,尽量使用类型信息查询方法来确定对象类型，而不要直接比较类对象，因为某些对象可能实现了消息转发功能。
 
 
-相关资料：   
+## 相关资料
+
 [高效 OC开发之熟悉Objective-C](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%80)  
 [高效 OC开发之对象、消息、运行时](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%BA%8C)  
 [高效 OC开发之接口与API设计](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%89)  

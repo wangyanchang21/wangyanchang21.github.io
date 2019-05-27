@@ -11,13 +11,18 @@ WatchOS表盘开发流程, 工作原理, 表盘类型和表盘模板类型总结
 
 ------
 
-**WatchOS 开发教程系列文章:**   
-[WatchOS开发教程之一: Watch App架构及生命周期](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%B8%80)   
-[WatchOS开发教程之二: 布局适配和系统Icon设计尺寸](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%BA%8C)   
-[WatchOS开发教程之三: 导航方式和控件详解](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%B8%89)   
-[WatchOS开发教程之四: Watch与 iPhone的通信和数据共享](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E5%9B%9B)   
-[WatchOS开发教程之五: 通知功能开发](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%BA%94)   
-[WatchOS开发教程之六: 表盘功能开发](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E5%85%AD)   
+- [表盘开发简介(Complications)](#表盘开发简介complications)
+	- [表盘开发的好处](#表盘开发的好处)
+- [表盘和模板的类型](#表盘和模板的类型)
+	- [表盘系列(Complication Family)](#表盘系列complication-family)
+	- [表盘模板(ComplicationTemplate)](#表盘模板complicationtemplate)
+- [时间轴(TimeLine)](#时间轴timeline)
+- [表盘开发流程](#表盘开发流程)
+	- [配置 WatchKit Extension](#配置-watchkit-extension)
+	- [设计表盘元素(Complications)](#设计表盘元素complications)
+	- [表盘数据源配置(ComplicationDataSource)](#表盘数据源配置complicationdatasource)
+	- [更新表盘数据](#更新表盘数据)
+- [相关资料](#相关资料)
 
 ----------
 
@@ -432,8 +437,14 @@ optional public func getLocalizableSampleTemplate(for complication: CLKComplicat
 
 
 
-相关资料:  
-[WatchOS 开发教程源码：Watch-App-Sampler](https://github.com/wangyanchang21/Watch-App-Sampler)  
+## 相关资料
+
+[WatchOS开发教程之一: Watch App架构及生命周期](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%B8%80)   
+[WatchOS开发教程之二: 布局适配和系统Icon设计尺寸](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%BA%8C)   
+[WatchOS开发教程之三: 导航方式和控件详解](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%B8%89)   
+[WatchOS开发教程之四: Watch与 iPhone的通信和数据共享](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E5%9B%9B)   
+[WatchOS开发教程之五: 通知功能开发](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%BA%94)   
+[WatchOS开发教程之六: 表盘功能开发](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E5%85%AD)  [WatchOS 开发教程源码：Watch-App-Sampler](https://github.com/wangyanchang21/Watch-App-Sampler)  
 [Complication Essentials](https://developer.apple.com/library/archive/documentation/General/Conceptual/WatchKitProgrammingGuide/ComplicationEssentials.html#//apple_ref/doc/uid/TP40014969-CH27-SW1)  
 [Complications Guidelines](https://developer.apple.com/design/human-interface-guidelines/watchos/app-architecture/complications/)
 [Complication Images Guidelines](https://developer.apple.com/design/human-interface-guidelines/watchos/icons-and-images/complication-images/)  

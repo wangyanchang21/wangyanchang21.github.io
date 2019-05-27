@@ -11,16 +11,21 @@ Apple Watch的布局方式和布局影响因素，以及不同尺寸屏幕的适
 
 ------
 
-**WatchOS 开发教程系列文章:**   
-[WatchOS开发教程之一: Watch App架构及生命周期](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%B8%80)   
-[WatchOS开发教程之二: 布局适配和系统Icon设计尺寸](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%BA%8C)   
-[WatchOS开发教程之三: 导航方式和控件详解](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%B8%89)   
-[WatchOS开发教程之四: Watch与 iPhone的通信和数据共享](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E5%9B%9B)   
-[WatchOS开发教程之五: 通知功能开发](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%BA%94)   
-[WatchOS开发教程之六: 表盘功能开发](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E5%85%AD)   
+- [布局和适配](#布局和适配)
+	- [Apple Watch的尺寸和适配](#apple-watch的尺寸和适配)
+	- [Watch App架构](#watch-app架构)
+- [系统icon设计尺寸](#系统icon设计尺寸)
+	- [Home Screen Icon](#home-screen-icon)
+	- [Short-look Notification Icon](#short-look-notification-icon)
+	- [Long-look Notification Icon](#long-look-notification-icon)
+	- [Notification Center Icon](#notification-center-icon)
+	- [Content Menu Icon](#content-menu-icon)
+	- [Watch App Icon On iPhone](#watch-app-icon-on-iphone)
+	- [App Store](#app-store)
+	- [线条像素](#线条像素)
+- [相关资料](#相关资料)
 
-
-----------
+-------
 
 
 ## 布局和适配
@@ -179,8 +184,15 @@ App Store 也需要提交一个 App Icon, 用于进行展示。尺寸为`1024x10
 
 
 
-相关资料:  
-[WatchOS 开发教程源码：Watch-App-Sampler](https://github.com/wangyanchang21/Watch-App-Sampler)  
+
+## 相关资料
+
+[WatchOS开发教程之一: Watch App架构及生命周期](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%B8%80)   
+[WatchOS开发教程之二: 布局适配和系统Icon设计尺寸](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%BA%8C)   
+[WatchOS开发教程之三: 导航方式和控件详解](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%B8%89)   
+[WatchOS开发教程之四: Watch与 iPhone的通信和数据共享](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E5%9B%9B)   
+[WatchOS开发教程之五: 通知功能开发](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E4%BA%94)   
+[WatchOS开发教程之六: 表盘功能开发](https://wangyanchang21.github.io/2018/WatchOS%E5%BC%80%E5%8F%91%E6%95%99%E7%A8%8B%E4%B9%8B%E5%85%AD)  [WatchOS 开发教程源码：Watch-App-Sampler](https://github.com/wangyanchang21/Watch-App-Sampler)  
 [Watch app icon设计终极指南](http://www.cocoachina.com/design/20150519/11740.html)  
 [UI Essentials](https://developer.apple.com/library/archive/documentation/General/Conceptual/WatchKitProgrammingGuide/CreatingtheUserInterface.html#//apple_ref/doc/uid/TP40014969-CH4-SW1)  
 [Human Interface Guidelines For Apple Watch](https://developer.apple.com/design/human-interface-guidelines/watchos/icons-and-images/home-screen-icons/)  

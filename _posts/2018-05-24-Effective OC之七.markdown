@@ -17,6 +17,7 @@ tags: [iOS, Effective OC]
 - [㊿ 构建缓存时选用NSCache而非NSDictionary](#-构建缓存时选用nscache而非nsdictionary)
 - [⑤① 精简initialize与load的实现代码](#-精简initialize与load的实现代码)
 - [⑤② 别忘了NSTimer会持有其目标对象](#-别忘了nstimer会持有其目标对象) 
+- [相关资料](#相关资料)
 
 -------
 
@@ -350,8 +351,8 @@ NSMutableDictionary *anNSDictinary =
 
 
 
+## 相关资料
 
-相关资料：   
 [高效 OC开发之熟悉Objective-C](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%80)  
 [高效 OC开发之对象、消息、运行时](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%BA%8C)  
 [高效 OC开发之接口与API设计](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%89)  

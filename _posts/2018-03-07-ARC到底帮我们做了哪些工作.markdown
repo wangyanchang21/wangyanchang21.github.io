@@ -761,7 +761,7 @@ id objc_autoreleaseReturnValue(id object) {
 还有一些其他的运行时方法是可以正常使用的, 如`objc_destructInstance()`, `objc_duplicateClass()`, `objc_destructInstance()`等等方法, 想了解的可以去下面的地址进行下载。
 
 
-# 相关资料
+## 相关资料
 
 推荐文章阅读:    
 [高效 OC之内存管理](http://blog.csdn.net/wangyanchang21/article/details/79356164#t7)   

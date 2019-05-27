@@ -19,6 +19,7 @@ tags: [iOS, Effective OC]
 - [㉞ 以“自动释放池块”降低内存峰值](#-以自动释放池块降低内存峰值)
 - [㉟ 用“僵尸对象”调试内存管理问题](#-用僵尸对象调试内存管理问题)
 - [㊱ 不要使用 retain Count](#-不要使用-retain-count)
+- [相关资料](#相关资料)
 
 -------
 
@@ -505,8 +506,8 @@ after release: 18446744073709551615
 
 
 
+## 相关资料
 
-相关资料：   
 [高效 OC开发之熟悉Objective-C](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%80)  
 [高效 OC开发之对象、消息、运行时](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%BA%8C)  
 [高效 OC开发之接口与API设计](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%89)  

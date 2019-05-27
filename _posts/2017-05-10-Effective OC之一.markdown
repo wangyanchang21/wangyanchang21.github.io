@@ -16,6 +16,7 @@ tags: [iOS, Effective OC]
 - [③ 多用字面量语法(语法糖)](#-多用字面量语法语法糖)
 - [④ 多用常量类型,少用#define预处理指令](#-多用常量类型-少用define预处理指令)
 - [⑤ 用枚举表示状态、选项、状态码](#-用枚举表示状态选项状态码)
+- [相关资料](#相关资料)
 
 -------
 
@@ -248,7 +249,8 @@ switch (currentState) {
 }
 ```
 
-相关资料： 
+## 相关资料
+
 [高效 OC开发之熟悉Objective-C](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%80)  
 [高效 OC开发之对象、消息、运行时](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%BA%8C)  
 [高效 OC开发之接口与API设计](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%89)  

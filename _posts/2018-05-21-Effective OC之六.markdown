@@ -21,6 +21,7 @@ block, GCD，NSOperationQueue等实现多线程。
 - [㊹ 通过Dispatch Group机制,根据系统资源状况来执行任务](#-通过dispatch-group机制-根据系统资源状况来执行任务)
 - [㊺ 使用dispatch_once来执行只需执行一次的线程安全代码](#-使用dispatch_once来执行只需执行一次的线程安全代码)
 - [㊻ 不要使用dispatch_get_current_queue](#-不要使用dispatch_get_current_queue)  
+- [相关资料](#相关资料)
 
 -------
 
@@ -419,7 +420,8 @@ if(retrievedValue){
 
 
 
-相关资料：   
+## 相关资料
+
 [高效 OC开发之熟悉Objective-C](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%80)  
 [高效 OC开发之对象、消息、运行时](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%BA%8C)  
 [高效 OC开发之接口与API设计](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%89)  

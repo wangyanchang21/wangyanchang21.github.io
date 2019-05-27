@@ -19,6 +19,7 @@ Objective-C的命名规则及命名空间，私有方法的处理。另外，还
 - [⑳ 为私有方法名加前缀](#-为私有方法名加前缀)
 - [㉑ 理解Objective-C 错误模型](#-理解objective-c-错误模型)
 - [㉒ 理解NSCopying协议](#-理解nscopying协议)
+- [相关资料](#相关资料)
 
 -------
 
@@ -243,8 +244,8 @@ Objective-C语言现在所采用的办法是: 只在极其罕见的情况下抛�
 
 
 
+## 相关资料
 
-相关资料：   
 [高效 OC开发之熟悉Objective-C](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%80)  
 [高效 OC开发之对象、消息、运行时](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%BA%8C)  
 [高效 OC开发之接口与API设计](https://wangyanchang21.github.io/2017/Effective-OC%E4%B9%8B%E4%B8%89)  
