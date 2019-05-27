@@ -1,0 +1,311 @@
+---
+title:  "iOS架构模式(MVC/MVCS/MVP/MVVM/VIPER)"
+date:   2016-07-27 22:30:20
+categories: [iOS]
+tags: [iOS]
+---
+
+iOS架构模式中的MVC、MVCS、MVP、MVVM、VIPER的特点和具体分工，且介绍如何选择最合适的架构模式。
+
+[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)
+
+------
+
+- [iOS架构模式](#ios架构模式)
+	- [为什么要关注架构模式](#为什么要关注架构模式)
+	- [一个好的架构应该具备的特点](#一个好的架构应该具备的特点)
+- [MVC](#mvc)
+	- [MVC如何分工](#mvc如何分工)
+	- [MVC通信特点](#mvc通信特点)
+	- [MVC总结](#mvc总结)
+- [MVCS](#mvcs)
+	- [MVCS如何分工](#mvcs如何分工)
+	- [关于胖Model和瘦Model](#关于胖model和瘦model)
+- [MVP](#mvp)
+	- [MVP如何分工](#mvp如何分工)
+	- [MVP总结](#mvp总结)
+- [MVVM](#MVVM)
+	- [MVVM如何分工](#mvvm如何分工)
+	- [MVVM模式特点](#mvvm模式特点)
+	- [MVVM总结](#mvvm总结)
+- [VIPER](#viper)
+	- [VIPER如何分工](#viper如何分工)
+	- [VIPER特点](#viper特点)
+	- [VIPER总结](#viper总结)
+- [总结](#总结)
+- [相关资料](#相关资料)
+
+------
+
+## iOS架构模式
+
+谈起iOS架构, 也许你直接想到的就是`MVC`, `MVVM `等等。 其实这是不准确的, iOS架构包含的内容有很多, 而上面的这些只是iOS架构中的`架构模式`。 
+
+那么你在进行架构设计的时候到底是选择`MVC`或者`MVVM `还是选择`VIPER`呢? 这就要根据你的业务需求, 项目规模以及项目未来的推演预测等诸多因素了。 
+
+这也是争议颇多的话题，所以我在这里来把几个主流思想做一个梳理, 今天就来说一说 ----- iOS架构之架构模式。
+
+### 为什么要关注架构模式
+
+假如你不关心架构模式, 那么总有一天，你会处在同一个庞大的类中。 你会发现在这样的条件下, 调试某些功能或者寻找某个bug是多么的不易, 你会花费大量的时间和精力放在这些臃肿的代码中。 所以, 你应该提前想到这些东西, 根据项目的实际情况选择一个合适的架构模式原来是如此重要。
+
+### 一个好的架构应该具备的特点
+
+一般的, 模块角色会有三种：数据管理者、数据加工者、数据展示者。 面对这些各种各样的架构模式思想，不外乎就是制订了一个规范，规定了这三个角色应当如何进行数据交换。但一个号的架构的必要特点是具备如下特点:
+
+- 各角色任务均衡, 分工明确。
+- 测试可行性高或者说易于测试。 
+- 维护成本低。
+- 易用性好。
+
+## MVC
+
+`MVC`（Model-View-Controller）是最老牌的的思想，其中Model就是作为数据管理者，View作为数据展示者，Controller作为数据加工者，Model和View又都是由Controller来根据业务需求调配，所以Controller还负担了一个数据流调配的功能。
+
+### MVC如何分工
+
+模型（Model）的分工：  
+ 
+- 为ViewController提供数据  
+- 为ViewController存储数据提供接口   
+- 提供经过抽象的业务基本组件，供Controller调度   
+
+控制器（Controller）的分工：
+
+- 管理View Container的生命周期  
+- 负责生成所有的View实例，并放入View Container  
+- 监听来自View与业务有关的事件，通过与Model的合作，来完成对应事件的业务。  
+
+视图（View）的分工：
+
+- 响应与业务无关的事件，并因此引发动画效果，点击反馈（如果合适的话，尽量还是放在View去做）等。   
+- 界面元素表达  
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/architecturalpattern/20160727184528761.png" width="80%" img/>
+</center>
+
+
+分工总结:   
+视图（View）：用户界面。
+控制器（Controller）：业务逻辑及处理。
+模型（Model）：数据存储。
+
+### MVC通信特点
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/architecturalpattern/20160727181538876.png" width="80%" img/>
+</center>
+
+
+1、Model和View永远不能相互通信，只能通过Controller传递。  
+2、Controller可以直接与Model通信（读写调用Model），Model通过Notification和KVO机制与Controller间接通信。  
+3、Controller与View通过Target/Action, delegate和datasource三种模式进行通信。通过这三种模式，View就可以向Controller通信, Action/Target 模式来让Controller 监听View 触发的事件。View又通过Data source和delegate进行数据获取和某些通信操作。  
+
+### MVC总结
+
+- 任务均摊--View和Model确实是分开的，但是View和Controller却是紧密耦合的  
+- 可测试性--由于糟糕的分散性，只能对Model进行测试  
+- 易用性--与其他几种模式相比最小的代码量。熟悉的人很多，因而即使对于经验不那么丰富的开发者来讲维护起来也较为容易。  
+
+
+## MVCS
+
+苹果自身就采用的是这种架构思路，从名字也能看出，也是基于`MVC`衍生出来的一套架构。从概念上来说，它拆分的部分是Model部分，拆出来一个Store。这个Store专门负责数据存取。但从实际操作的角度上讲，它拆开的是Controller。
+
+### MVCS如何分工
+
+这算是瘦Model的一种方案，瘦Model只是专门用于表达数据，然后存储、数据处理都交给外面的来做。`MVCS `使用的前提是，它假设了你是瘦Model，同时数据的存储和处理都在Controller去做。所以对应到`MVCS `，它在一开始就是拆分的Controller。因为Controller做了数据存储的事情，就会变得非常庞大，那么就把Controller专门负责存取数据的那部分抽离出来，交给另一个对象去做，这个对象就是Store。这么调整之后，整个结构也就变成了真正意义上的`MVCS `。
+
+分工总结:   
+视图（View）：用户界面。   
+控制器（Controller）：业务逻辑及处理。   
+模型（Model）：数据存储。   
+存储器（Store）：数据处理逻辑。   
+
+`MVCS `是基于瘦Model的一种架构思路，把原本Model要做的很多事情中的其中一部分关于数据存储的代码抽象成了Store，在一定程度上降低了Controller的压力。
+
+
+### 关于胖Model和瘦Model
+
+#### 胖Model (Fat Model)
+
+胖Model包含了部分弱业务逻辑。胖Model要达到的目的是，Controller从胖Model这里拿到数据之后，不用额外做操作或者只要做非常少的操作，就能够将数据直接应用在View上。
+
+FatModel做了这些弱业务之后，Controller就能变得非常skinny，Controller只需要关注强业务代码就行了。众所周知，强业务变动的可能性要比弱业务大得多，弱业务相对稳定，所以弱业务塞进Model里面是没问题的。另一方面，弱业务重复出现的频率要大于强业务，对复用性的要求更高，如果这部分业务写在Controller，类似的代码会洒得到处都是，一旦弱业务有修改（弱业务修改频率低不代表就没有修改），这个事情就是一个灾难。如果塞到Model里面去，改一处很多地方就能跟着改，就能避免这场灾难。
+
+然而其缺点就在于，胖Model相对比较难移植，虽然只是包含弱业务，但好歹也是业务，迁移的时候很容易拔出萝卜带出泥。另外一点，`MVC`的架构思想更加倾向于Model是一个Layer，而不是一个Object，不应该把一个Layer应该做的事情交给一个Object去做。最后一点，软件是会成长的，FatModel很有可能随着软件的成长越来越Fat，最终难以维护。
+
+#### 瘦Model(Slim Model)
+
+瘦Model只负责业务数据的表达，所有业务无论强弱一律扔到Controller。瘦Model要达到的目的是，尽一切可能去编写细粒度Model，然后配套各种helper类或方法来对弱业务做抽象，强业务依旧交给Controller。
+
+由于SlimModel跟业务完全无关，它的数据可以交给任何一个能处理它数据的Helper或其他的对象，来完成业务。在代码迁移的时候独立性很强，很少会出现拔出萝卜带出泥的情况。另外，由于SlimModel只是数据表达，对它进行维护基本上是0成本，软件膨胀得再厉害，SlimModel也不会大到哪儿去。
+
+缺点就在于，Helper这种做法也不见得很好，这里有一篇文章批判了这个事情。另外，由于Model的操作会出现在各种地方，SlimModel在一定程度上违背了DRY（Don't Repeat Yourself）的思路，Controller仍然不可避免在一定程度上出现代码膨胀。
+
+
+## MVP
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/architecturalpattern/20160727185010580.png" width="80%" img/>
+</center>
+
+这看起来不正是苹果所提出的`MVC`方案吗？确实是的，这种模式的名字叫做`MVC`，但是，这就是说苹果的`MVC`实际上就是`MVP `了？不，并不是这样的。如果你仔细回忆一下，View是和Controller紧密耦合的，但是`MVP `的协调器Presenter并没有对ViewController的生命周期做任何改变，因此View可以很容易的被模拟出来。在Presenter中根本没有和布局有关的代码，但是它却负责更新View的数据和状态。
+
+### MVP如何分工
+
+`MVP `是第一个如何协调整合三个实际上分离的层次的架构模式，既然我们不希望View涉及到Model，那么在显示的View Controller（其实就是View）中处理这种协调的逻辑就是不正确的，因此我们需要在其他地方来做这些事情, 比如用户输入操作, 数据请求, 数据处理等等业务逻辑。
+
+分工总结:   
+视图（View）：用户界面。   
+模型（Model）：数据存储。   
+展示器（Presenter）：数据处理, 业务逻辑。    
+
+View和Presenter之间是完全解耦的，他们通过接口来交互。   
+View和Presenter是一对一关系,意味着一个Presenter只映射一个View, 且他们之间是可以双向交互的。
+
+### MVP总结
+
+- 任务均摊--我们将最主要的任务划分到Presenter和Model，而View的功能较少（虽然上述例子中Model的任务也并不多）。   
+- 可测试性--非常好，由于一个功能简单的View层，所以测试大多数业务逻辑也变得简单。      
+- 易用性--在我们上边不切实际的简单的例子中，代码量是`MVC`模式的2倍，但同时`MVP `的概念却非常清晰。   
+
+
+## MVVM
+
+`MVVM ` 是 `MVC` 模式的一种演进，它主要解决了 ViewController 过于臃肿带来的不易维护和测试的问题。其中 ViewModel 的主要职责是处理业务逻辑并提供 View 所需的数据，这样 VC 就不用关心业务，自然也就瘦了下来。ViewModel 只关心业务数据不关心 View，所以不会与 View 产生耦合，也就更方便进行单元测试。
+
+View 是一个壳，它所呈现的内容都需要由 ViewModel 来提供，而 View 又不与 ViewModel 直接沟通，这时就需要 ViewController 来做中间的协调者。
+
+ViewController 持有 View 和 ViewModel，当 VC 初始化时，会让 ViewModel 去取数据，简单来说就是调用 VM 的某个获取数据的方法。
+
+但大部分国内外资料阐述`MVVM `的时候都是这样排布的：View <-> ViewModel <-> Model，造成了`MVVM `不需要Controller的错觉，现在似乎发展成业界开始出现`MVVM `是不需要Controller的的声音了。其实`MVVM `是一定需要Controller的参与的，虽然`MVVM `在一定程度上弱化了Controller的存在感，并且给Controller做了减负瘦身（这也是`MVVM `的主要目的）。但是，这并不代表`MVVM `中不需要Controller，`MVC`和`MVVM `他们之间的关系应该是这样：
+
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/architecturalpattern/20160727185706979.png" width="80%" img/>
+</center>
+
+View <-> C <-> ViewModel <-> Model，所以使用`MVVM `之后，就不需要Controller的说法是不正确的。严格来说`MVVM `其实是`MVCVM`。从图中可以得知，Controller夹在View和ViewModel之间做的其中一个主要事情就是将View和ViewModel进行绑定。在逻辑上，Controller知道应当展示哪个View，Controller也知道应当使用哪个ViewModel，然而View和ViewModel它们之间是互相不知道的，所以Controller就负责控制他们的绑定关系，所以叫Controller/控制器就是这个原因。
+
+前面扯了那么多，其实归根结底就是一句话：在`MVC`的基础上，把C拆出一个ViewModel专门负责数据处理的事情，就是`MVVM `。然后，为了让View和ViewModel之间能够有比较松散的绑定关系，于是我们使用`ReactiveCocoa`，因为苹果本身并没有提供一个比较适合这种情况的绑定方法。iOS领域里KVO，Notification，block，delegate和target-action都可以用来做数据通信，从而来实现绑定，但都不如`ReactiveCocoa`提供的`RACSignal`来的优雅，如果不用`ReactiveCocoa`，绑定关系可能就做不到那么松散那么好，但并不影响它还是`MVVM `。
+
+### MVVM如何分工
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/architecturalpattern/20160727185526039.png" width="80%" img/>
+</center>
+
+其实你可以发现`MVVM ` 与 `MVP `在业务逻辑上非常相似。一般情况下安卓用`MVP `要多一些, iOS用`MVVM `要多一些。
+
+分工总结:   
+视图（View）：用户界面。   
+模型（Model）：数据存储。   
+ViewModel：数据请求, 数据处理, 业务逻辑。 
+
+### MVVM模式特点
+
+- `MVVM `将ViewController视作View。   
+- 在View和Model之间没有紧密的联系,一般的与View是一对一的关系。   
+- ViewModel与View之间是双向交互的。   
+- 使用 `MVVM ` 最舒服的姿势是搭配现在已经比较成熟的 `ReactiveCocoa`, 本文最后也推荐了一些关于这方面的博客。   
+
+### MVVM总结
+
+- 任务均摊 -- 在例子中并不是很清晰，但是事实上，`MVVM `的View要比`MVP `中的View承担的责任多。因为前者通过ViewModel的设置绑定来更新状态，而后者只监听Presenter的事件但并不会对自己有什么更新。   
+- 可测试性 -- ViewModel不知道关于View的任何事情，这允许我们可以轻易的测试ViewModel。同时View也可以被测试，但是由于属于UIKit的范畴，对他们的测试通常会被忽略。   
+- 易用性 -- 在我们例子中的代码量和`MVP `的差不多，但是在实际开发中，我们必须把View中的事件指向Presenter并且手动的来更新View，如果使用绑定的话，`MVVM `代码量将会小的多。   
+
+
+## VIPER
+
+`VIPER` 是一个创建 iOS 应用简明构架的程序。`VIPER` 可以是视图 (View)，交互器 (Interactor)，展示器 (Presenter)，实体 (Entity) 以及路由 (Router) 的首字母缩写。简明架构将一个应用程序的逻辑结构划分为不同的责任层。这使得它更容易隔离依赖项 (如数据库)，也更容易测试各层间的边界处的交互。 
+
+### VIPER如何分工
+
+
+当我们把`VIPER`和`MV(X)`系列作比较时，我们会在任务均摊性方面发现一些不同:
+Model 逻辑通过把实体作为最小的数据结构转换到交互器中。
+Controller/Presenter/ViewModel的UI展示方面的职责移到了Presenter中，但是并没有数据转换相关的操作。
+
+`VIPER`是第一个通过路由器实现明确的地址导航模式。
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/architecturalpattern/20160727192110231.png" width="80%" img/>
+</center>
+
+
+视图（View）：根据展示器的要求显示界面，并将用户输入反馈给展示器。   
+交互器（Interactor）：包含由用例指定的业务逻辑。   
+展示器（Presenter）：包含为显示（从交互器接受的内容）做的准备工作的相关视图逻辑，并对用户输入进行反馈（从交互器获取新数据）。   
+实体（Entity）：包含交互器要使用的基本模型对象。   
+路由（Router）：包含用来描述屏幕显示和显示顺序的导航逻辑。   
+
+
+#### 交互器
+
+交互器在应用中代表着一个独立的用例。它具有业务逻辑以操纵模型对象（实体）执行特定的任务。交互器中的工作应当独立与任何用户界面，
+由于交互器是一个 PONSO (Plain Old NSObject，普通的 NSObject)，它主要包含了逻辑，因此很容易使用 TDD 进行开发。
+
+#### 实体
+
+实体是被交互器操作的模型对象，并且它们只被交互器所操作。交互器永远不会传输实体至表现层 (比如说展示器)。   
+
+实体也应该是 PONSOs。如果你使用 Core Data，最好是将托管对象保持在你的数据层之后，交互器不应与 NSManageObjects 协同工作。   
+
+#### 展示器
+
+展示器是一个主要包含了驱动用户界面的逻辑的 PONSO，它总是知道何时呈现用户界面。基于其收集来自用户交互的输入功能，它可以在合适的时候更新用户界面并向交互器发送请求。
+
+#### 视图
+视图一般是被动的，它通常等待展示器下发需要显示的内容，而不会向其索取数据。视图（例如登录界面的登录视图控件）所定义的方法应该允许展示器在高度抽象的层次与之交流。展示器通过内容进行表达，而不关心那些内容所显示的样子。展示器不知道 UILabel，UIButton 等的存在，它只知道其中包含的内容以及何时需要显示。内容如何被显示是由视图来进行控制的。
+视图是一个抽象的接口 (Interface)，在 Objective-C 中使用协议被定义。一个 UIViewController 或者它的一个子类会实现视图协议。
+
+#### 路由
+屏幕间的路径会在交互设计师创建的线框 (wireframes) 里进行定义。在 `VIPER` 中，路由是由两个部分来负责的：展示器和线框。一个线框对象包括 UIWindow，UINavigationController，UIViewController 等部分，它负责创建视图/视图控制器并将其装配到窗口中。
+
+由于展示器包含了响应用户输入的逻辑，因此它就拥有知晓何时导航至另一个屏幕以及具体是哪一个屏幕的能力。而同时，线框知道如何进行导航。在两者结合起来的情况下，展示器可以使用线框来进行实现导航功能，它们两者一起描述了从一个屏幕至另一个屏幕的路由过程。
+
+### VIPER特点
+
+数据存储模块负责提供实体给交互器。因为交互器要完成业务逻辑，因此它需要从数据存储中获取实体并操纵它们，然后将更新后的实体再放回数据存储中。数据存储管理实体的持久化，而实体应该对数据库全然不知，正因如此，实体并不知道如何对自己进行持久化。
+ 
+交互器同样不需要知道如何将实体持久化，有时交互器更希望使用一个 data manager 来使其与数据存储的交互变得容易。Data manager 可以处理更多的针对存储的操作，比如创建获取请求，构建查询等等。这就使交互器能够将更多的注意力放在应用逻辑上，而不必再了解实体是如何被聚集或持久化的。
+
+在 iOS 的项目中使用 Core Data 经常比构架本身还容易引起更多争议。然而，利用 `VIPER` 来使用 Core Data 将给你带来使用 Core Data 的前所未有的良好体验。在持久化数据的工具层面上，Core Data 可以保持快速存取和低内存占用方面，简直是个神器。但是有个很恼人的地方，它会像触须一样把 NSManagedObjectContext 延伸至你所有的应用实现文件中，特别是那些它们不该待的地方。`VIPER` 可以使 Core Data 待在正确的地方：数据存储层。
+ 
+在待办事项示例中，应用仅有的两部分知道使用了 Core Data，其一是数据存储本身，它负责建立 Core Data 堆栈；另一个是 data manager。Data manager 执行了获取请求，将数据存储返回的 NSManagedObject 对象转换为标准的 PONSO 模型对象，并传输回业务逻辑层。这样一来，应用程序核心将不再依赖于 Core Data，附加得到的好处是，你也再也不用担心过期数据 (stale) 和没有良好组织的多线程 NSManagedObjects 来糟蹋你的工作成果了。
+
+
+### VIPER总结
+ 
+- 任务均摊 -- 毫无疑问，`VIPER`是任务划分中的佼佼者。   
+- 可测试性 -- 不出意外地，更好的分布性就有更好的可测试性。   
+- 易用性 -- 最后你可能已经猜到了维护成本方面的问题。你必须为很小功能的类写出大量的接口。   
+
+
+## 总结
+
+这些架构模式还是要根据你的项目需求, 项目规模等条件来进行选择。项目规模越小, 越简单的话, 就尽量使用最基本的`MVC`, 项目再复杂一些的话, 可以选择使用`MVP `, `MVVM `, 更加繁琐的项目的话, 那`VIPER`就可以排上用场了。你会发现, 这个顺序其实是由简至繁的, 而为什么要做这样的选择呢? 因为他们都是遵循单一责任原则的, 当简单的项目繁重后, 尽量开辟出新的角色, 将其工作任务单一化, 这样就可以达到项目思路清晰, 易于测试, 易用性高, 维护成本低等要求了。
+
+其实, 你会发现其实这些架构模式都是可以从`MVC`的模式下拆分出来的。 我个人认为, 在做具体的架构设计时，不需要拘泥于`MVC`、`MVVM `、`VIPER`等死规矩, 也可以自己做一些小的改变, 但要记住只能拆分其它不重要的任务, 而且拆分后的模块要尽可能提高可复用性和抽象度。
+
+
+
+## 相关资料
+
+[iOS 架构模式--解密 MVC，MVP，MVVM以及VIPER架构](http://www.cocoachina.com/ios/20160108/14916.html)   
+[iOS应用架构谈 view层的组织和调用方案](http://casatwy.com/iosying-yong-jia-gou-tan-viewceng-de-zu-zhi-he-diao-yong-fang-an.html)   
+[MVVM without ReactiveCocoa](http://www.cocoachina.com/ios/20151020/13795.html)   
+[MVVM With ReactiveCocoa](http://blog.leichunfeng.com/blog/2016/02/27/mvvm-with-reactivecocoa/)   
+[iOS 开源项目 MVVMReactiveCocoa](https://github.com/leichunfeng/MVVMReactiveCocoa)   
+[ReactiveCocoa & MVVM 指南](http://www.cocoachina.com/bbs/read.php?tid-220409.html)   
+[使用VIPER构建iOS应用](http://www.cocoachina.com/ios/20140703/9016.html)   
+
+
+-------
+
+欢迎指正, [wangyanchang21](https://github.com/wangyanchang21).
+
+

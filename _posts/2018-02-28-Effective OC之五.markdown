@@ -156,7 +156,7 @@ _myPerson = objc_retainAutoreleasedReturnValue(tmp);
 
 此时不直接调用 `autorelease`方法, 而是改为调用`objc_autoreleaseReturnValue`。此函数会检测之后的代码, 会根据返回的对象是否执行 `retain`操作, 来设置全局数据结构中的一个标志位, 决定是否执行 `autorelease`操作。与之相似,  `retain`方法将改为执行 `objc_retainAutoreleasedReturnValue`, 此函数要检测刚才提到的那个标志位, 根据标志位来决定是否执行 `retain`操作。当然设置并检测标志位要比调用 `autorelease`和 `retain`更快。
 
-更具体的描述可以参考另一篇博客: [ARC到底帮我们做了哪些工作?](http://blog.csdn.net/wangyanchang21/article/details/79461511#t9)
+更具体的描述可以参考另一篇博客: [ARC到底帮我们做了哪些工作?](https://wangyanchang21.github.io/2018/ARC%E5%88%B0%E5%BA%95%E5%B8%AE%E6%88%91%E4%BB%AC%E5%81%9A%E4%BA%86%E5%93%AA%E4%BA%9B%E5%B7%A5%E4%BD%9C/#%E4%B8%8D%E9%9C%80%E8%A6%81%E6%89%8B%E5%8A%A8%E9%87%8A%E6%94%BE%E8%BF%94%E5%9B%9E%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%96%B9%E6%B3%95)
 
 为了求得最佳效率, 这些特殊函数的实现代码都因处理器而异。下面这段伪代码大概描述了其中的实现原理:
 
