@@ -15,7 +15,7 @@ Watch App的架构组成，以及生命周期。另外，还有Apple Watch和 Wa
 - [Watch App在项目中的结构](#watch-app在项目中的结构)
 - [Watch App架构](#watch-app架构)
 - [Watch App的生命周期](#watch-app的生命周期)
-- [与 iOS的共性技术](#与-ios的共性技术)
+- [与 iOS的技术共性](#与-ios的技术共性)
 - [相关资料](#相关资料)
 
 ----------

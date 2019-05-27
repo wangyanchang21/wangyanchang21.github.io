@@ -12,8 +12,8 @@ Apple Watch的布局方式和布局影响因素，以及不同尺寸屏幕的适
 ------
 
 - [布局和适配](#布局和适配)
+	- [布局方式和布局因素](#布局方式和布局因素)
 	- [Apple Watch的尺寸和适配](#apple-watch的尺寸和适配)
-	- [Watch App架构](#watch-app架构)
 - [系统icon设计尺寸](#系统icon设计尺寸)
 	- [Home Screen Icon](#home-screen-icon)
 	- [Short-look Notification Icon](#short-look-notification-icon)

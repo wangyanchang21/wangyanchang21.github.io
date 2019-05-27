@@ -17,7 +17,7 @@ Watch App中两种导航样式的说明和各种控件基本介绍和使用。
 - [控件详解](#控件详解)
 	- [WKInterfaceImage](#wkinterfaceimage)
 	- [WKInterfaceGroup](#wkinterfacegroup)
-	- [WKAlertControllerStyle](#wkialertcontrollerstyle)
+	- [WKAlertControllerStyle](#wkalertcontrollerstyle)
 	- [WKInterfacePicker](#wkinterfacepicker)
 	- [WKInterfaceTable](#wkinterfacetable)
 	- [WKInterfaceMenu](#wkinterfacemenu)
