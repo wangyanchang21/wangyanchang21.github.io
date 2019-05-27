@@ -72,7 +72,7 @@ struct Block_descriptor {
 5.`descriptor`:  表示该 `block`的附加描述信息，主要是 `size`，以及 `copy`和 `dispose`函数的指针。这两个辅助函数在拷贝及丢弃块对象时运行, 其中会执行一些操作, 比方说, 前者要保留捕获的对象,而后者则将之释放。   
 6.`variables`: 捕获的变量，`block`能够访问它外部的局部变量，就是因为将这些变量复制到了结构体中。  
 
-`block`的结构体中是有isa指针的, 它还有引用计数, 而且还能响应选择子, 所以可视为对象。这里就不详述了, 因为之前也写过了关于`block`的博客: [浅谈block实现原理及内存特性](https://blog.csdn.net/wangyanchang21/article/details/79525394)。
+`block`的结构体中是有isa指针的, 它还有引用计数, 而且还能响应选择子, 所以可视为对象。这里就不详述了, 因为之前也写过了关于`block`的博客: [浅谈block实现原理及内存特性](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%B8%80)。
 
 
 ### 总结

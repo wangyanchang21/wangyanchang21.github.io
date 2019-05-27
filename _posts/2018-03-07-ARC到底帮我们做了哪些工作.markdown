@@ -1,0 +1,776 @@
+---
+title:  "ARC到底帮我们做了哪些工作?"
+date:   2018-03-07 18:47:08
+categories: [iOS]
+tags: [iOS]
+---
+
+ARC将内存管理交由编译器和运行时来做。编译器根据语义，自动调用内存管理的底层C函数。这样就不需要频繁执行保留及释放操作，提高了效率和执行效率。
+
+[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)
+
+------
+
+- [关于ARC](#关于arc)
+	- [关于ARC的一些看法](#关于arc的一些看法)
+- [OC 中的方法命名规则](#oc-中的方法命名规则)
+- [ARC 做了哪些优化?](#arc-做了哪些优化)
+	- [利用汇编寻找答案](#利用汇编寻找答案)
+	- [需要手动释放返回对象的方法](#需要手动释放返回对象的方法)
+	- [不需要手动释放返回对象的方法](#不需要手动释放返回对象的方法)
+	- [对变量修饰符的优化](#对变量修饰符的优化)
+	- [手动添加autoreleasepool](#手动添加autoreleasepool)
+ - [ARC 不会优化的情景](#arc-不会优化的情景)
+ - [runtime中内存管理函数的实现](#runtime中内存管理函数的实现)
+
+------
+
+
+## 关于ARC
+
+从iOS5开始, 就支持自动引用计数(Automatic Reference Counting, ARC)了, 所以就变得更为简单了。ARC几乎把所有内存管理事宜都交由编译器来决定, 开发者只需专注于业务逻辑。
+
+### 关于ARC的一些看法
+
+1.ARC是不是和Java的GC类似，都会导致一部分性能损耗？   
+首先，ARC和GC是两码事，ARC是编译时编译器“帮你”插入了原本需要自己手写的内存管理代码，而非像GC一样运行时的垃圾回收系统。
+
+2.ARC下自己不管理内存，它会不会出现内存泄露，或导致不可控的内存涨落?   
+了解ARC的原理后，就知道，ARC下编译器插入的内存管理的代码是经过优化的，对于使用完的内存，多运行一行代码都不会浪费，可以这么说，手写的内存管理必须达到很严谨的水平才可能达到ARC自动生成的一样完整且没有疏漏。
+
+3.ARC没有一点风险吗? 有没有它不去管理内存的情况?   
+会有的, 具体请阅读下面的`ARC 不会优化的情景`。
+
+## OC 中的方法命名规则
+
+若方法名以下列词语开头, 则其返回的对象归调用者所有: `alloc`、`new`、`copy`、`mutable Copy`。若调用上述开头的方法就要负责释放返回的对象。也就是说, 这些对象在MRC中需要你手动的进行释放。若方法名不以上述四个词语开头, 返回的对象就不需要你手动去释放, 因为在方法内部将会自动执行一次 `autorelease`方法。
+
+具体做了什么可以阅读另一篇博文[高效 OC之内存管理](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%BA%94)。
+
+## ARC 做了哪些优化?
+
+本文只是以一些例子来说明ARC所作的事情, 只是管中窥豹, ARC还做了其他很多的事情, 以及优化。
+
+在使用ARC时一定要记住, 引用计数实际上还是要执行的, 只不过保留与释放操作现在是由ARC自动为你添加。实际上, ARC在调用这些方法时, 并不通过普通的 Objective-C消息派发机制, 而是直接调用其底层C语言版本。这样做性能更好, 因为保留及释放操作需要频繁执行, 所以直接调用底层函数能节省很多CPU周期。
+
+### 利用汇编寻找答案
+
+在Xcode中的 Product->Perform Action->Assemble“SomeClass.m”，我们可以看到该 OC源文件最终被编编译生产的汇编代码，这里就能详细的查看到底编译器在我们的代码背后插入了哪些代码。
+
+我建了一个类`Zoo`:
+
+``` swift
+@interface Zoo : NSObject
++ (instancetype)createZoo;
++ (instancetype)newZoo;
+@end
+
+@implementation Zoo
++ (instancetype)createZoo {
+    return [self new];
+}
++ (instancetype)newZoo {
+    return [self new];
+}
+@end
+```
+
+将`Zoo.m`转化为汇编后的`createZoo`和`newZoo`方法如下: 
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/arcexplore/20180307110223945.png" width="80%" img/>
+</center>
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/arcexplore/20180307110234926.png" width="80%" img/>
+</center>
+
+
+来看`createZoo`方法和`newZoo`方法中, 有两个 runtime的方法:
+`objc_msgSend`(34行和68行): 向类对象发送消息new。  
+
+`objc_autoreleaseReturnValue`(39行): 这个函数的作用相当于代替我们手动调用 autorelease, 而且还有一些优化。编译器会检测之后的代码, 根据返回的对象是否执行 retain操作, 来设置全局数据结构中的一个标志位, 并决定是否执行 autorelease操作。
+你可以先忽略这些作用, 后面有更详细的介绍。在这里只需要知道如何将代码转化为汇编就可以, 我们继续看。
+
+VC中的代码:
+
+``` swift
+@interface ViewController ()
+@property (nonatomic, strong) Zoo *zoo;
+@end
+
+@implementation ViewController
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [self testForARC];
+}
+- (void)testForARC {
+    // 需要手动释放返回对象的方法
+    [Zoo newZoo];               // 情景1
+    // id temp1 = [Zoo newZoo];    // 情景2
+    // self.zoo = [Zoo newZoo];    // 情景3
+    
+    // 不需要手动释放返回对象的方法
+    // [Zoo createZoo];            // 情景4
+    // id temp2 = [Zoo createZoo]; // 情景5
+    // self.zoo = [Zoo createZoo]; // 情景6
+}
+
+@end
+```
+
+### 需要手动释放返回对象的方法
+
+情景1、2、3中都是以`new`开头的方法, 返回的对象都归调用者所有, 所以需要手动释放返回对象的方法。当我们测试`情景1`的时候, 要注释掉其他情景的代码以增加汇编的可读性。
+
+#### 情景1
+
+情景1下, VC转为汇编:
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/arcexplore/20180307114803559.png" width="80%" img/>
+</center>
+
+可以看到, 黄色框里的是在`ViewController.m`中的代码行是第35行, 即`情景1`的代码。 有两个runtime的函数, 即红色框中的函数:  
+`objc_msgSend`(83行): 向Zoo发送消息createZoo。   
+`objc_release`: 释放[Zoo newZoo]所返回的对象。   
+
+所以这时候, ARC自动添加代码应该是这样的:
+
+``` swift
+// Zoo
++ (instancetype)newZoo {
+    return [self new];
+}
+// VC
+- (void)testForARC {
+	id temp = [Zoo newZoo];
+    objc_release(temp) ;
+}
+```
+
+#### 情景2
+
+情景2下, VC转为汇编:
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/arcexplore/20180307143136372.png" width="80%" img/>
+</center>
+
+所以这时候, ARC自动添加代码应该是这样的:
+
+``` swift
+// Zoo
++ (instancetype)newZoo {
+    return [self new];
+}
+// VC
+- (void)testForARC {
+    id temp1 = [Zoo newZoo];
+	objc_storeStrong(&temp1, nil);   //相当于release
+}
+```
+
+`objc_storeStrong`的内部实现如下:
+
+``` swift
+void objc_storeStrong(id *location, id obj) {
+    id prev = *location;   
+    if (obj == prev) {
+        return;    
+    }    
+    objc_retain(obj);    
+    *location = obj;    
+    objc_release(prev);
+}
+```
+
+#### 情景3
+
+VC反查汇编后的`testForARC`方法:
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/arcexplore/20180314101323863.png" width="80%" img/>
+</center>
+
+VC反查汇编后的`setZoo`方法:
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/arcexplore/20180314101332497.png" width="80%" img/>
+</center>
+
+所以, VC中的代码应该是这样的:
+
+``` swift
+// Zoo
++ (instancetype)newZoo {
+    return [self new];
+} 
+// VC
+- (void)testForARC {
+    id temp = [Zoo newZoo];
+    [self setZoo:temp];
+    objc_release(temp);
+}
+- (void)setZoo:(Zoo *zoo) {
+    objc_storeStrong(&_zoo, zoo);
+}
+```
+
+### 不需要手动释放返回对象的方法
+
+情景4、5、6的命名规则, 返回的对象不归调用者所有, 所以不需要手动释放返回对象的方法。
+
+#### 情景4
+
+情景4下, VC转为汇编:
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/arcexplore/20180307163843406.png" width="80%" img/>
+</center>
+
+VC中的代码应该是这样的:
+
+``` swift
+// Zoo
++ (instancetype)createZoo {
+    id temp = [self new];  
+    return objc_autoreleaseReturnValue(temp); 
+} 
+// VC
+- (void)testForARC { 
+    objc_unsafeClaimAutoreleasedReturnValue([Zoo createZoo]); 
+}
+```
+
+`objc_autoreleaseReturnValue`: 这个函数的作用相当于代替我们手动调用 autorelease, 而且还有一些优化。编译器会检测之后的代码, 根据返回的对象是否执行 retain操作, 来设置全局数据结构中的一个标志位, 来决定是否会执行 autorelease操作。该标记有两个状态, `ReturnAtPlus0`代表执行 autorelease, 以及`ReturnAtPlus1`代表不执行 autorelease。
+
+`objc_unsafeClaimAutoreleasedReturnValue`: 这个函数的作用是替我们手动调用`objc_release`函数，而且还有一些优化。编译器会根据存储的标记来决定需要不需要对其进行 release操作, 当然如果它创建时执行了 autorelease操作就不需要对其进行 release操作了。
+
+
+#### 情景5
+
+情景5下, VC转为汇编:
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/arcexplore/20180307172901351.png" width="80%" img/>
+</center>
+
+VC中的代码应该是这样的:
+
+``` swift
+// Zoo
++ (instancetype)createZoo  {
+    id temp = [self new]; 
+    return objc_autoreleaseReturnValue(temp); //
+} 
+// VC
+- (void)testForARC { 
+    id temp2 = objc_retainAutoreleasedReturnValue([Zoo createZoo]); 
+    objc_storeStrong(&temp2, nil); // 相当于release
+}
+```
+
+`objc_retainAutoreleasedReturnValue`: 这个函数将替代 MRC中的 retain方法, 此函数也会检测刚才提到的那个标志位, 根据标志位来决定是否执行 retain操作。
+
+在这个例子中, 由于代码中没有对对象进行保留, 所以创建时`objc_autoreleaseReturnValue`函数设置的标志位状态是应该是`ReturnAtPlus0`, 表示需要执行 autorelease操作的。所以, 该函数在此处是会进行 retain操作的。
+
+
+#### 情景6
+
+VC反查汇编后的`testForARC`方法:
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/arcexplore/20180315143428159.png" width="80%" img/>
+</center>
+
+VC反查汇编后的`setZoo`方法:
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/arcexplore/20180314101815662.png" width="80%" img/>
+</center>
+
+VC中的代码应该是这样的:
+
+``` swift
+// Zoo
++ (instancetype)createZoo  {
+    id temp = [self new]; 
+    return objc_autoreleaseReturnValue(temp);
+}
+// VC
+- (void)testForARC {
+    id temp = _objc_retainAutoreleasedReturnValue([Zoo createZoo]); 
+    [self setZoo:temp];
+    objc_release(temp);
+}
+- (void)setZoo:(Zoo *zoo) {
+    objc_storeStrong(&_zoo, zoo);
+}
+```
+
+在这个例子中, 由于代码中 zoo属性对对象进行了保留, 所以创建时`objc_autoreleaseReturnValue`函数设置的标志位状态是应该是`ReturnAtPlus1`, 表示不需要执行 autorelease操作的。所以, 该函数在此处是不会进行 retain操作的, 所以此时的引用计数就是创建时的那个, 并没有做多余的操作。而且通过ARC的这种设置并检测标志位的方法要比调用 autorelease和 retain更快。
+
+
+### 对变量修饰符的优化
+
+在应用程序中，修饰符来改变局部变量与实例变量的语义: `__strong`, `__unsafe_unretained`, `__weak`, `__autorelease`。具体含义就不絮述了, 可以约我我之前的博客:[Effective OC之内存管理](http://blog.csdn.net/wangyanchang21/article/details/79356164#t8)。
+
+现在单纯为了研究修饰符的语义, 就以`需要手动释放返回对象`的环境为背景来做比较, 修改VC中`testForARC`的方法:
+
+``` swift
+- (void)testForARC {
+// 其它方法
+    id objc1 = [Zoo newZoo];                      // 情景7(与情景2一致)
+//    __weak id objc2 = [Zoo newZoo];               // 情景8
+//    __unsafe_unretained id objc3 = [Zoo newZoo];  // 情景9
+//    __autoreleasing id objc4 = [Zoo newZoo];      // 情景10
+}
+```
+
+#### `__strong`(情景7)
+
+在创建对象时, 默认都是`strong`的, 所以在这些比较中, 情景7与情景2一致, 所以就不赘述了。
+
+#### `__weak`(情景8)
+
+VC反查汇编后的`testForARC`方法:
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/arcexplore/2018032018464759.png" width="80%" img/>
+</center>
+
+VC中的代码应该是这样的:
+
+``` swift
+- (void)testForARC {
+    id temp = [Zoo newZoo]; 
+    objc_initWeak(&objc2, temp);
+    objc_release(temp);
+    objc_destroyWeak(&objc2);
+}
+```
+
+这个过程就是`weak`指针的一个周期, 从创建到销毁。这上面两个新的runtime函数, `objc_initWeak`和`objc_destroyWeak`。这两个函数就是负责创建`weak`指针和销毁`weak`指针的。其实, 这两个函数内部都引用另一个runtime函数, `storeWeak`, 它是和`storeStrong`对应的一个函数。
+
+它们的源码如下:
+
+``` swift
+objc_initWeak(id *location, id newObj)
+{
+    if (!newObj) {
+        *location = nil;
+        return nil;
+    }
+
+    return storeWeak<DontHaveOld, DoHaveNew, DoCrashIfDeallocating>
+        (location, (objc_object*)newObj);
+}
+```
+
+``` swift
+void
+objc_destroyWeak(id *location)
+{
+    (void)storeWeak<DoHaveOld, DontHaveNew, DontCrashIfDeallocating>
+        (location, nil);
+}
+```
+
+#### `__unsafe_unretained`(情景9)
+
+VC反查汇编后的`testForARC`方法:
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/arcexplore/20180320184709437.png" width="80%" img/>
+</center>
+
+VC中的代码应该是这样的:
+
+``` swift
+- (void)testForARC {
+    id temp = [Zoo newZoo]; 
+	// 指针objc3赋值过程
+	objc_release(temp);
+}
+```
+
+`__unsafe_unretained`类型，不具有所有权，所以只是简单的指针赋值, 没有runtime的函数使用。当临时变量`temp`销毁后, 指针`objc3`仍然是指向那块内存, 所以是不不安全的。正如其名, unretained, unsafe。
+
+#### `__autoreleasing`(情景10)
+
+VC反查汇编后的`testForARC`方法:
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/arcexplore/20180320184759510.png" width="80%" img/>
+</center>
+
+VC中的代码应该是这样的:
+
+``` swift
+- (void)testForARC {
+    id objc4 = [Zoo newZoo]; 
+	objc_autorelease(objc4);
+}
+```
+
+使用`__autorelease`修饰后, 就相当于为其添加一个`autorelease`, 当`autoreleasepool`销毁的时候, 将其释放掉。
+
+### 手动添加autoreleasepool
+
+我们都知道, `ARC`下编译器会为我们添加一些的`autorelease`会在系统创建`autoreleasepool`中进行释放, 释放时机在自动释放池`pop`的时候进行的。而且手动添加的`autoreleasepool`会在释放池的作用域结束后立即`pop`释放。先来看代码:
+
+``` swift
+- (void)testForARC {
+    @autoreleasepool {
+        id objc5 = [Zoo newZoo];                    // 情景11
+//        __autoreleasing id objc6 = [Zoo newZoo];    // 情景12
+//        __autoreleasing id objc7 = [Zoo createZoo]; // 情景13
+    }
+}
+```
+
+#### 情景11
+
+VC反查汇编后的`testForARC`方法:
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/arcexplore/2018032018482397.png" width="80%" img/>
+</center>
+
+VC中的代码应该是这样的:
+
+``` swift
+- (void)testForARC {
+	 @autoreleasepool {
+	    id objc5 = [Zoo newZoo];
+	    objc_storeStrong(&objc5, nil);
+	}
+}
+```
+
+`情景11`其实就是在`情景2`的基础上, 在外面包了一层`autoreleasepool`, 结果其实差别不大, 这是多了一个`objc_autoreleasePoolPush`和`objc_autoreleasePoolPop`。了解自动释放吃原理的你会明白, 手动添加的自动释放池原来是因此才会出了作用域就会释放的。我之前的博客里有写到[Autorelease机制及释放时机](http://blog.csdn.net/wangyanchang21/article/details/51037831), 这里就不絮述了。
+
+#### 情景12
+
+VC反查汇编后的`testForARC`方法:
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/arcexplore/20180320184839910.png" width="80%" img/>
+</center>
+
+VC中的代码应该是这样的:
+
+``` swift
+- (void)testForARC {
+	 @autoreleasepool {
+	    id objc6 = [Zoo newZoo];
+		objc_autorelease(objc6);
+	}
+}
+```
+
+当你在`autoreleasepool`中添加一个`__autorelease`修饰的变量后, 就相当于为其添加一个`autorelease`, 当`autoreleasepool`销毁的时候, 将其释放掉。这是个手动添加的`autoreleasepool`, 所以当释放池`objc_autoreleasePoolPop`后就立即释放了。下面的`情景13`也是同样的道理。
+
+#### 情景13
+
+VC反查汇编后的`testForARC`方法:
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/arcexplore/20180320184854169.png" width="80%" img/>
+</center>
+
+VC中的代码应该是这样的:
+
+``` swift
+- (void)testForARC {
+	@autoreleasepool {
+		 id objc7 = _objc_retainAutoreleasedReturnValue([Zoo createZoo]); 
+		 objc_autorelease(objc7);
+	}
+	}
+}
+```
+
+## ARC 不会优化的情景
+
+绝大部分ARC都是可以做好的, 但会有一些情况是例外的。如performSelector系列方法有很多, 都是带有选择子的。这种编程方式极为灵活，经常可用来简化复杂的代码。不管哪种用法，编译器都不知道要执行的选择子是什么，这必须到了运行期才能确定。 
+
+这种方式的确定很明显。编译器并不知道将要调用的选择子是什么，因此也就不了解其方法签名及返回值，甚至连是否有返回值都不清楚。而且，由于编译器不知道方法名，所以就没办法运用ARC的内存管理规则来判定返回值是不是应该释放，鉴于此，ARC采用了比较谨慎的做法，就是不添加释放操作。然而这么做可能导致内存泄漏，因为方法在返回对象时 可能已经将其保留了。 
+
+来写个例子, 在`Zoo`中重写`dealloc`方法:
+
+``` swift
+- (void)dealloc {
+    NSLog(@"dealloc: %@", self);
+}
+```
+
+VC中:
+
+``` swift
+    // ARC不会为运行期的@selector添加内存管理语句
+    id zoo = [Zoo performSelector:@selector(newZoo)];           // 情景1
+//    id zoo = [Zoo performSelector:@selector(createZoo)]; // 情景2
+    NSLog(@"instance: %@", zoo);
+```
+
+在`ARC环境`下, 使用情景二创建的实例对象可以正常的释放, 而使用情景一创建的实例对象不会自动释放, 从而造成了内存泄露。我的另外一篇博客中说到了这个问题, [多用GCD, 少用performSelector系列方法](https://blog.csdn.net/wangyanchang21/article/details/80340873#t15)。
+
+
+
+## runtime中内存管理函数的实现
+
+在runtime的源码中, 有一些内存管理的函数, 它们的声明存在于`objc-internal.h`文件中。比如, `objc_alloc()`, `objc_allocWithZone()`, `objc_retain()`, `objc_release()`, `objc_autorelease()`, `objc_autoreleasePoolPush`, `objc_autoreleasePoolPop`, 这些函数应该看命名就知道了吧。
+
+还有一些, 当然也包括我们上面提到的, `objc_autoreleaseReturnValue()`, `objc_unsafeClaimAutoreleasedReturnValue()`, `objc_retainAutoreleasedReturnValue()`, `objc_storeStrong()`, `objc_weakStrong`, `objc_initWeak()`, `objc_destroyWeak()`它们的内部实现简单来聊一聊。
+
+1.`objc_storeStrong()`
+
+``` swift
+void objc_storeStrong(id *location, id obj) {
+    id prev = *location;   
+    if (obj == prev) {
+        return;    
+    }    
+    objc_retain(obj);    
+    *location = obj;    
+    objc_release(prev);
+}
+```
+
+当看到这个源代码后, 才会发现这是ARC中做的优化。且看下面的代码, 假如 object在 release后的引用计数降为0, 从而导致系统将其回收, 接下来再执行 retain操作, 就会令应用程序崩溃。使用ARC之后, 就不可能发生这种疏失了。ARC自动的先保留新值, 再释放旧值, 最后设置实例变量, 使其安全的存储。
+
+``` swift
+- (void)setObject:(id)object {
+    [object release];
+    _object = [object retain];
+}
+```
+
+2.`storeWeak()`
+
+它是和`storeStrong`对应的一个函数:
+
+``` swift
+static id 
+storeWeak(id *location, objc_object *newObj)
+{
+    assert(haveOld  ||  haveNew);
+    if (!haveNew) assert(newObj == nil);
+
+    Class previouslyInitializedClass = nil;
+    id oldObj;
+    SideTable *oldTable;
+    SideTable *newTable;
+
+    // Acquire locks for old and new values.
+    // Order by lock address to prevent lock ordering problems. 
+    // Retry if the old value changes underneath us.
+ retry:
+    if (haveOld) {
+        oldObj = *location;
+        oldTable = &SideTables()[oldObj];
+    } else {
+        oldTable = nil;
+    }
+    if (haveNew) {
+        newTable = &SideTables()[newObj];
+    } else {
+        newTable = nil;
+    }
+
+    SideTable::lockTwo<haveOld, haveNew>(oldTable, newTable);
+
+    if (haveOld  &&  *location != oldObj) {
+        SideTable::unlockTwo<haveOld, haveNew>(oldTable, newTable);
+        goto retry;
+    }
+
+    // Prevent a deadlock between the weak reference machinery
+    // and the +initialize machinery by ensuring that no 
+    // weakly-referenced object has an un-+initialized isa.
+    if (haveNew  &&  newObj) {
+        Class cls = newObj->getIsa();
+        if (cls != previouslyInitializedClass  &&  
+            !((objc_class *)cls)->isInitialized()) 
+        {
+            SideTable::unlockTwo<haveOld, haveNew>(oldTable, newTable);
+            _class_initialize(_class_getNonMetaClass(cls, (id)newObj));
+
+            // If this class is finished with +initialize then we're good.
+            // If this class is still running +initialize on this thread 
+            // (i.e. +initialize called storeWeak on an instance of itself)
+            // then we may proceed but it will appear initializing and 
+            // not yet initialized to the check above.
+            // Instead set previouslyInitializedClass to recognize it on retry.
+            previouslyInitializedClass = cls;
+
+            goto retry;
+        }
+    }
+
+    // Clean up old value, if any.
+    if (haveOld) {
+        weak_unregister_no_lock(&oldTable->weak_table, oldObj, location);
+    }
+
+    // Assign new value, if any.
+    if (haveNew) {
+        newObj = (objc_object *)
+            weak_register_no_lock(&newTable->weak_table, (id)newObj, location, 
+                                  crashIfDeallocating);
+        // weak_register_no_lock returns nil if weak store should be rejected
+
+        // Set is-weakly-referenced bit in refcount table.
+        if (newObj  &&  !newObj->isTaggedPointer()) {
+            newObj->setWeaklyReferenced_nolock();
+        }
+
+        // Do not set *location anywhere else. That would introduce a race.
+        *location = (id)newObj;
+    }
+    else {
+        // No new value. The storage is not changed.
+    }
+    
+    SideTable::unlockTwo<haveOld, haveNew>(oldTable, newTable);
+
+    return (id)newObj;
+}
+```
+
+首先是根据weak指针找到其指向的老的对象, 然后获取到与新旧对象相关的SideTable对象, 在老对象的weak表中移除指向信息，而在新对象的weak表中建立关联信息, 接下来让弱引用指针指向新的对象并返回。
+
+3.`objc_initWeak()`
+
+``` swift
+objc_initWeak(id *location, id newObj)
+{
+    if (!newObj) {
+        *location = nil;
+        return nil;
+    }
+
+    return storeWeak<DontHaveOld, DoHaveNew, DoCrashIfDeallocating>
+        (location, (objc_object*)newObj);
+}
+```
+
+4.`objc_destroyWeak()`
+
+``` swift
+void
+objc_destroyWeak(id *location)
+{
+    (void)storeWeak<DoHaveOld, DontHaveNew, DontCrashIfDeallocating>
+        (location, nil);
+}
+```
+
+5.`objc_retainAutoreleaseReturnValue()`
+
+``` swift
+// Prepare a value at +0 for return through a +0 autoreleasing convention.
+id objc_retainAutoreleaseReturnValue(id obj)
+{
+    if (prepareOptimizedReturn(ReturnAtPlus0)) return obj;
+
+    // not objc_autoreleaseReturnValue(objc_retain(obj)) 
+    // because we don't need another optimization attempt
+    return objc_retainAutoreleaseAndReturn(obj);
+}
+```
+
+6.`objc_retainAutoreleasedReturnValue()`
+
+``` swift
+// Accept a value returned through a +0 autoreleasing convention for use at +1.
+id objc_retainAutoreleasedReturnValue(id obj)
+{
+    if (acceptOptimizedReturn() == ReturnAtPlus1) return obj;
+
+    return objc_retain(obj);
+}
+```
+
+伪代码如下:
+
+``` swift
+id objc_retainAutoreleasedReturnValue(id object) {
+    if (get_flag(object))  {
+        clear_flag(object);
+        return object;
+    } else {
+        return [object retain];
+    }
+}
+```
+
+7.`objc_unsafeClaimAutoreleasedReturnValue()`
+
+``` swift
+// Accept a value returned through a +0 autoreleasing convention for use at +0.
+id objc_unsafeClaimAutoreleasedReturnValue(id obj)
+{
+    if (acceptOptimizedReturn() == ReturnAtPlus0) return obj;
+
+    return objc_releaseAndReturn(obj);
+}
+```
+
+伪代码如下:
+
+``` swift
+id objc_unsafeClaimAutoreleasedReturnValue(id object) {
+    if (get_flag(object))  {
+        return [object release];
+    } else {
+        clear_flag(object);
+        return object;
+    }
+}
+```
+
+8.`objc_autoreleaseReturnValue()`
+
+``` swift
+// Prepare a value at +1 for return through a +0 autoreleasing convention.
+id objc_autoreleaseReturnValue(id obj)
+{
+    if (prepareOptimizedReturn(ReturnAtPlus1)) return obj;
+
+    return objc_autorelease(obj);
+}
+```
+
+伪代码如下:
+
+``` swift
+id objc_autoreleaseReturnValue(id object) {
+    if ( //调用者将会执行retain ) {
+          set_flag(object);
+          return object;
+    } else {
+          return [object autorelease];    
+    }
+}
+```
+
+还有一些其他的运行时方法是可以正常使用的, 如`objc_destructInstance()`, `objc_duplicateClass()`, `objc_destructInstance()`等等方法, 想了解的可以去下面的地址进行下载。
+
+
+推荐文章阅读:    
+[高效 OC之内存管理](http://blog.csdn.net/wangyanchang21/article/details/79356164#t7)   
+[ARC编译器下的autorelease、release](https://dcsnail.blog.csdn.net/article/details/51037831#t12)   
+源码下载:    
+[本文Demo_ARC探究](https://download.csdn.net/download/wangyanchang21/11042292)   
+[OpenSource objc4](https://opensource.apple.com/tarballs/objc4)   
+[runtime源码](http://download.csdn.net/download/wangyanchang21/10256049)    
+
+
+-------
+
+欢迎指正, [wangyanchang21](https://github.com/wangyanchang21).
+
+

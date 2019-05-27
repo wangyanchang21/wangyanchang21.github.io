@@ -12,9 +12,9 @@ __block和__forwarding的原理，以及block是如何进行自身copy的。
 ------
 
 **浅谈block实现原理及内存特性系列文章:**   
-[浅谈block实现原理及内存特性之一: 内部结构和类型](https://blog.csdn.net/wangyanchang21/article/details/79525394)   
-[浅谈block实现原理及内存特性之二: 持有变量](https://blog.csdn.net/wangyanchang21/article/details/79785274)   
-[浅谈block实现原理及内存特性之三: copy过程分析](https://blog.csdn.net/wangyanchang21/article/details/79785308)   
+[浅谈block实现原理及内存特性之一: 内部结构和类型](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%B8%80)   
+[浅谈block实现原理及内存特性之二: 持有变量](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%BA%8C)   
+[浅谈block实现原理及内存特性之三: copy过程分析](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%B8%89)    
 
 -----
 
@@ -42,7 +42,7 @@ __Block_byref_a_0 *__forwarding;
 };
 ```
 
-已知在`MRC`下[block捕获由__block修饰的变量的例子](https://blog.csdn.net/wangyanchang21/article/details/79785274#t5)中, 打印变量a是都是取自于`a.__forwarding->a`或者`a->__forwarding->a`(它俩其实是同一个东西, 只因为由于前者和后者的类型不同, 需要的取值方式不同罢了)。当然在`ARC`中也是一样的从`a.__forwarding->a`或者`a->__forwarding->a`中取值, 但区别在于, `__forwarding`所指向的地址不同。
+已知在`MRC`下`block捕获由__block修饰的变量的例子`中, 打印变量a是都是取自于`a.__forwarding->a`或者`a->__forwarding->a`(它俩其实是同一个东西, 只因为由于前者和后者的类型不同, 需要的取值方式不同罢了)。当然在`ARC`中也是一样的从`a.__forwarding->a`或者`a->__forwarding->a`中取值, 但区别在于, `__forwarding`所指向的地址不同。
 
 先看看上面在`MRC`的例子中, `_I_ViewController_capture__blockVariable`函数中, 变量a是这么定义的:
 
@@ -245,7 +245,7 @@ void _Block_object_dispose(const void *object, const int flags) {
 </center>
 
 
-本文在最后就不做总结了, 如果总结也是一个复述式的总结。但本文的目录结构足以说明一切, 就权当一个层次复述吧。对`block`的研究和探讨就到这里, 若有疑问, 欢迎来[我的博客](http://blog.csdn.net/wangyanchang21)进行指正。
+本文在最后就不做总结了, 如果总结也是一个复述式的总结。但本文的目录结构足以说明一切, 就权当一个层次复述吧。对`block`的研究和探讨就到这里, 若有疑问, 欢迎来指正。
 
 
 

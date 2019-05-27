@@ -12,10 +12,10 @@ block是如何进行持有变量的，__block是如何进行工作的。
 ------
 
 **浅谈block实现原理及内存特性系列文章:**   
-[浅谈block实现原理及内存特性之一: 内部结构和类型](https://blog.csdn.net/wangyanchang21/article/details/79525394)   
-[浅谈block实现原理及内存特性之二: 持有变量](https://blog.csdn.net/wangyanchang21/article/details/79785274)   
-[浅谈block实现原理及内存特性之三: copy过程分析](https://blog.csdn.net/wangyanchang21/article/details/79785308)   
- 
+[浅谈block实现原理及内存特性之一: 内部结构和类型](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%B8%80)   
+[浅谈block实现原理及内存特性之二: 持有变量](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%BA%8C)   
+[浅谈block实现原理及内存特性之三: copy过程分析](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%B8%89)   
+
 ----------
 
 
@@ -216,7 +216,7 @@ static void _I_ViewController_capture__blockVariable(ViewController * self, SEL 
 }
 ```
 
-与[block捕获局域变量例子](https://blog.csdn.net/wangyanchang21/article/details/79785274#t2)中作对比后, 会发现:   
+与`block捕获局域变量例子`中作对比后, 会发现:   
 1.block中增加一个名为`__Block_byref_a_0`的结构体, 用来保存我们捕获并且要修改的变量a。   
 2.`__ViewController__capture__blockVariable_block_impl_0`中引用的是`__Block_byref_a_0`的结构体指针, 这样就可以达到修改外部变量的作用。   
 3.我们要负责`__Block_byref_a_0`结构体相关的内存管理, 所以在`__ViewController__capture__blockVariable_block_desc_0`中增加了`copy`和`dispose`函数指针, 对于在调用前后修改相应变量的引用计数。   
@@ -225,20 +225,20 @@ static void _I_ViewController_capture__blockVariable(ViewController * self, SEL 
 
 #### __block的作用
 
-在[block捕获局域变量例子](https://blog.csdn.net/wangyanchang21/article/details/79785274#t2)的`_I_ViewController_captureVariable`函数中, 首先定义变量`int a = 100`, 然后在构建block的时候(即构建`__ViewController__captureVariable_block_impl_0`), 传入的捕获变量是变量a的值(即传入a)。 所以对于block捕获的变量, block默认是将其复制到其数据结构中来实现访问的,  且block捕获的变量是在`block内部`进行修改是不会影响外部变量的。
+在`block捕获局域变量例子`的`_I_ViewController_captureVariable`函数中, 首先定义变量`int a = 100`, 然后在构建block的时候(即构建`__ViewController__captureVariable_block_impl_0`), 传入的捕获变量是变量a的值(即传入a)。 所以对于block捕获的变量, block默认是将其复制到其数据结构中来实现访问的,  且block捕获的变量是在`block内部`进行修改是不会影响外部变量的。
 
 <center>
 <img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/blockexplore/20180315162231956.png" width="50%" img/>
 </center>
 
-在[block捕获由__block修饰的变量例子](https://blog.csdn.net/wangyanchang21/article/details/79785274#t5)的`_I_ViewController_capture__blockVariable`函数中, 首先定义了`__Block_byref_a_0`类型的变量a, 紧接着在构建block时(即构建`__ViewController__capture__blockVariable_block_impl_0`), 传入捕获变量a的地址(即传入&a)。所以对于block捕获的`__block`修饰的变量，block是复制其引用地址来实现访问的。自然就可以在`block内部`修改变量从而影响外部的变量了, 且block内外打印其地址都是同一个地址。
+在`block捕获由__block修饰的变量例子`的`_I_ViewController_capture__blockVariable`函数中, 首先定义了`__Block_byref_a_0`类型的变量a, 紧接着在构建block时(即构建`__ViewController__capture__blockVariable_block_impl_0`), 传入捕获变量a的地址(即传入&a)。所以对于block捕获的`__block`修饰的变量，block是复制其引用地址来实现访问的。自然就可以在`block内部`修改变量从而影响外部的变量了, 且block内外打印其地址都是同一个地址。
 
 <center>
 <img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/blockexplore/20180315162240775.png" width="50%" img/>
 </center>
 
 
-这就是为什么`__block`修饰后, 才可以修改捕获变量的原因。当然这是在`MRC`中, 在`ARC`中原理与此相同。 不同的是`ARC`下编译器会自动为我们`copy`当前block至堆区, 过程中又会有怎么样的区别呢? 那我们继续来看上面提到的一个变量`__forwarding`, 在后面[浅谈block实现原理及内存特性之三: copy过程分析](https://blog.csdn.net/wangyanchang21/article/details/79785308)中会详细讲到。
+这就是为什么`__block`修饰后, 才可以修改捕获变量的原因。当然这是在`MRC`中, 在`ARC`中原理与此相同。 不同的是`ARC`下编译器会自动为我们`copy`当前block至堆区, 过程中又会有怎么样的区别呢? 那我们继续来看上面提到的一个变量`__forwarding`, 在后面[浅谈block实现原理及内存特性之三: copy过程分析](https://wangyanchang21.github.io/2018/%E6%B5%85%E8%B0%88block%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E5%8F%8A%E5%86%85%E5%AD%98%E7%89%B9%E6%80%A7%E4%B9%8B%E4%B8%89)中会详细讲到。
 
 ### block捕获当前类的属性
 
@@ -319,7 +319,7 @@ static void _I_ViewController_captureProperty(ViewController * self, SEL _cmd) {
 
 ### block捕获由__block修饰的对象
 
-这个情景实质上与[block捕获由__block修饰的变量](https://blog.csdn.net/wangyanchang21/article/details/79785274#t5)是相同的。区别就在于存储的变量不同, 之前是一个变量, 现在是一个对象, 而对象是具有指针地址和存储地址(即指针指向地址)的。既然我们在说内存特性, 干脆也将其总结一下, 还可以巩固对上面的知识认知。
+这个情景实质上与`block捕获由__block修饰的变量`是相同的。区别就在于存储的变量不同, 之前是一个变量, 现在是一个对象, 而对象是具有指针地址和存储地址(即指针指向地址)的。既然我们在说内存特性, 干脆也将其总结一下, 还可以巩固对上面的知识认知。
 
 #### 例子和打印结果
 
