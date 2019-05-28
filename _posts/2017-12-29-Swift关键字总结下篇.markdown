@@ -1,0 +1,656 @@
+---
+title:  "Swift关键字总结下篇"
+date:   2017-12-29 10:35:01
+categories: [Swift]
+tags: [Swift]
+---
+
+在Swift的`特性`中还有一些关键字, 是以`@`开头的关键字。另外，还有以数字符号`＃`开头的关键字。
+
+[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)
+
+------
+
+- [Swift中有多少关键字?](#swift中有多少关键字)
+	- [起始于数字标记(#)的关键字](#起始于数字标记的关键字)
+	- [特性中的关键字(@)](#特性中的关键字)
+	- [以数字符号＃开头的关键字](#以数字符号开头的关键字)
+- [#available](#available)
+	- [#file、#column、#line、#function](#filecolumnlinefunction)
+	- [#if、#end、#sourceLocation](#ifendsourceLocation)
+- [@Attributes(特性)](#Attributes特性)
+	- [声明特性](#声明特性)
+	- [Interface Builder使用的声明特性](#interface-builder使用的声明特性)
+	- [类型特性](#类型特性)
+- [相关资料](#相关资料)
+
+------
+
+
+
+## Swift中有多少关键字?
+
+在Swift官方文档的`词汇结构`中, 有非常多的关键字, 它们被用于声明中、语句中、表达式中、类中、模式中, 还有以数字符号`＃`开头的关键字, 以及特定上下文环境使用的关键字。本文中涉及的代码可以在这里[下载代码资源](http://download.csdn.net/download/wangyanchang21/10194696)。
+
+另外, 在`特性`中还有一些关键字, 是以`@`开头的关键字。这些所有的关键字将在 [Swift关键字总结上篇](http://blog.csdn.net/wangyanchang21/article/details/78887137#t10) 和 [Swift关键字总结下篇](http://blog.csdn.net/wangyanchang21/article/details/78928925) 两篇文章中详细列举。
+
+上篇中主要写到不带符号的关键字, 那么本篇中将详细写到下面的这些关键字。如带`#`或者`@`的关键字, 到底是如何使用的。
+
+#### 起始于数字标记(#)的关键字
+
+`#available`、`#column`、`#else`、`#elseif`、`#endif`、`#file`、`#function`、`#if`、`#line`、`#selector` 和 `#sourceLocation`。
+
+#### 特性中的关键字(@)
+
+`@available`、`@discardableResult`、`@GKInspectable`、`@nonobjc`、`@objc`、`@NSCopying`、`@NSManaged`、`@objcMembers`、`@testable`、`@NSApplicationMain`、`@UIApplicationMain`、`@IBAction`、`@IBOutlet`、`@IBDesignable`、`@IBInspectable`、`@autoclosure`、`@escaping`、`@convention`。
+
+
+## 以数字符号＃开头的关键字
+
+### #available
+
+Swift 拥有内置的对 API 可用性的检查功能。编译器在 SDK 中使用可用性信息来确保在你项目中明确的 API 都是可用的。如果你尝试使用一个不可用的 API 的话，Swift 会在编译时报告一个错误。
+
+``` swift
+if #available(platform name version, ..., *) {
+    statements to execute if the APIs are available
+} else {
+    fallback statements to execute if the APIs are unavailable
+}
+```
+
+在这个通用的格式中，可用性条件接收平台的名称和版本列表。你可以使用 iOS，macOS 和 watchOS 来作为平台的名字。要说明额外的特定主版本号则使用类似 iOS 8 这样的名字，你可以明确更小一点的版本号比如 iOS 8.3 和 macOS 10.10.3。
+
+举个例子:
+
+``` swift
+if #available(iOS 10, macOS 10.12, *) {
+    // Use iOS 10 APIs on iOS, and use macOS 10.12 APIs on macOS
+} else {
+    // Fall back to earlier iOS and macOS APIs
+}
+```
+
+
+### #file、#column、#line、#function
+
+这些都是特殊字面量。字面量表达式要么由普通字面量组成(例如字符串和数字)， 要么是数组或字典的字面量、playground 字面量，要么就是这些特殊字面量。
+
+| Literal | Type | Value |
+| :-----: | :-----: | :-----: |
+| #file | String | 它出现的位置的文件名 |
+| #line | Int | 它出现位置的行数 |
+| #column | Int | 他开始的列数 |
+| #function | String | 它出现的声明 |
+
+
+直接上代码: 
+
+``` swift
+class SomeClass {
+    func logLiteral(fileName: String = #file, methodName: String = #function, lineNumber: Int = #line, column: Int = #column) {
+        print("\(fileName as NSString)->\(methodName)->\(lineNumber)->\(column)");
+    }
+    
+    func excuteLog() {
+        logLiteral()
+    }
+}
+SomeClass().excuteLog()
+```
+
+在我工程中它是这个样子的:
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/swiftkeywords/20171226161019455.png" width="80%" img/>
+</center>
+
+所以打印结果为: 
+
+``` swift
+MyPlayground.playground->excuteLog()->95->19
+```
+
+
+### #if、#end、#sourceLocation
+
+编译器控制语句允许程序改变编译器的行为。Swift 有两种编译器控制语句：`编译配置语句`和`线路控制语句`。
+
+编译配置语句可以根据一个或多个配置来有条件地编译代码。
+每一个编译配置语句都以 `#if` 开始，`#endif`结束。如下是一个简单的编译配置语句：
+
+``` swift
+#if 编译配置1
+    如果编译配置1成立则执行这部分代码
+#elseif 编译配置2
+    如果编译配置2成立则执行这部分代码
+#else
+    如果编译配置均不成立则执行这部分代码
+#endif
+```
+
+编译配置可以是 true 和 false 的字面量，也可以是使用 -D 命令行标志的标识符，或者是下列表格中的任意一个平台检测函数。
+
+| 函数 | 可用参数 |
+| :-----: | :-----: |
+| os()| OSX, iOS, watchOS, tvOS, Linux |
+| arch()| i386, x86_64, arm, arm64 |
+| swift() | >= 后跟版本号 |
+
+
+``` swift
+#if os(iOS)
+    print("come in one")
+#endif
+#if arch(x86_64)
+    print("come in two")
+#endif
+#if swift(>=4.0)
+    print("come in three")
+#endif
+
+// result is
+// come in one
+// come in two
+// come in three
+```
+
+介绍完编译配置语句, 然后开始介绍线路制语句。行控制语句可以为被编译的源代码指定行号和文件名，从而改变源代码的定位信息，以便进行分析和调试。
+
+行控制语句形式如下：
+
+``` swift
+#sourceLocation(file: 文件名 , line:行号)
+#sourceLocation()
+```
+
+第一种的行控制语句会改变该语句之后的代码中的字面量表达式 #line 和 #file 所表示的值。行号 是一个大于 0 的整形字面量，会改变 #line 表达式的值。文件名 是一个字符串字面量，会改变 #file 表达式的值。
+
+第二种的行控制语句, #sourceLocation()，会将源代码的定位信息重置回默认的行号和文件名。
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/swiftkeywords/20171226175632019.png" width="80%" img/>
+</center>
+
+
+## @Attributes(特性)
+
+特性给有关声明或类型提供更多的信息。在 Swift 中有两种特性，一种用于声明，另一种用于类型。
+
+通过在 `@` 符号后跟一个特性名称和该特性可以接受的实际参数来指定一个特性。有些声明特性通过接收参数来指定特性的更多信息以及它是如何修饰某个特定的声明的。这些特性的参数写在圆括号内，它们的格式由它们所属的特性来定义：
+
+``` swift
+@特性名
+@特性名（特性参数）
+```
+
+### 声明特性
+
+声明特性只能应用于声明。
+
+#### @available
+
+将 `available` 特性用于声明时，表示该声明的生命周期与特定的平台和操作系统版本有关。
+
+参数说明:   
+
+1. `available` 特性经常与参数列表一同出现，该参数列表至少有两个特性参数，参数之间由逗号分隔。这些参数由以下这些平台名字中的一个起头：`iOS`, `OSApplicationExtension`, `macOS`, `macOSApplicationExtension`, `watchOS`, `watchOSApplicationExtension`, `tvOS`, `tvOSApplicationExtension`, `swift`
+
+当然，你也可以用一个星号（`*`）来表示上面提到的所有平台。 其余的参数，可以按照任何顺序出现，并且可以添加关于声明生命周期的附加信息，包括重要事件。   
+
+2. `unavailable`参数表示该声明在指定的平台上是无效的。   
+
+3. `introduced` 参数表示指定平台从哪一版本开始引入该声明。格式如下：
+
+``` swift
+introduced=版本号
+```
+版本号由一个或多个正整数构成，由句点分隔的。
+
+4. `deprecated`参数表示指定平台从哪一版本开始弃用该声明。格式如下：
+
+``` swift
+deprecated=版本号
+```
+
+可选的版本号由一个或多个正整数构成，由句点分隔的。省略版本号表示该声明目前已弃用，当弃用出现时无需给出任何有关信息。如果你省略了版本号，冒号（`:`）也可省略。
+
+5. `obsoleted` 参数表示指定平台从哪一版本开始废弃该声明。当一个声明被废弃后，它就从平台中移除，不能再被使用。格式如下：
+
+``` swift
+obsoleted=版本号
+```
+
+版本号由一个或多个正整数构成，由句点分隔的。
+
+6. `message` 参数用来提供文本信息。当使用被弃用或者被废弃的声明时，编译器会抛出警告或错误信息。格式如下：
+
+``` swift
+message=信息内容
+```
+
+信息内容由一个字符串构成。
+
+7. `renamed` 参数用来提供文本信息，用以表示被重命名的声明的新名字。当使用声明的旧名字时，编译器会报错提示新名字。格式如下：
+
+``` swift
+renamed=新名字
+```
+
+新名字由一个字符串构成。
+
+举例说明:    
+你可以将`renamed` 参数和 `unavailable` 参数以及类型别名声明组合使用，以此向用户表示某个声明已经被重命名。当某个声明的名字在一个框架或者库的不同发布版本间发生变化时，这会相当有用。
+
+``` swift
+// 首发版本
+protocol MyProtocol {
+// 这里是协议定义
+}
+// 后续版本重命名了 MyProtocol
+protocol MyRenamedProtocol {
+// 这里是协议定义
+}
+@available(*, unavailable, renamed:"MyRenamedProtocol")
+typealias MyProtocol = MyRenamedProtocol
+```
+
+还可以可以简明地表达出声明在多个平台上的可用性。如果 `available` 特性除了平台名称参数外，只指定了一个 `introduced` 参数，那么可以使用以下简写语法代替：
+
+``` swift
+@available（平台名称 版本号，*）
+```
+``` swift
+@available(macOS 10.12, *)
+@available(iOS 10.0, macOS 10.12, *)
+@available(swift 3.0.2)
+@available(*, deprecated: 10.0)
+@available(iOS, introduced: 2.0, deprecated: 8.0, message: "Header views are animated along with the rest of the view hierarchy")
+```
+
+
+#### @discardableResult
+
+该特性用于的函数或方法声明, 以抑制编译器中函数或方法的返回值被调而没有使用其结果的警告。
+
+``` swift
+class WaringClass {
+    @discardableResult
+    func someWarningMethod() -> Bool {
+        return true
+    }
+}
+
+var waring = WaringClass()
+waring.someWarningMethod()
+```
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/swiftkeywords/20171228183823533.png" width="80%" img/>
+</center>
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/swiftkeywords/20171228183832969.png" width="80%" img/>
+</center>
+
+#### @GKInspectable
+
+用这个特性可以把一个自定义的 `GameplayKit` 组件属性显示到 `SpriteKit` 编辑器界面中。使用这个特性也就隐式地使用了 `objc` 特性
+
+
+#### @objc
+
+该特性用于修饰任何可以在 Objective-C 中表示的声明。比如，非嵌套类、协议、非泛型枚举（仅限原始值为整型的枚举）、类和协议中的属性和方法（包括存取方法）、构造器、析构器以及下标运算符。`objc` 特性告诉编译器这个声明可以在 Objective-C 代码中使用。
+
+标有 `objc` 特性的类必须继承自 Objective-C 中定义的类。如果你将 `objc` 特性应用于一个类或协议，它也会隐式地应用于类或协议中兼容 Objective-C 的成员。对于标记了 `objc` 特性的类，编译器会隐式地为它的子类添加 `objc` 特性。标记了 `objc` 特性的协议不能继承没有标记 `objc` 的协议。
+
+如果你将 `objc` 特性应用于枚举，每一个枚举用例都会以枚举名称和用例名称组合的方式暴露在 Objective-C 代码中。例如，在 Planet 枚举中有一个名为 Venus 的用例，该用例暴露在 Objective-C 代码中时叫做 PlanetVenus。
+
+`objc` 特性有一个可选的参数，由标识符构成。当你想把 `objc` 所修饰的实体以一个不同的名字暴露给 Objective-C 时，你就可以使用这个特性参数。你可以使用这个参数来命名类、枚举类型、枚举用例、协议、方法、存取方法以及构造器。下面的例子把 ExampleClass 中的 enabled 属性的取值方法暴露给 Objective-C，名字是 isEnabled，而不是它原来的属性名。
+
+``` swift
+//@objc
+class ExampleClass: NSObject {
+    @objc var enabled: Bool {
+        @objc(isEnabled) get {
+            // Return the appropriate value
+            return true
+        }
+    }
+}
+```
+
+#### @nonobjc
+
+把这个特性应用到一个方法，属性，下标，或者初始化器的声明中，废除一个隐式 `objc` 特性 。尽管有可能在 Objective-C 中表示一个声明， `nonobjc` 特性告诉编译器，使其声明在 Objective-C 代码中不可用。
+
+给扩展使用这个特性与对扩展中的所有不显式地用 `objc` 特性标记的成员使用是一样的效果。
+
+对于一个标为 `objc` 特性的类中桥接的方法，你可以使用 `nonobjc` 特性解决其循环性，并且允许重载标为 `objc` 特性的类中的方法和初始化器。
+
+一个标记为 `nonobjc` 特性的方法不能重写标为 `objc` 特性的方法。但是，一个标记为 `objc` 特性的方法可以重写一个标为 `nonobjc` 特性的方法。同样，一个标为 `nonobjc` 特性的方法不能满足一个标为 `objc` 特性方法的协议需求。
+
+
+#### @NSCopying
+
+这个特性用于一个类的可变存储属性中。这个特性让属性值（由 `copyWithZone(_:)` 方法返回，而不是属性本身的值）的拷贝合成属性的`setter`。属性的类型必须遵循 `NSCopying` 协议。
+
+从某种程度上来说， `NSCopying` 特性的行为类似 Objective-C 中的 `copy` 属性特性。`@NSCopying`修饰的属性必须是遵循`NSCopying协议`的，而在 Swift 中， `NSCopying协议`被限制给类使用。由于 Swift 中的 `String` 类型已经是值类型了。所以 `String` 不能通过扩展遵循`NSCopying协议`。值类型的赋值，只可能是值的拷贝，当然，结构体里面有对象类型，就另当别论了。
+
+以下是一个使用@NSCopying的案例：
+
+``` swift
+class Dog : NSObject, NSCopying {
+    var name = "no name"
+    var age = 0
+    
+    func copy(with zone: NSZone? = nil) -> Any {
+        let copy = Dog()
+        print("copyed")
+        copy.name = name
+        copy.age = age
+        return copy
+    }
+}
+
+class Master : NSObject {
+    @NSCopying var pet : Dog
+    init(pet : Dog) {
+        self.pet = pet
+        super.init()
+    }
+}
+
+// create dogA
+var dogA = Dog()
+dogA.name = "dididi"
+dogA.age = 1
+
+// create dogB
+var dogB = Dog()
+dogB.name = "dadada"
+dogB.age = 3
+
+// create master of dogA
+var master = Master(pet: dogA)
+
+print(master.pet === dogA)
+print(master.pet.name, master.pet.age)
+// true
+// dididi 1
+
+// dogB replace dogA
+master.pet = dogB
+// copyed
+
+print(master.pet === dogB)
+print(master.pet.name, master.pet.age)
+// false
+// dadada 3
+```
+
+大部分情况下，`@NSCopying`在 Swift 中的使用场景都是放在调用 Objective-C 中的类型时候使用。自定义类去遵循`NSCopying协议`，不太符合 Swift 的类型体系：请使用结构体！
+
+
+#### @NSManaged
+
+该特性用于修饰 `NSManagedObject` 子类中的实例方法或存储型变量属性，表明它们的实现由 `Core Data` 在运行时基于相关实体描述动态提供。对于标记了 `NSManaged` 特性的属性，`Core Data` 也会在运行时为其提供存储。应用这个特性也意味着`objc`特性。
+
+在与`Core Data` 模型中管理对象子类相关的特性或者关系的每个属性定义之前，将`@NSmanaged`特性加入。与 Objective-C 里面的 `@dynamic`特性类似，`@NSManaged`特性告知 Swift 编译器，这个属性的存储和实现将在运行时完成。但是，与`@dynamic`不同的是，`@NSManaged`特性仅在 `Core Data` 支持中可用。
+
+Swift 类被命名空间化---他们局限于被编译的模块中（最典型的是`Target`）。 为了使用带 `Core Data` 模型的`NSManagedObject`类的 Swift 子类，在模型实体监视器的类区域里，用模块名字作为类名的前缀。
+
+#### @testable
+
+在导入允许测试的编译模块时，该特性用于修饰 `import` 声明，这样就能访问被导入模块中的任何标有 `internal` 访问级别修饰符的实体，犹如它们被标记了 `public` 访问级别修饰符。测试也可以访问使用`internal`或者`public`访问级别修饰符标记的类和类成员, 就像它们是`open`访问修饰符声明的。
+
+当你在写一个有单元测试目标的应用时，你的代码应该能被模块访问到以进行测试。默认情况下只有标注为 `open` 或 `public` 的才可以被其他模块访问。但是，如果你使用 `@testable`  属性标注了导入的生产模块并且用使能测试的方式编译了这个模块，单元测试目标就能访问任何 `internal` 的实体。
+
+``` swift
+@testable import someModule
+```
+
+#### @NSApplicationMain
+
+在类上使用该特性表示该类是应用程序委托类，使用该特性与调用 `NSApplicationMain(_:_:)` 函数并且把该类的名字作为委托类的名字传递给函数的效果相同。
+
+如果你不想使用这个特性，可以提供一个 `main.swift` 文件，并在代码顶层调用`NSApplicationMain(_:_:)` 函数,如下所示:
+
+``` swift
+import AppKit
+NSApplicationMain(CommandLine.argc, CommandLine.unsafeArgv)
+```
+
+没看懂不要紧, 向下看。
+
+
+#### @UIApplicationMain
+
+在类上使用该特性表示该类是应用程序委托类，使用该特性与调用 `UIApplicationMain`函数并且把该类的名字作为委托类的名字传递给函数的效果相同。
+
+如果你不想使用这个特性，可以提供一个 `main.swift` 文件，并在代码顶层调用 `UIApplicationMain(_:_:_:)` 函数。比如，如果你的应用程序使用一个继承于 `UIApplication` 的自定义子类作为主要类，你可以调用 `UIApplicationMain(_:_:_:)` 函数而不是使用该特性。
+
+又没看懂, 不要紧, 我们来分析一下: 
+XCode 中创建一个基于 Objective-C 的 `iOS App` 工程。`Supporting Files`目录下会自动创建一个`main.m`文件。里面的代码段如下：
+
+``` swift
+#import <UIKit/UIKit.h>
+#import "AppDelegate.h"
+int main(int argc, char * argv[]) {
+    @autoreleasepool {
+        return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
+    }
+}
+```
+
+其实上面这段代码在OC工程中所做的事情, 就是 Swift 的项目中引入`@NSApplicationMain` 和 `@UIApplicationMain`两个特性所做的事情。
+苹果对 Swift 的项目进行了简化，使用`@NSApplicationMain` 放在 `OSX` 桌面应用工程代理类前面，使用`@UIApplicationMain`放在 `iOS app` 工程代理类前面。与 OC 工程中的`main.m`的功能一模一样。这里我们使用 `iOS app`作为例子，`@NSApplicationMain` 在 `OSX` 桌面应用工程里面的用法是一样的, 当你使用Xcode 创建一个 Swift iOS 工程时，自动生成的 `AppDelegate.swift` 里面，会看到以下代码：
+
+``` swift
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
+...
+```
+
+大家平时可以忽悠这个特性点，因为 Xcode 已经自动帮你加上了。不用自己添加任何东西，只需要关注代理类中要去实现的相关的业务逻辑。但是对这个特性的理解，有助于你去理解整个 app 的生命周期。
+
+
+### Interface Builder使用的声明特性
+
+`Interface Builder` 特性是 `Interface Builder` 用来与 Xcode 同步的声明特性。Swift 提供了以下的 `Interface Builder` 特性：`IBAction`，`IBOutlet`，`IBDesignable`，以及`IBInspectable` 。这些特性与 Objective-C 中对应的特性在概念上是相同的。
+
+`IBOutlet` 和 `IBInspectable` 用于修饰一个类的属性声明，`IBAction` 特性用于修饰一个类的方法声明，`IBDesignable` 用于修饰类的声明。
+`IBAction` 和 `IBOutlet` 特性都意味着`objc`特性。
+
+
+### 类型特性
+
+类型特性只能用于修饰类型。
+
+#### @autoclosure
+
+这个特性通过把表达式自动封装成无参数的闭包来延迟表达式的计算。它可以修饰类型为返回表达式结果类型的无参数函数类型的函数参数。
+
+自动闭包是一种自动创建的用来把作为实际参数传递给函数的表达式打包的闭包。它不接受任何实际参数，并且当它被调用时，它会返回内部打包的表达式的值。自动闭包允许你延迟处理，因此闭包内部的代码直到你调用它的时候才会运行。对于有副作用或者占用资源的代码来说很有用，因为它可以允许你控制代码何时才进行求值。
+
+函数类型的形式参数`() -> T` （其中 `T` 是任何类型）可以应用 `autoclosure` 特性在其调用时隐式创建闭包。这提供了语法上方便的方式来推迟表达式的执行而不需要在调用函数时写一个显式的闭包。比如说一个`() -> String`的闭包, 用`@autoclosure` 来修饰。现在你可以调用函数就像它接收了一个 String 实际参数而不是闭包，而实际参数自动地转换为了闭包。
+
+下面来举个例子, 写一个函数, 入参中包含一个闭包, 而且这个闭包没有形式参数:
+
+``` swift
+// 1.完整闭包
+printIfTrue(block:  { () -> Bool in
+    return 2 > 1
+})
+// 2.闭包中括号内的省略
+printIfTrue(block: { return 2 > 1 })
+// 3.尾随闭包的省略
+printIfTrue(){ return 2 > 1 }
+// 4.省略return
+printIfTrue(){ 2 > 1 }
+// 5.无入参时, 省略()
+printIfTrue{2 > 1}
+// 不使用自动闭包的用法, 如此调用会报错
+//printIfTrue(2 > 1)
+```
+
+写一个同样功能的自动闭包的函数:
+
+``` swift
+func printIfTrueOrNot(block: @autoclosure ()-> Bool){
+    if block(){
+        print("The result is true")
+    }
+}
+
+// 使用自动闭包, 相当于把 2 > 1 这个表达式的bool结果, 自动转换为 () -> Bool
+printIfTrueOrNot(block: 2 > 1)
+```
+
+#### @escaping
+
+当闭包作为一个实际参数传递给一个函数的时候，我们就说这个闭包逃逸了，因为它可以在函数返回之后被调用。当你声明一个接受闭包作为形式参数的函数时，你可以在形式参数前写 `@escaping` 来明确闭包是允许逃逸的。闭包可以逃逸的一种方法是被储存在定义于函数外的变量里。比如说，很多函数接收闭包实际参数来作为启动异步任务的回调。函数在启动任务后返回，但是闭包要直到任务完成——闭包需要逃逸，以便于稍后调用。
+
+将这个特性应用到一个方法或函数声明的形参类型中，以指明可以存储该形参值用于稍后执行。这意味着允许那个值超过调用它的范围而存在。 `escaping` 类型特性的函数类型形参需要为属性或方法显式使用 `self.`。
+
+
+``` swift
+var completionHandlers: [() -> Void] = []
+func someFunctionWithEscapingClosure(completionHandler: @escaping () -> Void) {
+    print("#1-刚刚进逃逸闭包函数, 准备开始添加---\(completionHandlers.count)")
+    completionHandlers.append(completionHandler)
+    print("#1-执行到我这里, 虽然已经将闭包添加进数组, 但是闭包还没有执行---\(completionHandlers.count)")
+}
+
+func someFunctionWithNonescapingClosure(closure: () -> Void) {
+    print("#2-刚刚进入非非非逃逸闭包函数")
+    closure()
+    print("#2-代码执行结束了")
+}
+
+class SomeClassd {
+    var x = 10
+    func doSomething() {
+        someFunctionWithEscapingClosure {
+            print("#1-这里才是真正执行传入闭包的时刻---\(completionHandlers.count)")
+            self.x = 100
+        }
+        someFunctionWithNonescapingClosure {
+            print("#2-这里我进行了操作")
+            self.x = 200
+        }
+    }
+}
+
+let instance = SomeClassd()
+instance.doSomething()
+print(instance.x)
+// Prints "200"
+
+completionHandlers.first?()
+print(instance.x)
+```
+
+函数 `someFunctionWithEscapingClosure(_:)`接收一个闭包作为实际参数并且添加它到声明在函数外部的数组里。如果你不标记函数的形式参数为 `@escaping`，你就会遇到编译时错误。这里你可以很清楚的发现拥有逃逸闭包的函数和拥有非逃逸闭包的函数之间的区别。
+
+让闭包 `@escaping`意味着你必须在闭包中显式地引用 `self`，比如说，下面的代码中，传给 `someFunctionWithEscapingClosure(_:)`的闭包是一个逃逸闭包，也就是说它需要显式地引用 `self`。相反，传给`someFunctionWithNonescapingClosure(_:)` 的闭包是非逃逸闭包，也就是说它可以隐式地引用 `self`。
+
+
+#### @convention
+
+`convention` 该特性用于修饰函数类型，它指出了函数调用的约定。   
+`convention` 特性总是与下面的参数之一一起出现。   
+
+参数为:   
+1.`swift` 参数用于表示一个 Swift 函数引用。这是 Swift 中函数值的标准调用约定。   
+2.`block` 参数用于表示一个 Objective-C 兼容的块引用。函数值会作为一个块对象的引用，块是一种 `id` 兼容的 Objective-C 对象，其中嵌入了调用函数。调用函数使用 C 的调用约定。   
+3.`c` 参数用于表示一个 C 函数引用。函数值没有上下文，不具备捕获功能，同样使用 C 的调用约定。   
+
+使用 C 函数调用约定的函数也可用作使用 Objective-C 块调用约定的函数，同时使用 Objective-C 块调用约定的函数也可用作使用 Swift 函数调用约定的函数。然而，只有非泛型的全局函数、局部函数以及未捕获任何局部变量的闭包，才可以被用作使用 C 函数调用约定的函数。
+
+##### 具体场景
+
+1.在 Swift 中调用包含函数指针参数的 C函数  
+
+定义了某个C函数:
+
+``` swift
+CGFloat myCFunction(CGFloat (callback)(CGFloat x, CGFloat y)) {
+    return callback(1.1, 2.2);
+}
+```
+
+其中 `callback`是一个函数指针，需要调用者自己实现，在 Swift 中，如果需要实现`callback`，供`myCFunction`调用的话，有以下写法，这里就会用到`@convention`:
+
+``` swift
+let swiftCallback : @convention(c) (CGFloat, CGFloat) -> CGFloat = {
+    (x, y) -> CGFloat in
+    return x + y
+} 
+let result = myCFunction( swiftCallback )
+print(result) // 3.3
+```
+
+另外，还有更加简单地直接使用闭包的做法，这里没有用到`@convention`:
+
+``` swift
+let result = myCFunction( {
+    (x, y) -> CGFloat in
+    return x + y
+} )
+print(result) // 3.3
+```
+
+2.在 Swift中调用包含 block参数的 Objective-C方法
+
+与调用 C 的函数指针类似，要在 Swift 中调用一个含有 block 的 Objective-C 的方法时，需要使用@convention(block)定义 Swift 变量才能传入到 Objective-C 的方法中。当然也可以直接使用闭包，这里我们举一个动画方法的例子：
+
+``` swift
+[UIView animateWithDuration:2 animations:^{
+	NSLog(@"start");
+} completion:^(BOOL finished){
+ 	NSLog(@"completion");
+}];
+```
+
+以上代码使用了 2个block，直接使用闭包转换成 Swift代码：
+
+``` swift
+UIView.animate(withDuration: 2, animations: {
+    NSLog("start")
+}, completion: {
+    (completion) in
+    NSLog("completion")
+})
+```
+
+等价使用@convention(block)的代码如下：
+
+``` swift
+let animationsBlock : @convention(block) () -> () = {
+    NSLog("start")
+}
+let completionBlock : @convention(block) (Bool) -> () = {
+    (completion) in
+    NSLog("start")
+}
+UIView.animate(withDuration: 2, animations: animationsBlock, completion: completionBlock)
+```
+
+
+## 相关资料
+
+[Swift关键字总结上篇](https://blog.csdn.net/wangyanchang21/article/details/78887137)   
+[Swift关键字总结下篇](https://blog.csdn.net/wangyanchang21/article/details/78928925)   
+[copy关键字和NSCopying协议](http://swift.gg/2016/05/11/swift-qa-2016-05-11/)   
+[@NSApplicationMain 和 @UIApplicationMain](http://swift.gg/2016/05/04/swift-qa-2016-05-04/)     
+[@convention](http://swift.gg/2016/05/18/swift-qa-2016-05-18/)   
+
+
+
+
+-------
+
+欢迎指正, [wangyanchang21](https://github.com/wangyanchang21).
+
+

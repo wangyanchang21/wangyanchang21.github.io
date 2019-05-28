@@ -1,0 +1,928 @@
+---
+title:  "Swift关键字总结上篇"
+date:   2017-12-24 20:41:13
+categories: [Swift]
+tags: [Swift]
+---
+
+在Swift的词汇结构中, 有非常多的关键字, 它们被用于声明中、语句中、表达式中、类中、模式中, 以及特定上下文环境使用的关键字。 
+
+[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)
+
+------
+
+- [Swift中有多少关键字?](#swift中有多少关键字)
+	- [用在声明中的关键字](#用在声明中的关键字)
+	- [用在语句中的关键字](#用在语句中的关键字)
+	- [用在表达式和类型中的关键字](#用在表达式和类型中的关键字)
+	- [特定上下文中被保留的关键字](#特定上下文中被保留的关键字)
+	- [起始于数字标记(#)的关键字](#起始于数字标记的关键字)
+	- [用在模式中的关键字](#用在模式中的关键字)
+- [关键字如何使用?](#关键字如何使用)
+	- [inout](#inout)
+	- [typealias、协议组合类型](#typealias协议组合类型)
+	- [associatedtype](#associatedtype)
+	- [subscript](#subscript)
+	- [operator、prefix、postfix、infix](#operatorprefixpostfixinfix)
+	- [precedenceGroup、precedence、associativity](#precedencegroupprecedenceassociativity)
+	- [defer](#defer)
+	- [fallthrough](#fallthrough)
+	- [dynamicType](#dynamictype)
+	- [willSet、didSet](#willsetdidset)
+	- [open、public、internal、fileprivate、private](#openpublicinternalfileprivateprivate)
+	- [final](#final)
+	- [required](#required)
+	- [mutating、nonmutating](#mutatingnonmutating)
+	- [dynamic](#dynamic)
+	- [optional](#optional)
+	- [indirect](#indirect)
+- [相关资料](#相关资料)
+
+
+------
+
+## Swift中有多少关键字?
+
+在Swift官方文档的`词汇结构`中, 有非常多的关键字, 它们被用于声明中、语句中、表达式中、类中、模式中, 还有以数字符号`＃`开头的关键字, 以及特定上下文环境使用的关键字。 本文中涉及的代码可以在这里[下载代码资源](http://download.csdn.net/download/wangyanchang21/10194696)。 
+
+另外, 在特性中还有一些关键字, 是以`@`开头的关键字。这些所有的关键字将在 [Swift关键字总结上篇](http://blog.csdn.net/wangyanchang21/article/details/78887137) 和 [Swift关键字总结下篇](http://blog.csdn.net/wangyanchang21/article/details/78928925) 两篇文章中详细列举。
+
+本篇主要写到不带符号的关键字, 如带`#`的关键字和带`@`的特性将在下篇文章中详细说明。
+
+#### 用在声明中的关键字
+
+`associatedtype`、` class`、`deinit`、`enum`、`extension`、`func`、`import`、`init`、`inout`、`internal`、`let`、`operator`、`private`、`protocol`、`public`、`open`、`fileprivate`、`static`、`struct`、`subscript`、`typealias` 和 `var`。
+
+#### 用在语句中的关键字
+
+`break`、`case`、`continue`、`default`、`defer`、`do`、`else`、`fallthrough`、`for`、`guard`、`if`、`in`、`repeat`、`return`、`switch`、`where` 和 `while` 。
+ 
+#### 用在表达式和类型中的关键字
+
+`as`、`catch`、`dynamicType`、`false`、`is`、`nil , rethrows`、`super`、`self`、`Self`、`throw`、`throws`、`true` 和 `try` 。
+ 
+#### 特定上下文中被保留的关键字
+
+`associativity`、`convenience`、`dynamic`、`didSet`、`final`、`get`、`infix`、`indirect`、`lazy`、`left`、`mutating`、`none`、`nonmutating`、`optional`、`override`、`postfix`、`precedence`、`prefix`、`Protocol`、`required`、`right`、`set`、`Type`、`unowned`、`weak`  和 `willSet` 。
+
+#### 起始于数字标记(#)的关键字
+
+`#available`、`#column`、`#else`、`#elseif`、`#endif`、`#file`、`#function`、`#if`、`#line`、`#selector` 和 `#sourceLocation` 。
+
+#### 用在模式中的关键字
+`_` 。
+
+#### 注意事项
+
+以上的关键字被预留，不能被用作标识符，除非它们像上一节标识符中描述的那样使用反引号(`),  才能使用保留字作为标识符。
+
+有个例外是, 特定上下文中被保留的关键字在特定上下文语法之外可以被用于标识符。
+
+以下标记被当作保留符号，不能用于自定义操作符：`(` 、 `)` 、 `{` 、 `}` 、 `[` 、 `]` 、 `.` 、 `,`、 `:` 、 `;` 、 `=` 、 `@` 、 `#` 、 `&` （作为前缀操作符）、 `->` 、`\`  、 `?` 和 `!` (作为后缀操作符)。
+
+
+
+## 关键字如何使用?
+
+我想在上面的这些关键字中, 大部分的大家应该烂熟于心了。那我就在其中挑选部分特殊的或不常用的来说一说吧。
+
+### inout
+
+在函数的入参的类型前添加一个 `inout`关键字可以定义一个输入输出形式参数。输入输出形式参数有一个能输入给函数的值，函数能对其进行修改，还能输出到函数外边替换原来的值。
+
+你只能把变量作为输入输出形式参数的实际参数。你不能用常量或者字面量作为实际参数，因为常量和字面量不能修改。在将变量作为实际参数传递给输入输出形式参数的时候，直接在它前边添加一个和符合 (`&`) 来明确可以被函数修改。
+
+``` swift
+func swapTwoInts(_ a: inout Int, _ b: inout Int) {
+    let temporaryA = a
+    a = b
+    b = temporaryA
+}
+
+var abc = 99
+var efg = 88
+swapTwoInts(&abc, &efg)
+
+print(abc, efg)
+// print result is "88 99\n"
+```
+
+
+### typealias、协议组合类型
+
+类型别名可以为已经存在的类型定义了一个新的可选名字。用 `typealias` 关键字定义类型别名。一旦为类型创建了一个别名，你就可以在任何使用原始名字的地方使用这个别名。
+
+``` swift
+typealias AudioSample = UInt16
+var maxAmplitudeFound = AudioSample.min
+
+typealias Point = (Int, Int) 
+let origin: Point = (0, 0)
+```
+
+关于`typealias`还有一种很高效的用法与协议组合类型相关。 
+
+#### 协议组合类型
+
+协议组合类型允许你指定一个值，该值的类型遵循多个协议的要求而不必显式定义一个新的命名型的继承自每个你想要该类型遵循的协议的协议。比如，指定一个协议组合类型 ProtocolA & ProtocolB & ProtocolC实际上是和定义一个新的继承自 ProtocolA，ProtocolB， ProtocolC的协议 ProtocolD是完全一样的，但不需要引入一个新名字同理，标明一个协议组合类型 SuperClass & ProtocolA与声明一个新类型 SubClass继承自 SuperClass 并遵循 ProtocolA是一样的，但不需要引入新名字。
+
+协议组合列表中的每项元素必须是类名，协议名或协议组合类型、协议、类的类型别名。列表可以最多包含一个类。
+
+当协议组合类型包含类型别名，就有可能同一个协议在定义中出现不止一次——重复会被忽略。比如说，下面的 PQR 定义等价于 P & Q & R 。
+
+``` swift
+typealias PQ = P & Q
+typealias PQR = PQ & Q & R
+```
+
+
+### associatedtype
+
+ 定义一个协议时，有时在协议定义里声明一个或多个关联类型是很有用的。关联类型给协议中用到的类型一个占位符名称。直到采纳协议时，才指定用于该关联类型的实际类型。关联类型通过 `associatedtype` 关键字指定。
+
+这里是一个叫做`Container` 的示例协议，声明了一个叫做 `ItemType` 的关联类型：
+
+``` swift
+protocol Container {
+    associatedtype ItemType
+    mutating func append(_ item: ItemType)
+    var count: Int { get }
+}
+```
+
+`Container` 协议定义了所有容器必须提供的功能：   
+1.必须能够通过 append(_: ) 方法向容器中添加新元素   
+2.必须能够通过一个返回 Int 值的 count 属性获取容器中的元素数量   
+3.必须能够通过 Int 索引值的下标取出容器中每个元素。   
+
+任何遵循 `Container`协议的类型必须能指定其存储值的类型。尤其是它必须保证只有正确类型的元素才能添加到容器中。为了实现这些要求， `Container` 协议声明了一个叫做 `ItemType` 的关联类型，写作 `associatedtype ItemType`。
+
+``` swift
+struct IntStack: Container {
+    // original IntStack implementation
+    var items = [Int]()
+    
+    // conformance to the Container protocol
+    typealias ItemType = Int
+    mutating func append(_ item: Int) {
+        // append...
+    }
+    var count: Int {
+        return items.count
+    }
+}
+```
+
+`IntStack`为了实现 `Container`协议，指定了适用于`ItemType`的类型是 `Int`类型。`typealias ItemType = Int`把 `ItemType`抽象类型转换为了具体的 `Int`类型。
+
+如果你从代码中删除了 `typealias ItemType = Int`，一切都会正常运行，因为 `ItemType` 会由Swift的类型推断推断出来。
+
+
+### subscript
+
+下标的语法, 下标脚本允许你通过在实例名后面的方括号内写一个或多个值对该类的实例进行查询。它的语法类似于实例方法和和计算属性。使用关键字 `subscript` 来定义下标，并且指定一个或多个输入形式参数和返回类型，与实例方法一样。与实例方法不同的是，下标可以是读写也可以是只读的。这个行为通过与计算属性中相同的 `getter` 和 `setter` 传达：
+
+``` swift
+subscript(index: Int) -> Int {
+    get {
+        // return an appropriate subscript value here
+    }
+    set(newValue) {
+        // perform a suitable setting action here
+    }
+}
+```
+
+`newValue` 的类型和下标的返回值一样。与计算属性一样，你可以选择不去指定 `setter` 的(`newValue`)形式参数。 `setter` 默认提供形式参数 `newValue` ，如果你自己没有提供的话。
+
+``` swift
+struct TimesTable {
+    let multiplier: Int
+    subscript(index: Int) -> Int {
+        return multiplier * index
+    }
+}
+let threeTimesTable = TimesTable(multiplier: 3)
+print("six times three is \(threeTimesTable[6])")
+// prints "six times three is 18"
+```
+
+### operator、prefix、postfix、infix
+
+除了实现标准运算符，在 Swift 当中还可以声明和实现自定义运算符（`custom operators`）。可以用来自定义运算符的字符列表请参考运算符。
+
+新的运算符要在全局作用域内，使用 `operator`  关键字进行声明，同时还要指定 `prefix` 、` infix`  或者 `postfix`  限定符, 语法结构如下：
+
+``` swift
+prefix operator `operatorName`
+postfix operator `operatorName`
+infix operator operatorname: `precedenceGroup`
+```
+
+上面的代码定义了一个新的名为 `+++`  的前缀运算符。这个运算符在 Swift 中并没有意义，我们针对下面这个类`SomeNumer`的实例来赋予它意义。对这个例子来讲， `+++`  作为“平方”运算符。
+
+``` swift
+prefix operator +++
+
+class SomeNumber {
+    var minNum = 0
+    var maxNum = 0
+
+    static prefix func +++(number: SomeNumber) -> SomeNumber {
+        number.minNum = number.minNum * number.minNum
+        number.maxNum = number.maxNum * number.maxNum
+        return number
+    }
+}
+
+var aaa = SomeNumber()
+aaa.minNum = 3
+aaa.maxNum = 6
++++aaa
+print(aaa.minNum, aaa.maxNum)
+// result is "9 36\n"
+```
+
+需要注意的地方是, 当使用自定义运算时, 传入的参数至少要有一个当前对象, 否则编译不会通过。定义前缀或后缀运算符时，不要指定优先级。但是，如果将前缀和后缀运算符应用于相同的操作时，则首先进行后缀运算。
+
+上面这个例子是前缀`prefix`, 当然后缀 `postfix`也是同样的用法, 还有一个中缀 `infix`是比较特殊的, 涉及到结合性`associativity` 和 优先级`precedence`的使用。下面继续来进行说明。
+
+
+### precedenceGroup、precedence、associativity
+
+自定义的中缀（ infix ）运算符也可以指定优先级和结合性。优先级和结合性中详细阐述了这两个特性是如何对中缀运算符的运算产生影响的。
+
+以下示例定义了一个名为+ - 的新自定义中缀运算符，该运算符属于优先级组`AdditionPrecedence`:
+
+``` swift
+infix operator +-: AdditionPrecedence
+extension SomeNumber {
+    static func +- (left: SomeNumber, right: SomeNumber) -> Int {
+        return  left.minNum * left.maxNum + right.minNum * right.maxNum
+    }
+}
+print(aaa +- aaa)
+// result is 648
+```
+
+`infix operator +-: AdditionPrecedence`这一行对自定义运算符有一个声明的作用。当然也可以不使用系统中的优先级分组，自己自定义。有一点需要注意，从 Swift4.0开始，声明中必须要使用优先级分组而不支持之前直接定义`precedence`的语句了，已然废弃。否则会有如下错误产生：
+
+``` swift
+infix operator +- { associativity left precedence 140 }
+// Eror: Operator should no longer be declared with body; use a precedence group instead
+```
+
+中缀的表达式中的`precedenceGroup` 是中缀运算符优先级分组。优先级组声明 (A precedence group declaration) 会向程序的中缀运算符引入一个全新的优先级组运算符的优先级指定运算符在没有分组括号的情况下绑定到其操作数的紧密程度。
+
+自定义优先级分组:
+
+``` swift
+precedencegroup 优先级组名称 {
+    higherThan: 较低优先级组的名称
+    lowerThan: 较高优先级组的名称
+    associativity: 结合性
+    assignment: 赋值性
+}
+```
+
+`precedencegroup`定义了一个优先级组，表示操作符优先级别。操作符优先级的定义和类型声明有些类似, 一个操作符需要属于某个特定的优先级。Swift定义了许多优先组与标准库提供的运算符一起使用。例如，加（`+`）和减（ `-` ）运算符属于`AdditionPrecedence`组，乘（`*`）和除（`/`）运算符属于`MultiplicationPrecedence`组。查看提供这些优先级组请看这里[Improved operator declarations](https://github.com/apple/swift-evolution/blob/master/proposals/0077-operator-precedence.md)。如果没有合适你的运算符的优先级组, 你就需要向我们在例子中做的这样, 自己指定结合律方式和优先级顺序了。
+
+`higherThan`和`lowerThan`定义了较高优先级组和较低优先级组，说明了新建的优先级组是依赖于现存的优先级组的。 `lowerThan` 优先级组的属性只可以引用当前模块外的优先级组。当两个运算符为同一个操作数竞争时,比如表达式`2 + 3 * 5`,优先级更高的运算符将优先参与运算。
+
+优先级组的结合性`associativity`定义了结合律, 即多个同类的操作符顺序出现时的计算顺序。比较常见的加法和减法都是`left`, 就是说多个加法同时出现时按照从左往右的顺序计算。比如在加法和乘法中，它们满足加法交换律和乘法交换律，无论怎样的顺序都不影响最后的计算结果。而在减法和除法中，就不可以，是需要从左向右进行计算的(即左关联性的)，否则结果就会出错。右关联性的运算符是从右往左分组的,指定为`none`结合性的运算符就没有结合性。还需要注意的是，同样优先级没有结合性的运算符不能相邻出现,例如`<`运算符是`none`结合性,那表示`1 < 2 < 3`就不是一个有效表达式。
+
+优先级组的赋值性`assignment`表示在包含可选链操作时的运算符优先级。当设为`true`时,与优先级组对应的运算符在可选链操作中使用和标准库中赋值运算符同样的分组规则,当设为`false`或者不设置,该优先级组的运算符与不赋值的运算符遵循同样的可选链规则。
+
+自定义优先级分组举例:
+
+``` swift
+precedencegroup MulAddPrecedence {
+    associativity: none
+    higherThan: MultiplicationPrecedence
+}
+
+infix operator +*: MulAddPrecedence
+
+struct Seat {
+    var row = 0
+    var column = 0
+
+    static func +* (left: Seat, right: Seat) -> Seat {
+        let row = left.row * left.row + right.row * right.row
+        let column = left.column * left.column + right.column * right.column
+        return Seat(row: row, column: column)
+    }
+}
+```
+
+
+### defer
+
+`defer` 语句用于在退出当前作用域之前执行代码。
+
+``` swift
+defer {
+    statement
+}
+```
+
+在 `defer` 语句中的语句无论程序控制如何转移都会被执行。在某些情况下，例如，手动管理资源时，比如关闭文件描述符，或者即使抛出了错误也需要执行一些操作时，就可以使用 `defer` 语句。
+
+如果多个 `defer` 语句出现在同一作用域内，那么它们执行的顺序与出现的顺序相反。给定作用域中的第一个 defer 语句，会在最后执行，这意味着代码中最靠后的 `defer` 语句中引用的资源可以被其他 defer 语句清理掉。
+
+``` swift
+func f() {
+    print("111")
+    defer { print("First") }
+    print("222")
+    defer { print("Second") }
+    print("333")
+    defer { print("Third") }
+    print("444")
+}
+f()
+
+// 打印结果
+// 111
+// 222
+// 333
+// 444
+// Third
+// Second
+// First
+```
+
+`defer` 语句中的语句无法将控制权转移到 `defer` 语句外部。
+
+
+### fallthrough
+
+`fallthrough` 语句用于在 `switch` 语句中转移控制权。`fallthrough` 语句会把控制权从 `switch` 语句中的一个 `case` 转移到下一个 `case`。这种控制权转移是无条件的，即使下一个 `case` 的模式与 switch 语句的控制表达式的值不匹配。
+
+`fallthrough` 语句可出现在 `switch` 语句中的任意 `case `中，但不能出现在最后一个 `case` 中。同时，`fallthrough` 语句也不能把控制权转移到使用了值绑定的 `case`。
+
+``` swift
+switch 1 {
+case 1:
+    print("111")
+    fallthrough
+case 2:
+    print("222")
+case 3:
+    print("333")
+default:
+    print("default")
+}
+// result is 
+// 111 
+// 222
+```
+
+### dynamicType
+
+注意: 这个关键字在Swift 4.0 开始已经废弃了(depricate from Swift 4.0)!!! 
+你可以对类型的实例使用 dynamicType  表达式来获取该实例的动态运行时的类型。
+
+``` swift
+class SomeBaseClass {
+    class func printClassName() {
+        print("SomeBaseClass")
+    }
+}
+class SomeSubClass: SomeBaseClass {
+    override class func printClassName() {
+        print("SomeSubClass")
+    }
+}
+let someInstance: SomeBaseClass = SomeSubClass()
+// The compile-time type of someInstance is SomeBaseClass,
+// and the runtime type of someInstance is SomeSubClass
+someInstance.dynamicType.printClassName()
+// Prints "SomeSubClass"
+```
+
+
+### do 、 try 、 catch 、throw 、 throws、rethrows 
+
+#### 表示错误
+
+这些关键字都是关于错误处理的, 错误处理是相应和接收来自你程序中错误条件的过程。Swift 给运行时可恢复错误的抛出、捕获、传递和操纵提供了一类支持。
+
+在 Swift 中，错误表示为遵循 `Error` 协议类型的值。这个空的协议明确了一个类型可以用于错误处理。
+
+Swift 枚举是典型的为一组相关错误条件建模的完美配适类型，关联值还允许错误错误通讯携带额外的信息。比如说，`SomeError` 的错误条件：
+
+``` swift
+enum SomeError: Error {
+    case SomeError1
+    case SomeError2
+    case SomeError3(code: Int)
+}
+```
+
+抛出一个错误允许你明确某些意外的事情发生了并且正常的执行流不能继续下去。你可以使用 `throw` 语句来抛出一个错误。
+
+``` swift
+throw SomeError.SomeError2
+throw SomeError.SomeError3(code: value)
+```
+
+#### 抛出错误
+
+为了明确一个函数或者方法可以抛出错误，你要在它的声明当中的形式参数后边写上 `throws`关键字。使用 `throws`标记的函数叫做抛出函数。如果它明确了一个返回类型，那么 `throws`关键字要在返回箭头 ( `->`)之前。
+
+``` swift
+func makeSomeError(value: Int)
+func makeSomeError(value: Int) throws
+func makeSomeError(value: Int) throws -> String
+```
+
+但是只有抛出函数可以传递错误。任何在非抛出函数中抛出的错误都必须在该函数内部处理。函数类型如果要抛出错误就必须使用 throws 关键字标记，而且能重抛错误的函数类型必须使用 rethrows 关键字标记。
+
+完善这个可抛异常的函数实现: 
+
+``` swift
+func makeSomeError(value: Int) throws {
+    switch value {
+    case 1:
+        throw SomeError.SomeError1
+    case 2:
+        throw SomeError.SomeError2
+    case 3:
+        throw SomeError.SomeError3(code: 888)
+    case 4:
+    	// 默认的这里随便找了一个错误, 来说明catch的范围
+        throw MachError(.exceptionProtected)
+    default:
+        print("excute normal code")
+    }
+}
+```
+
+#### 处理错误
+
+在 Swift 中有四种方式来处理错误。你可以将来自函数的错误传递给调用函数的代码中，使用 `do-catch` 语句来处理错误，把错误作为可选项的值，或者错误不会发生的断言。
+
+使用 `do-catch`语句来通过运行一段代码处理错误。如果`do`分句中抛出了一个错误，它就会与 `catch`分句匹配，以确定其中之一可以处理错误。
+
+这是 `do-catch`语句的通常使用语法：
+
+``` swift
+do {
+    try expression
+    statements
+} catch pattern 1 {
+    statements
+} catch pattern 2 where condition {
+    statements
+}
+```
+
+按照上面的例子来写, 如下: 
+
+``` swift
+do {
+    try makeSomeError(value: 1)
+} catch SomeError.SomeError1 {
+    print("SomeError1")
+} catch SomeError.SomeError2 {
+    print("SomeError2")
+} catch SomeError.SomeError3(let anyCode) {
+    print("SomeError3 code is \(anyCode)")
+}
+```
+
+结合三者, 就是一个完整的例子,  当我们执行如上代码时, 将会`catch` 到 `SomeError1` 并打印。
+
+如果将 `try` 语句换为如下代码时, 打印结果如下:
+
+``` swift
+try makeSomeError(value: 3)
+// SomeError2
+try makeSomeError(value: 3)
+// SomeError3 code is 888
+try makeSomeError(value: 4)
+// nothing print, because can't catch
+try makeSomeError(value: 5)
+// excute normal code
+```
+
+当`makeSomeError`执行 `default`分支时, 抛出的异常是不能 处理的, 因为`catch`中没有涉及相关的异常所以`catch`不到的.
+
+
+### convenience
+
+便利构造器是类中比较次要的、辅助型的构造器。你可以定义便利构造器来调用同一个类中的指定构造器，并为其参数提供默认值。你也可以定义便利构造器来创建一个特殊用途或特定输入值的实例。
+
+如果你的类不需要便利构造器你可以不提供它。在为通用的初始化模式创建快捷方式以节省时间或者类的初始化更加清晰明了的时候时候便利构造器。
+
+便利构造器可以将构造过程委托给另一个便利构造器或一个指定构造器。但是，类的构造过程必须以一个将类中所有属性完全初始化的指定构造器的调用作为结束。便利构造器不能调用超类的构造器。
+
+便利构造器有着相同的书写方式，但是要用 `convenience` 修饰符放到 `init` 关键字前，用空格隔开：
+
+``` swift
+convenience init(parameters) {
+    statements
+}
+```
+
+``` swift
+class Food {
+    var name: String
+    init(name: String) {
+        self.name = name
+    }
+    convenience init() {
+        self.init(name: "[Unnamed]")
+    }
+}
+var food = Food.init()
+print(food.name)
+// result is [Unnamed]
+```
+
+
+### willSet、didSet
+
+可以在声明存储型变量或属性时提供 `willSet` 和 `didSet` 观察器。一个包含观察器的存储型变量或属性以如下形式声明：
+
+``` swift
+var 变量名称: 类型 = 表达式 {  
+    willSet(setter 名称) {  
+        语句
+    }  
+    didSet(setter 名称) {  
+        语句
+    }  
+}  
+```
+
+可以在全局范围、函数内部，或者类、结构的声明中使用这种形式的声明。当变量以这种形式在全局范围或者函数内部被声明时，观察器表示一个存储型变量观察器。当它在类和结构的声明中被声明时，观察器表示一个属性观察器。
+
+可以为任何存储型属性添加观察器。也可以通过重写父类属性的方式为任何继承的属性（无论是存储型还是计算型的）添加观察器。
+
+当变量或属性的值被改变时，`willSet` 和 `didSet` 观察器提供了一种观察方法。观察器会在变量的值被改变时调用，但不会在初始化时被调用。
+
+`willSet` 观察器只在变量或属性的值被改变之前调用。新的值作为一个常量传入 `willSet` 观察器，因此不可以在 `willSet` 中改变它。`didSet` 观察器在变量或属性的值被改变后立即调用。和 `willSet` 观察器相反，为了方便获取旧值，旧值会传入 `didSet` 观察器。这意味着，如果在变量或属性的 `didiset` 观察器中设置值，设置的新值会取代刚刚在 `willSet` 观察器中传入的那个值。
+
+在 `willSet` 和 `didSet` 中，圆括号以及其中的 `setter` 名称是可选的。如果提供了一个 `setter` 名称，它就会作为 `willSet` 和 `didSet` 的参数被使用。如果不提供 `setter` 名称，`willSet` 观察器的默认参数名为 `newValue`，`didSet` 观察器的默认参数名为 `oldValue`。
+
+提供了 `willSet` 时，`didSet` 是可选的。同样的，提供了 `didSet` 时，`willSet` 则是可选的。
+
+
+### open、public、internal、fileprivate、private
+
+这些关键字是 Swift 为代码的实体提供个五个不同的`访问级别`。这些访问级别和定义实体的源文件相关，并且也和源文件所属的模块相关。
+
+`open` 访问是最高的（限制最少）访问级别，`private` 是最低的（限制最多）访问级别。
+
+#### private
+`private` 访问, 将实体的使用限制于封闭声明中。当一些细节仅在单独的声明中使用时，使用 `private` 访问隐藏特定功能的实现细节。
+
+#### fileprivate
+`File-private` 访问, 将实体的使用限制于当前定义源文件中。当一些细节在整个文件中使用时，使用 `file-private` 访问隐藏特定功能的实现细节。
+
+#### internal
+`Internal` 访问, 为默认访问级别, 允许实体被定义模块中的任意源文件访问，但不能被该模块之外的任何源文件访问。通常在定义应用程序或是框架的内部结构时使用。
+
+#### public、open
+`public` 访问和`Open` 访问, 允许实体被定义模块中的任意源文件访问，同样可以被另一模块的源文件通过导入该定义模块来访问。在指定框架的公共接口时，通常使用 `open` 或 `public` 访问。
+
+`public` 访问只能在当前模块中被继承和子类重写。   
+`open` 访问仅适用于类和类成员，可以在其他模块外被继承和子类重写。   
+
+显式地标记类为 `open` 意味着你考虑过其他模块使用该类作为父类对代码的影响，并且相应地设计了类的代码。
+
+#### 访问控制的注意事项
+
+Swift 中的访问级别遵循一个总体指导准则：实体不可以被更低（限制更多）访问级别的实体定义。
+
+比如: 一个 `public` 的变量其类型的访问级别不能是 `internal`, `file-private` 或是 `private`，因为在使用 `public` 变量的地方可能没有这些类型的访问权限。
+又比如: 函数类型的访问级别由函数成员类型和返回类型中的最严格访问级别决定。一个函数不能比它的参数类型和返回类型访问级别高，因为函数可以使用的环境而其参数和返回类型却不能使用。
+
+这里简单列举了两个有关访问级别的使用注意事项。想了解有更多详细的注意事项的朋友, 可以查阅我的另外一篇博文: [Swift访问控制](http://blog.csdn.net/wangyanchang21/article/details/78952144)。这里面有代码举例和详细说明, 小编这里不再赘述。
+
+
+### final
+
+该修饰符用于修饰类或类中的属性、方法以及下标。如果用它修饰一个类，那么这个类不能被继承。如果用`final` 修饰类中的属性、方法或下标，那么它们不能在子类中被重写。
+
+使用`final`的情况, 是类或方法属性等不希望被继承和重写，具体情况一般是:    
+1.类或者方法的功能确实已经完备了, 基本不会再继承和重写。   
+2.避免子类继承和修改造成危险。有些方法如果被子类继承重写会造成破坏性的后果，导致无法正常工作，则需要将其标为final加以保护。   
+3.保证父类的方法一定被执行, 我们可以把父类的方法定义成`final`，同时将内部可以继承的部分剥离出来，供子类继承重写。   
+
+还有一中说法, 认为`final`能改成性能，因为编译器能从`final`中获取额外的信息，所以可以对类或者方法调用进行优化处理。其实这样优化对性能的提升非常有限，所以如果是为了提升性能, 把所有的属性方法都加上`final`关键字，也没有多大的作用。
+
+
+### required
+
+必要构造器标识符, 修饰符用于修饰类的指定构造器或便利构造器，表示该类所有的子类都必须实现该构造器。在子类实现该构造器时，必须同样使用 `required` 修饰符修饰该构造器。
+
+为了要求子类去实现超类的构造器，使用 `required` 声明修饰符标记超类的构造器。子类实现超类构造器时也必须使用 `required` 声明修饰符。
+
+``` swift
+class SomeClass1 {
+    required init() {
+        // 构造器的实现代码
+    }
+}
+```
+
+在子类重写父类的必要构造器时，必须在子类的构造器前也添加`required`修饰符，表明该构造器要求也应用于继承链后面的子类。在重写父类中必要的指定构造器时，不需要添加`override`修饰符：
+
+``` swift
+class SomeSubclass: SomeClass1 {
+    required init() {
+        // 构造器的实现代码
+    }
+}
+```
+
+如果子类继承的构造器能满足必要构造器的要求，则无须在子类中显式提供必要构造器的实现。就像下面的代码, 因为子类继承的构造器能满足必要构造器的要求, 所以子类的必要构造器可以是隐性的。代码如下:
+
+``` swift
+class SomeClass1 {
+    required init() {
+        // 构造器的实现代码
+    }
+}
+class SomeSubclass: SomeClass1 {
+
+}
+```
+
+你可以在遵循协议的类中实现构造器，无论是作为指定构造器，还是作为便利构造器。无论哪种情况，你都必须为构造器实现标上 `required` 修饰符：
+
+``` swift
+class SomeClass: SomeProtocol {
+    required init(someParameter: Int) {
+        // 这里是构造器的实现部分
+    }
+}
+```
+
+使用 `required` 修饰符可以确保所有子类也必须提供此构造器实现，从而也能符合协议。如果类已经被标记为 `final`，那么不需要在协议构造器的实现中使用 `required` 修饰符，因为 `final` 类不能有子类。如果这个类还没有用 `final` 声明修饰符标记，这个构造器必须用 `required` 声明修饰符标记。
+
+这就是为什么在日常开发中, 当我们继承系统某各类去指定一个新的构造器时, 系统总是编译报错, 提示添加如下代码:
+
+``` swift
+required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+```
+
+这种情况一般会出现在继承了遵守`NSCoding protocol`的类，比如`UIView`系列的类、`UIViewController`系列的类。这是`NSCoding protocol`定义的，遵守了`NSCoding protoaol`的所有类必须继承。当我们在子类定义了指定初始化器(包括自定义和重写父类指定初始化器)，那么必须显示实现`required init?(coder aDecoder: NSCoder)`，而其他情况下则会隐式继承。
+
+如果一个子类重写了父类的指定构造器，并且该构造器满足了某个协议的要求，那么该构造器的实现需要同时标注 `required` 和 `override` 修饰符：
+
+``` swift
+protocol SomeProtocol {
+    init()
+}
+class SomeSuperClass {
+    init() {
+        // 这里是构造器的实现部分
+    }
+}
+
+class SomeSubClass: SomeSuperClass, SomeProtocol {
+    // 因为遵循协议，需要加上 required
+    // 因为继承自父类，需要加上 override
+    required override init() {
+        // 这里是构造器的实现部分
+    }
+}
+```
+
+
+### mutating、nonmutating
+
+结构体和枚举是值类型。默认情况下，值类型属性不能被自身的实例方法修改。但是，如果你确实需要在某个特定的方法中修改结构体或者枚举的属性，你可以为这个方法选择可变(`mutating`)行为，然后就可以从其方法内部改变它的属性；并且这个方法做的任何改变都会在方法执行结束时写回到原始结构中。方法还可以给它隐含的`self`属性赋予一个全新的实例，这个新实例在方法结束时会替换现存实例。
+
+结构体中用法:
+
+``` swift
+struct Point {
+    var x = 0.0, y = 0.0
+    mutating func moveBy(x deltaX: Double, y deltaY: Double) {
+        self = Point(x: x + deltaX, y: y + deltaY)
+    }
+}
+```
+
+枚举中用法:
+
+``` swift
+enum TriStateSwitch {
+    case off, low, high
+    mutating func next() {
+        switch self {
+        case .off:
+            self = .low
+        case .low:
+            self = .high
+        case .high:
+            self = .off
+        }
+    }
+}
+var ovenLight = TriStateSwitch.low
+ovenLight.next()
+// ovenLight is now equal to .high
+ovenLight.next()
+// ovenLight is now equal to .off
+```
+
+在协议中如何使用? 若你定义了一个协议的实例方法需求，想要改变任何采用了该协议的类型实例，只需在协议里方法的定义当中使用 `mutating` 关键字。这允许结构体和枚举类型能采用相应协议并满足方法要求。
+
+``` swift
+protocol Togglable {
+    mutating func toggle()
+}
+```
+
+在`Togglable`协议的定义中， `toggle()` 方法使用 `mutating` 关键字标记，来表明该方法在调用时会改变遵循该协议的实例的状态：
+
+``` swift
+struct Test: Togglable {
+    var time: Int = 0
+    
+    mutating func toggle() {
+        self.time = 33333
+    }
+}
+
+var test = Test()
+test.time = 2
+test.toggle()
+// result is 2
+```
+
+如果你在协议中标记实例方法需求为 `mutating` ，在为类实现该方法的时候不需要写 `mutating` 关键字。 `mutating` 关键字只在结构体和枚举类型中需要书写。
+
+
+### dynamic
+
+我来告诉你为什么Swift中要使用关键字`dynamic`。Swift 中的函数可以是静态调用，静态调用会更快。Swift的代码直接被编译优化成静态调用的时候，就不能从Objective-C 中的`SEL`字符串来查找到对应的`IMP`了。这样就需要在 Swift 中添加一个关键字 `dynamic`，告诉编译器这个方法是可能被动态调用的，需要将其添加到查找表中。
+
+纯Swift类没有动态性，但在方法、属性前添加`dynamic`修饰可以获得动态性。该修饰符用于修饰任何兼容 Objective-C 的类的成员。访问被 `dynamic` 修饰符标记的类成员将总是由 Objective-C 运行时系统进行动态派发，而不会由编译器进行内联或消虚拟化。
+
+继承自NSObject的Swift类，其继承自父类的方法具有动态性，其他自定义方法、属性需要加`dynamic`修饰才可以获得动态性。而且因为使用动态修饰符标记的声明是使用Objective-C运行时分派的，所以它们必须用`objc`属性标记。(从Swift 4.0开始, 加`dynamic` 修饰符时必须是显式的`objc`了)
+
+纯Swift类中的`dynamic`的使用:
+
+``` swift
+class DynamicSwiftClass {
+    var zero = 0
+    @objc dynamic var fist = 1
+    @objc func dynamicFunc() {
+    }
+//    open this code will be error
+//    @objc dynamic var adddd = (0 , 0)
+//    @objc dynamic func someMethod(value: Int) -> (Int, Int) {
+//        return (1, 1)
+//    }
+}
+```
+
+若方法的参数、属性类型为Swift特有、无法映射到Objective-C的类型(如`Character`、`Tuple`)，则此方法、属性无法添加`dynamic`修饰, 一旦添加就会编译报错。
+
+
+### optional
+
+该修饰符用于修饰协议中的属性、方法以及下标成员，表示符合类型可以不实现这些成员要求。
+
+#### 可选类型
+
+Swift 为命名类型 `Optional<Wrapped>` 定义后缀 `?` 作为语法糖 ，其定义在 Swift 标准库中。换句话说，下列两种声明是等价的:
+
+``` swift
+var optionalInteger: Int? 
+var optionalInteger: Optional<Int>
+```
+
+在上述两种情况下，变量 `optionalInteger` 都声明为可选整数类型。注意在类型和 `?` 之间没有空格。
+
+类型 `Optional<Wrapped>` 是有两种情况的， `none` 和 `Some(Wrapped)` ，它代表可能没有值或可能有值。任何类型都可以被显式的声明（或隐式的转换）为可选类型。如果你在声明可选的变量或属性时没有提供初始值，它的值则会默认为 `nil` 。
+
+使用 `!` 操作符获解析一个值为 `nil` 的可选项会导致运行时错误。你也可以使用可选链和可选绑定来有条件地执行对可选表达式的操作。如果值为 `nil` ，不会执行任何操作并且不会因此产生运行时错误。
+
+#### 隐式展开可选类型
+
+Swift 为命名类型 `Optional<Wrapped>` 定义后缀 `!` 作为语法糖 ，其定义在 Swift 标准库中，作为它被访问时自动解析的附加行为。如果你试图使用一个值为 `nil` 的隐式解析，你会得到一个运行时错误。除了隐式展开的行为之外，下面两个声明是等价的：
+
+``` swift
+var implicitlyUnwrappedString: String! 
+var explicitlyUnwrappedString: Optional<String>
+```
+
+注意类型与 `!` 之间没有空格。   
+有了可选项，如果在声明隐式展开可选变量或属性时你不用提供初始值，它的值会默认为 `nil` 。使用可选链有条件地对隐式展开可选项的表达式进行操作。如果值为 `nil` ，就不执行任何操作，因此也不会产生运行错误。
+
+#### 可选的协议
+
+协议可以定义可选要求，遵循协议的类型可以选择是否实现这些要求。在协议中使用 `optional` 关键字作为前缀来定义可选要求。可选要求用在你需要和 Objective-C 打交道的代码中。协议和可选要求都必须带上`objc`属性。标记 `objc` 特性的协议只能被继承自 Objective-C 类的类或者 `objc` 类遵循，其他类以及结构体和枚举均不能遵循这种协议。只能将 `optional` 修饰符用于被 `objc` 特性标记的协议。这样一来，就只有类类型可以采纳并符合拥有可选成员要求的协议。
+
+使用可选要求时（例如，可选的方法或者属性），它们的类型会自动变成可选的。比如，一个类型为 `(Int) -> String` 的方法会变成` ((Int) -> String)?`。需要注意的是整个函数类型是可选的，而不是函数的返回值。
+
+协议中的可选要求可通过可选链式调用来使用，因为遵循协议的类型可能没有实现这些可选要求。类似 `someOptionalMethod?(someArgument)` 这样，你可以在可选方法名称后加上 `?` 来调用可选方法。
+
+``` swift
+@objc protocol CounterDataSource {
+    @objc optional var fixedIncrement: Int { get }
+    @objc optional func incrementForCount() -> Int
+}
+
+class Counter {
+    var count = 0
+    var dataSource: CounterDataSource?
+    func increment() {
+        if let amount = dataSource?.incrementForCount?() {
+            count += amount
+        } else if let amount = dataSource?.fixedIncrement {
+            count += amount
+        }
+    }
+}
+
+class ThreeSource: NSObject, CounterDataSource {
+    let fixedIncrement = 3
+}
+
+var counter = Counter()
+counter.dataSource = ThreeSource()
+for _ in 1...4 {
+    counter.increment()
+    print(counter.count)
+}
+// 3
+// 6
+// 9
+// 12
+```
+
+当没有代理没有实现可选的协议时,  `dataSource?.incrementForCount?()`为`nil`, 只有当代理实现了此协议方法时, `amount`才会是返回的那个值。
+
+
+### indirect
+
+递归枚举是一种枚举类型，它有一个或多个枚举成员使用该枚举类型的实例作为关联值。使用递归枚举时，编译器会插入一个间接层。你可以在枚举成员前加上`indirect`来表示该成员可递归, 而且被 `indirect` 修饰符标记的枚举用例必须有一个关联值。。
+
+``` swift
+enum ArithmeticExpression {
+    case number(Int)
+    indirect case addition(ArithmeticExpression, ArithmeticExpression)
+    indirect case multiplication(ArithmeticExpression, ArithmeticExpression)
+}
+```
+
+你也可以在枚举类型开头加上`indirect`关键字来表明它的所有成员都是可递归的：
+
+``` swift
+indirect enum ArithmeticExpression {
+    case number(Int)
+    case addition(ArithmeticExpression, ArithmeticExpression)
+    case multiplication(ArithmeticExpression, ArithmeticExpression)
+}
+```
+
+上面定义的枚举类型可以存储三种算术表达式：纯数字、两个表达式相加、两个表达式相乘。枚举成员`addition`和`multiplication`的关联值也是算术表达式。
+
+下面的代码展示了使用`ArithmeticExpression`这个递归枚举创建表达式`(5 + 4) * 2`:
+
+``` swift
+let five = ArithmeticExpression.number(5)
+let four = ArithmeticExpression.number(4)
+let sum = ArithmeticExpression.addition(five, four)
+let product = ArithmeticExpression.multiplication(sum, ArithmeticExpression.number(2))
+```
+
+使用这个枚举:
+
+``` swift
+func evaluate(_ expression: ArithmeticExpression) -> Int {
+    switch expression {
+    case let .number(value):
+        return value
+    case let .addition(left, right):
+        return evaluate(left) + evaluate(right)
+    case let .multiplication(left, right):
+        return evaluate(left) * evaluate(right)
+    }
+}
+print(evaluate(product))
+// 打印 "18"
+```
+
+## 相关资料
+
+[Swift关键字总结上篇](https://blog.csdn.net/wangyanchang21/article/details/78887137)   
+[Swift关键字总结下篇](https://blog.csdn.net/wangyanchang21/article/details/78928925)   
+
+
+-------
+
+欢迎指正, [wangyanchang21](https://github.com/wangyanchang21).
+
+

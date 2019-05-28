@@ -1,0 +1,225 @@
+---
+title:  "Swift访问权限"
+date:   2018-01-02 15:15:27
+categories: [Swift]
+tags: [Swift]
+---
+
+Swift提供个五个不同的访问级别,open、public、internal、fileprivate、private。
+
+[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)
+
+------
+
+- [访问权限级别](#访问权限级别)
+- [模块和源文件的概念](#模块和源文件的概念)
+- [访问权限级别详解](#访问权限级别详解)
+	- [private](#private)
+	- [fileprivate](#fileprivate)
+	- [internal](#internal)
+	- [public、open](#publicopen)
+- [访问权限级别的注意事项](#访问权限级别的注意事项)
+
+------
+
+## 访问权限级别
+
+Swift 为代码的实体提供个五个不同的访问级别, 分别是`open`、`public`、`internal`、`fileprivate`、`private`。这些访问级别和定义实体的源文件相关，并且也和源文件所属的模块相关。
+
+关于访问权限的关键字我在之前的文章也有过一些说明了, 想了解的朋友可以阅读: [Swift关键字总结上篇](http://blog.csdn.net/wangyanchang21/article/details/78887137)。
+
+## 模块和源文件的概念
+
+`模块`是单一的代码分配单元, 一个框架或应用程序会作为的独立的单元构建和发布并且可以使用 Swift 的 `import` 关键字导入到另一个模块。
+
+Xcode 中的每个构建目标（例如应用程序包或框架）在 Swift 中被视为一个独立的模块。 如果你将应用程序的代码作为独立的框架组合在一起——或许可以在多个应用程序中封装和重用该代码——那么当在一个应用程序中导入和使用时，在该框架中定义的所有内容都将作为独立模块的一部分 ，或是当它在另一个框架中使用时。
+
+`源文件`是一个模块中的单个 Swift 源代码文件（实际上，是一个应用程序或是框架中的单个文件）。虽然通常在单独源文件中定义单个类型，但是一个源文件可以包含多个类型、函数等的定义。
+
+
+## 访问权限级别详解
+
+`open` 访问是最高的（限制最少）访问级别，`private` 是最低的（限制最多）访问级别。
+
+### private
+
+`private` 访问, 将实体的使用限制于封闭声明中。当一些细节仅在单独的声明中使用时，使用 `private` 访问隐藏特定功能的实现细节。
+
+### fileprivate
+
+`File-private` 访问, 将实体的使用限制于当前定义源文件中。当一些细节在整个文件中使用时，使用 `file-private` 访问隐藏特定功能的实现细节。
+
+### internal
+
+`Internal` 访问, 为默认访问级别, 允许实体被定义模块中的任意源文件访问，但不能被该模块之外的任何源文件访问。通常在定义应用程序或是框架的内部结构时使用。
+
+### public、open
+
+`public` 访问和`Open` 访问, 允许实体被定义模块中的任意源文件访问，同样可以被另一模块的源文件通过导入该定义模块来访问。在指定框架的公共接口时，通常使用 `open` 或 `public` 访问。
+
+`public` 访问只能在当前模块中被继承和子类重写。   
+`open` 访问仅适用于类和类成员，可以在其他模块外被继承和子类重写。   
+
+显式地标记类为 `open` 意味着你考虑过其他模块使用该类作为父类对代码的影响，并且相应地设计了类的代码。
+
+
+## 访问权限级别的注意事项
+
+1.一个 `public` 的变量其类型的访问级别不能是 `internal`, `file-private` 或是 `private`，因为在使用 `public` 变量的地方可能没有这些类型的访问权限。
+
+``` swift
+fileprivate class A {
+    open var op = 0
+    public var pu = 0
+    internal var inter = 0
+    fileprivate var fp = 0
+    private var pr = 0
+    
+    open func testOpen() {}
+    public func testPublic() {}
+    fileprivate func testFileprivate() {}
+    private func testPrivate() {}
+}
+```
+
+上面的代码里, `A`类是 `fileprivate`的, 而它的属性和方法中有`open`、`public`、`internal` , 这样是不好的表述方式。本身类型的访问级别修饰符就给定了一个范围来限定它的使用权限, 再给属性或者函数添加更高级别的访问权限也没有什么作用。所以用以下代码表述要好一些:
+
+``` swift
+fileprivate class A {
+    var op = 0
+    var pu = 0
+    var inter = 0
+    fileprivate var fp = 0
+    private var pr = 0
+    
+    func testOpen() {}
+    func testPublic() {}
+    fileprivate func testFileprivate() {}
+    private func testPrivate() {}
+}
+```
+
+2.类型的访问级别也会影响它的成员的默认访问级别（它的属性，方法，初始化方法，下标）。如果你将类型定义为 `private` 或 `file private` 级别，那么它的成员的默认访问级别也会是 `private` 或`file private`。如果你将类型定义为 `internal` 或 `public`级别（或直接使用默认级别而不显式指出），那么它的成员的默认访问级别会是 `internal` 。
+
+所以在上面这段代码中, 未明确指定访问级别的属性是与类型访问级别一致的`fileprivate`。
+
+3.函数类型的访问级别由函数成员类型和返回类型中的最严格访问级别决定。一个函数不能比它的参数类型和返回类型访问级别高，因为函数可以使用的环境而其参数和返回类型却不能使用。
+
+``` swift
+public class B {
+	// error
+    public func someFun1() -> A {
+        return A()
+    }
+    // correct
+    fileprivate func someFun2() -> A {
+        return A()
+    }
+}
+```
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/accesscontrol/20180102154931288.png" width="70%" img/>
+</center>
+
+
+`someFun1()` 的代码将会报错, 原因为 Method cannot be declared public because its result uses a fileprivate type, 所以应该将`someFun2()`访问级别改为`fileprivate` 或者`private`。
+
+
+4.元组类型的访问级别是所有类型里最严格的。例如，如果你将两个不同类型的元素组成一个元组，一个元素的访问级别是 `internal`，另一个是 `private`，那么这个元组类型是 `private` 级别的。
+
+``` swift
+public class C {
+    fileprivate func someFun() -> (A, B) {
+        return (A(), B())
+    }
+}
+```
+
+上面的代码中, `fomeFun()`函数访问级别必须是`fileprivate`或者更低, 否则将会报错。原因就是这个元组中一个是`public`, 另一个是`fileprivate`。
+
+5.枚举中的独立成员自动使用该枚举类型的访问级别。你不能给独立的成员指明一个不同的访问级别。
+
+``` swift
+public enum CompassPoint {
+      case north
+      case south
+      case east
+      case west
+}
+```
+
+而且枚举定义中的原始值和关联值使用的类型必须有一个不低于枚举的访问级别。例如，你不能使用一个 `private` 类型作为一个 `internal` 级别的枚举类型中的原始值类型。
+
+``` swift
+fileprivate enum EnumeABC {
+    case sss
+    case ppp
+    case ddd
+    case lll
+}
+
+class E {
+    // error
+    public var enumProperty1 = EnumeABC.sss
+    // correct
+    fileprivate var enumProperty2 = EnumeABC.sss
+}
+```
+
+`public`修饰的属性是一个接收类型为`EnumeABC`、访问级别为`fileprivate` 的属性。所以, 该属性的访问级别只能比`fileprivate`一致或更低。否则将会编译报错: Property cannot be declared public because its type 'CompassPoint' uses a fileprivate type。
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/accesscontrol/20180102154343082.png" width="70%" img/>
+</center>
+
+
+
+6.你可以继承任何类只要是在当前可以访问的上下文环境中。但子类不能高于父类的访问级别，例如，你不能写一个 internal 父类的 public 子类。`A`类是`fileprivate`的, 所以继承于`A`类时, 需要是`fileprivate`或者更低。
+
+``` swift
+// error
+public class F: A {}
+// correct
+fileprivate class G: A{}
+```
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/accesscontrol/20180102154449298.png" width="70%" img/>
+</center>
+
+当继承于父类还要重写其属性时, 会出现编译报错Cannot override with a stored property 'op': 
+
+``` swift
+fileprivate class H: A {
+    override var op = 1
+}
+```
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/accesscontrol/20180102154546613.png" width="70%" img/>
+</center>
+
+问题就在于你不可以在子类中重写这个存储属性, 但如果作为计算属性并指定类型就没有问题了:
+
+``` swift
+fileprivate class H: A {
+    override var op: Int {
+        get {
+            return 1
+        }
+        set {
+            // nothing
+        }
+    }
+}
+```
+
+这个属性在`B`中就变为一个只读属性了。如果还有疑问请查阅: [在Swift中覆盖存储的属性](https://stackoverflow.com/questions/26691935/overriding-a-stored-property-in-swift)   
+
+
+-------
+
+欢迎指正, [wangyanchang21](https://github.com/wangyanchang21).
+
+
