@@ -1,8 +1,8 @@
 ---
 title:  "高效 OC开发之内存管理"
 date:   2018-02-28 17:18:43
-categories: [iOS, Effective OC]
-tags: [iOS, Effective OC]
+categories: [iOS, Effective OC, 内存管理]
+tags: [iOS, Effective OC, 内存管理]
 ---
 
 引用计数，ARC的工作原理，dealloc和循环引用的问题，以及其它关于内存管理的部分特性。 

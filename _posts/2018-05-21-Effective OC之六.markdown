@@ -1,8 +1,8 @@
 ---
 title:  "高效 OC开发之Block和GCD"
 date:   2018-05-21 12:53:04
-categories: [iOS, Effective OC]
-tags: [iOS, Effective OC]
+categories: [iOS, Effective OC, 多线程]
+tags: [iOS, Effective OC, 多线程]
 ---
 
 block, GCD，NSOperationQueue等实现多线程。

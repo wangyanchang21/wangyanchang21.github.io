@@ -5,7 +5,7 @@ categories: [iOS]
 tags: [iOS]
 ---
 
-摘要描述...
+关于+load方法和+initialize方法的联系和区别。
 
 [![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)
 

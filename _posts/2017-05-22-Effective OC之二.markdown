@@ -1,8 +1,8 @@
 ---
 title:  "高效 OC开发之对象、消息、运行时"
 date:   2017-05-22 01:38:32
-categories: [iOS, Effective OC]
-tags: [iOS, Effective OC]
+categories: [iOS, Effective OC, runtime]
+tags: [iOS, Effective OC, runtime]
 ---
 
 属性的高效使用，消息转发机制，以及 一些runtime的介绍，如 Method Swizzle, objc_class等。
@@ -617,7 +617,7 @@ Method class_getInstanceMethod(Class aClass, SEL aSelector)
 
 ### Method Swizzling应用
 
-`Method Swizzling`在我的博客中也曾探究过: [Runtime之黑魔法-Method Swizzling]。(http://blog.csdn.net/wangyanchang21/article/details/61199865)
+`Method Swizzling`在我的博客中也曾探究过: [Runtime黑魔法之Method Swizzling]。(http://blog.csdn.net/wangyanchang21/article/details/61199865)
 
 ### 总结
 

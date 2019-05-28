@@ -1,8 +1,8 @@
 ---
 title:  "浅谈block实现原理及内存特性之一: 内部结构和类型"
 date:   2018-03-16 17:01:20
-categories: [iOS, block]
-tags: [iOS, block]
+categories: [iOS, block, 内存管理]
+tags: [iOS, block, 内存管理]
 ---
 
 block在ARC和MRC下的几种类型，block的内部结构和作用。

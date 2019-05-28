@@ -1,8 +1,8 @@
 ---
 title:  "浅谈block实现原理及内存特性之二: 持有变量"
 date:   2018-04-02 10:10:52 
-categories: [iOS, block]
-tags: [iOS, block]
+categories: [iOS, block, 内存管理]
+tags: [iOS, block, 内存管理]
 ---
 
 block是如何进行持有变量的，__block是如何进行工作的。

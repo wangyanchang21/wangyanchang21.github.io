@@ -1,8 +1,8 @@
 ---
 title:  "浅谈block实现原理及内存特性之三: copy过程分析"
 date:   2018-04-02 10:12:53 
-categories: [iOS, block]
-tags: [iOS, block]
+categories: [iOS, block, 内存管理]
+tags: [iOS, block, 内存管理]
 ---
 
 __block和__forwarding的原理，以及block是如何进行自身copy的。

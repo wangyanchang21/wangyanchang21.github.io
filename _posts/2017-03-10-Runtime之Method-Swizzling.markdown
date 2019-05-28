@@ -1,8 +1,8 @@
 ---
-title:  "Runtime之黑魔法-Method Swizzling"
+title:  "Runtime黑魔法之Method Swizzling"
 date:   2017-03-10 18:03:23
-categories: [iOS]
-tags: [iOS]
+categories: [iOS, runtime]
+tags: [iOS, runtime]
 ---
 
 runtime中通过 swizzle method实现方法交换，以解决统一派生基类的不足的问题。
@@ -14,7 +14,7 @@ runtime中通过 swizzle method实现方法交换，以解决统一派生基类�
 - [目的](#目的)
 	- [统一派生基类的不足](#统一派生基类的不足)
 	- [基类派生的替代方法](#基类派生的替代方法)
-- [AOP编程思想—Method Swizzling](#aop编程思想—method-swizzling)
+- [AOP编程思想-Method Swizzling](#aop编程思想-method-swizzling)
 	- [Method Swizzling原理](#method-swizzling原理)
 	- [Method Swizzling使用](#method-swizzling使用)
 	- [代码分析](#代码分析)
@@ -53,7 +53,7 @@ runtime中通过 swizzle method实现方法交换，以解决统一派生基类�
 
 我本人不赞成Category的过度使用，但鉴于Category是最典型的化继承为组合的手段，在这个场景下还是适合使用的。还有的就是，关于`Method Swizzling`手段实现方法拦截，业界也已经有了现成的开源库：[Aspects](https://github.com/steipete/Aspects)，我们可以直接拿来使用。
 
-## AOP编程思想---Method Swizzling
+## AOP编程思想-Method Swizzling
 
 ### Method Swizzling原理
 
@@ -64,7 +64,7 @@ Method Swizzing是发生在运行时的，主要用于在运行时将两个Metho
 首先，让我们通过两张图片来了解一下`Method Swizzling`的实现原理:
 
 <center>
-<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/trustwallet-2/20170310161902367.png" width="70%" img/>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/methodswizzle/20170310161902367.png" width="70%" img/>
 </center>
 
 dispath talbe的概念:   
@@ -77,7 +77,7 @@ dispath talbe的概念:
 
 
 <center>
-<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/trustwallet-2/20170310161911945.png" width="70%" img/>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/methodswizzle/20170310161911945.png" width="70%" img/>
 </center>
 
 而`Method Swizzling`就是对 dispath table进行了操作，让`SEL`对应另一个`IMP`。利用Objective-C的动态特性，改变其映射, 它可以使得在运行时通过改变 `SEL` 在类的消息分发列表中的映射从而改变方法的调用。
