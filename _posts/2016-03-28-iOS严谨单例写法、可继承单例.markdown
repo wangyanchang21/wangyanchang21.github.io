@@ -1,0 +1,242 @@
+---
+title:  "iOS严谨单例写法、可继承单例"
+date:   2016-03-28 13:54:49
+categories: [iOS]
+tags: [iOS]
+---
+
+单例模式在iOS开发中可能算是最常用的模式之一了，但是由于OC本身的语言特性，想要写一个正确的单例模式相对来说比较麻烦。 今天就来说一说, 单例创建的方式和严谨的单例写法及可继承单例编写。
+
+[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)
+
+------
+
+- [基本单例的创建方式](#基本单例的创建方式)
+	- [方式一(普通创建方式)](#方式一普通创建方式)
+	- [方式二(GCD方式)](#方式二gcd方式)
+- [严谨的单例写法探究](#严谨的单例写法探究)
+	- [一般写法](#一般写法)
+	- [严谨的写法](#严谨的写法)
+- [可继承单例探究](#可继承单例探究)
+
+------
+
+
+## 基本单例的创建方式
+
+### 方式一(普通创建方式)
+
+
+``` swift
+// SingleHandle.h
+
+@interface SingleHandle : NSObject
+
+//单例创建方法一般以 share, stand, main 开头 + 当前类名
++(SingleHandle *)shareSingleHandle;
+
+@end
+```
+
+``` swift
+// SingleHandle.m
+
+@implementation SingleHandle
+
+//声明静态变量
+static SingleHandle *singlehanle = nil;
+
++(SingleHandle *)shareSingleHandle {
+    //同步锁  //防止一种极限的可能,第一个对象正在创建的时候,第二个对象就开始创建了,造成两个对象
+    @synchronized(self){
+        if (singlehanle == nil) {
+            singlehanle = [[SingleHandle alloc]init];
+        }
+        return singlehanle;
+    }
+}
+@end
+```
+
+### 方式二(GCD方式)
+
+``` swift
+// Singleton.h
+
+@interface Singleton : NSObject
+
++(instancetype) shareInstance;
+
+@end
+```
+
+
+``` swift
+// Singleton.m
+
+@implementation Singleton
+
+static Singleton* instance = nil;
+
++(instancetype) shareInstance {
+    static dispatch_once_t onceToken ;
+    dispatch_once(&onceToken, ^{
+        instance = [[self alloc] init] ;
+    }) ;
+    
+    return instance ;
+}
+
+@end
+```
+
+## 严谨的单例写法探究
+
+### 一般写法
+
+一般情况下，可能我们写的单例模式是上面的方式, 这里不再赘述, 但这样是不严谨的。 先来看一下到底不严谨的写法缺点是什么。
+
+以上面的方式二举例:
+
+``` swift
+    Singleton* single1 = [Singleton shareInstance] ;
+    NSLog(@"single1 = %@", single1) ;
+    
+    Singleton* single2 = [Singleton shareInstance] ;
+    NSLog(@"single2 = %@", single2) ;
+    
+    Singleton* single3 = [[Singleton alloc] init] ;
+    NSLog(@"single3 = %@", single3) ;
+    
+    NSLog(@"single4 = %@", [single3 copy]) ;
+```
+
+打印结果:
+
+``` swift
+single1 = < Singleton: 0x7ffb93743e80 >
+single2 = < Singleton: 0x7ffb93743e80 >
+single3 = < Singleton: 0x7ffb9373ecc0 >
+-[Singleton copyWithZone:]: unrecognized selector sent to instance 0x7ffb9373ecc0
+```
+
+可以看到，当我们调用shareInstance方法时获取到的对象是相同的，但是当我们通过`alloc`和`init`来构造对象的时候，得到的对象却是不一样的。而且在 single4 这行注释打开后, 会在此崩溃, 原因如上。 
+
+所以，我们通过不同的途径得到不同的对象，显然是不行的。我们必须要确保对象的唯一性，所以我们就需要封锁用户通过alloc和init以及copy来构造对象这条道路。
+
+我们知道，创建对象的步骤分为申请内存`alloc`、初始化`init`这两个步骤，我们要确保对象的唯一性，因此在第一步这个阶段我们就要拦截它。当我们调用`alloc`方法时，OC内部会调用`allocWithZone`这个方法来申请内存，我们覆写这个方法，然后在这个方法中调用shareInstance方法返回单例对象，这样就可以达到我们的目的。拷贝对象也是同样的原理，覆写`copyWithZone`方法，然后在这个方法中调用shareInstance方法返回单例对象。
+
+### 严谨的写法
+
+``` swift
+@implementation Singleton
+
+static Singleton* instance = nil;
+
++(instancetype) shareInstance {
+    static dispatch_once_t onceToken ;
+    dispatch_once(&onceToken, ^{
+        instance = [[super allocWithZone:NULL] init];
+    }) ;
+    
+    return instance ;
+}
++(id) allocWithZone:(struct _NSZone *)zone {
+    return [Singleton shareInstance] ;
+}
+-(id) copyWithZone:(struct _NSZone *)zone {
+    return [Singleton shareInstance] ;
+}
+@end
+```
+
+``` swift
+打印结果:
+single1 = < Singleton: 0x7fe2e24a2880 >
+single2 = < Singleton: 0x7fe2e24a2880 >
+single3 = < Singleton: 0x7fe2e24a2880 >
+single4 = < Singleton: 0x7fe2e24a2880 >
+```
+
+这样就是比较正确很严谨的写法了。
+
+## 可继承单例探究
+
+可继承单例是指父类中写下单例创建的方法, 当其本身类或其子类调用父类中的类创建的方法时, 可以各自类创建各自类的单例。 所以, 在父类中写的一个方法, 同时适用于其本身和其子类, 故称作可继承单例。
+
+单例类 A :
+
+``` swift
+@interface A : NSObject
+@property (nonatomic,copy)NSString *a1;
+
++ (instancetype)sharedInstance;
+
+@end
+
+#import "A.h"
+#import <objc/runtime.h>
+@implementation A
+
++(instancetype)sharedInstance {
+    id instance = objc_getAssociatedObject(self, @"instance");
+    
+    if (!instance) {
+        instance = [[super allocWithZone:NULL] init];
+        NSLog(@"单例创建=====%@=====",instance);
+        objc_setAssociatedObject(self, @"instance", instance, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    return instance;
+}
++(id) allocWithZone:(struct _NSZone *)zone {
+    return [self sharedInstance] ;
+}
+-(id) copyWithZone:(struct _NSZone *)zone {
+    Class selfClass = [self class];
+    return [selfClass sharedInstance] ;
+}
+@end
+```
+
+单例类 B 和单例类 C 中无任何方法和属性, 只是继承于A类。 
+
+执行下面的方法:
+
+``` swift
+    A *singleA = [A sharedInstance];
+    B *singleB = [B sharedInstance];
+    C *singleC = [C sharedInstance];
+
+    singleA.a1 = @"aaa";
+    singleB.a1 = @"bbb";
+    singleC.a1 = @"ccc";
+
+    NSLog(@"singleA = %p",singleA);
+    NSLog(@"singleB = %p",singleB);
+    NSLog(@"singleC = %p",singleC);
+    
+    NSLog(@"singleA.a1 = %@",singleA.a1);
+    NSLog(@"singleB.b1 = %@",singleB.a1);
+    NSLog(@"singleC.c1 = %@",singleC.a1);
+```
+
+打印结果:
+
+``` swift
+单例创建=====< A: 0x7fc21282fb60 >=====
+单例创建=====< B: 0x7fc21282fcb0 >=====
+单例创建=====< C: 0x7fc210427190 >=====
+singleA = 0x7fc21282fb60
+singleB = 0x7fc21282fcb0
+singleC = 0x7fc210427190
+singleA.a1 = aaa
+singleB.a1 = bbb
+singleC.a1 = ccc
+```
+
+
+-------
+
+欢迎指正, [wangyanchang21](https://github.com/wangyanchang21).
+
+

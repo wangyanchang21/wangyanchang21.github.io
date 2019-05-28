@@ -1,0 +1,333 @@
+---
+title:  "iOS设备获取唯一标识的方法总结"
+date:   2016-11-07 17:38:23
+categories: [iOS]
+tags: [iOS]
+---
+
+iOS设备获取唯一标识的各种方法总结，以及最好的实现获取唯一标识的方法。
+
+[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)
+
+------
+
+- [各种获取设备唯一标识的方法介绍](#各种获取设备唯一标识的方法介绍)
+	- [UDID(Unique Device Identifier)](#udidunique-device-identifier)
+	- [UUID(Universally Unique Identifier)](#uuiduniversally-unique-identifier)
+	- [CFUUID](#cfuuid)
+	- [NSUUID](#nsuuid)
+	- [open UDID](#open-udid)
+	- [MAC Address](#mac-address)
+	- [广告标示符(IDFA-identifierForIdentifier)](#广告标示符idfa-identifierforidentifier)
+	- [Vendor标示符(IDFV-identifierForVendor)](#vendor标示符(idfv-identifierforvendor))
+	- [推送token＋bundle_id](#推送tokenbundle_id)
+	- [NSUUID,CFUUID,IDFA,IDFV获取的标识对比](#nsuuidcfuuiddifaidfv获取的标识对比)
+	- [总结](#总结)
+- [如何正确的获取设备的唯一标识](#如何正确的获取设备的唯一标识)
+	- [利用keyChain和UUID永久获得设备的唯一标识](#利用keychain和uuid永久获得设备的唯一标识)
+	- [什么是钥匙串?](#什么是钥匙串)
+	- [实现代码](#实现代码)
+- [相关资料](#相关资料)
+
+------
+
+
+## 各种获取设备唯一标识的方法介绍
+
+### UDID(Unique Device Identifier)
+
+`UDID`的全称是Unique Device Identifier，它就是苹果iOS设备的唯一识别码，它由40位16进制数的字母和数字组成（越狱的设备通过某些工具可以改变设备的`UDID`）。移动网络可利用`UDID`来识别移动设备，但是，从IOS5.0（2011年8月份）开始，苹果宣布将不再支持用`uniqueIdentifier`方法获取设备的`UDID`，iOS5以下是可以用的。苹果从iOS5开始就移除了通过代码访问`UDID`的权限。从2013年5月1日起，试图访问UIDIDs的程序将不再被审核通过，替代的方案是开发者应该使用“在iOS 6中介绍的`Vendor`或`Advertising`标示符”。所以`UDID`是绝对是不能再使用了。
+
+```
+//UUID , 已废除
+NSString *udid = [[UIDevice currentDevice] uniqueIdentifier];
+```
+
+#### 为什么苹果反对开发人员使用UDID？ 
+
+iOS 2.0版本以后UIDevice提供一个获取设备唯一标识符的方法`uniqueIdentifier`，通过该方法我们可以获取设备的序列号，这个也是目前为止唯一可以确认唯一的标示符。 许多开发者把`UDID`跟用户的真实姓名、密码、住址、其它数据关联起来；网络窥探者会从多个应用收集这些数据，然后顺藤摸瓜得到这个人的许多隐私数据。同时大部分应用确实在频繁传输`UDID`和私人信息。为了避免集体诉讼，苹果最终决定在iOS 5 的时候，将这一惯例废除，开发者被引导生成一个唯一的标识符，只能检测应用程序，其他的信息不提供。现在应用试图获取`UDID`已被禁止且不允许上架。
+
+
+### UUID(Universally Unique Identifier)
+
+`UUID`是Universally Unique Identifier的缩写，中文意思是通用唯一识别码。它是让分布式系统中的所有元素，都能有唯一的辨识信息，而不需要透过中央控制端来做辨识信息的指定。这样，每个人都可以建立不与其它人冲突的 `UUID`。在此情况下，就不需考虑数据库建立时的名称重复问题。苹果公司建议使用`UUID`为应用生成唯一标识字符串。
+获得的`UUID`值系统没有存储, 而且每次调用得到`UUID`，系统都会返回一个新的唯一标示符。如果你希望存储这个标示符，那么需要自己将其存储到`NSUserDefaults`, `Keychain`, `Pasteboard`或其它地方。
+
+
+### CFUUID
+
+从iOS2.0开始，`CFUUID`就已经出现了。它是CoreFoundatio包的一部分，因此API属于C语言风格。CFUUIDCreate 方法用来创建CFUUIDRef，并且可以获得一个相应的NSString，如下代码：
+
+```
+CFUUIDRef cfuuid = CFUUIDCreate(kCFAllocatorDefault);NSString *cfuuidString = (NSString*)CFBridgingRelease(CFUUIDCreateString(kCFAllocatorDefault, cfuuid));
+```
+
+获得的这个`CFUUID`值系统并没有存储。每次调用CFUUIDCreate，系统都会返回一个新的唯一标示符。如果你希望存储这个标示符，那么需要自己将其存储到`NSUserDefaults`, `Keychain`, `Pasteboard`或其它地方。
+ 
+### NSUUID
+
+`NSUUID`在iOS 6中才出现，这跟`CFUUID`几乎完全一样，只不过它是Objective-C接口。+ (id)UUID 是一个类方法，调用该方法可以获得一个`UUID`。通过下面的代码可以获得一个`UUID`字符串：
+
+```
+NSString *uuid = [[NSUUID UUID] UUIDString];
+```
+
+跟`CFUUID`一样，这个值系统也不会存储，每次调用的时候都会获得一个新的唯一标示符。如果要存储的话，你需要自己存储。在我读取`NSUUID`时，注意到获取到的这个值跟`CFUUID`完全一样（不过也可能不一样）
+
+### open UDID
+
+在iOS 5发布时，`uniqueIdentifier`被弃用了，这引起了广大开发者需要寻找一个可以替代`UDID`，并且不受苹果控制的方案。由此[OpenUDID](https://github.com/ylechelle/OpenUDID)成为了当时使用最广泛的开源`UDID`替代方案。`OpenUDID`在工程中实现起来非常简单，并且还支持一系列的广告提供商。
+
+`OpenUDID`利用了一个非常巧妙的方法在不同程序间存储标示符 — 在粘贴板中用了一个特殊的名称来存储标示符。通过这种方法，别的程序（同样使用了`OpenUDID`）知道去什么地方获取已经生成的标示符（而不用再生成一个新的）。而且根据贡献者的代码和方法，和一些开发者的经验，如果把使用了`OpenUDID`方案的应用全部都删除，再重新获取`OpenUDID`，此时的`OpenUDID`就跟以前的不一样。可见，这种方法还是不保险。
+
+但是`OpenUDID`库早已经弃用了, 在其[官方的博客](http://blog.appsfire.com/udid-is-dead-openudid-is-deprecated-long-live-advertisingidentifier/)中也指明了, 停止维护`OpenUDID`的原因是为了更好的向苹果的举措靠拢, 还指明了`MAC Address`不是一个好的选择。 
+
+
+### MAC Address
+
+#### 这个MAC地址是指什么？有什么用？
+
+`MAC`(Medium/Media Access Control)地址，用来表示互联网上每一个站点的标识符，采用十六进制数表示，共六个字节（48位）。其中，前三个字节是由IEEE的注册管理机构 RA负责给不同厂家分配的代码(高位24位)，也称为“编制上唯一的标识符” （Organizationally Unique Identifier)，后三个字节(低位24位)由各厂家自行指派给生产的适配器接口，称为扩展标识符（唯一性）。
+
+`MAC地址`在网络上用来区分设备的唯一性，接入网络的设备都有一个`MAC地址`，他们肯定都是不同的，是唯一的。一部iPhone上可能有多个`MAC地址`，包括WIFI的、SIM的等，但是iTouch和iPad上就有一个WIFI的，因此只需获取WIFI的`MAC地址`就好了，也就是en0的地址。
+
+形象的说，`MAC地址`就如同我们身份证上的身份证号码，具有全球唯一性。这样就可以非常好的标识设备唯一性，类似与苹果设备的`UDID`号，通常的用途有：  
+1）用于一些统计与分析目的，利用用户的操作习惯和数据更好的规划产品。    
+2）作为用户ID来唯一识别用户，可以用游客身份使用app又能在服务器端保存相应的信息，省去用户名、密码等注册过程。  
+
+#### 如何使用Mac地址生成设备的唯一标识呢？
+
+主要分三种：  
+1、直接使用“MAC Address”  
+2、使用“MD5(MAC Address)”  
+3、使用“MD5(Mac Address+bundle_id)”获得“机器＋应用”的唯一标识（bundle_id 是应用的唯一标识）  
+
+iOS7之前，因为`MAC地址`是唯一的， 一般app开发者会采取第3种方式来识别安装对应app的设备。为什么会使用它？在iOS5之前，都是使用`UDID`的，后来被禁用。苹果推荐使用`UUID` 但是也有诸多问题，从而使用`MAC地址`。而`MAC地址`跟`UDID`一样，存在隐私问题，现在苹果新发布的iOS7上，如果请求`MAC地址`都会返回一个固定值，那么Mac Address+bundle_id这个值大家的设备都变成一致的啦，跟`UDID`一样相当于被禁用, 所以`Mac Address`是不能够被使用为获取设备唯一标识的。
+
+
+### 广告标示符(IDFA-identifierForIdentifier)
+
+广告标示符，在同一个设备上的所有App都会取到相同的值，是苹果专门给各广告提供商用来追踪用户而设的。但好在Apple默认是允许追踪的，而且一般用户都不知道有这么个设置，所以基本上用来监测推广效果，是戳戳有余了。
+
+它是iOS 6中另外一个新的方法，提供了一个方法`advertisingIdentifier`，通过调用该方法会返回一个`NSUUID`实例，最后可以获得一个`UUID`，由系统存储着的。
+
+```
+#import <AdSupport/AdSupport.h>
+	NSString *adId = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+```
+
+不过即使这是由系统存储的，但是有几种情况下，会重新生成广告标示符。如果用户完全重置系统（(设置程序 -> 通用 -> 还原 -> 还原位置与隐私) ，这个广告标示符会重新生成。另外如果用户明确的还原广告(设置程序-> 通用 -> 关于本机 -> 广告 -> 还原广告标示符) ，那么广告标示符也会重新生成。
+
+关于广告标示符的还原，有一点需要注意：如果程序在后台运行，此时用户“还原广告标示符”，然后再回到程序中，此时获取广 告标示符并不会立即获得还原后的标示符。必须要终止程序，然后再重新启动程序，才能获得还原后的广告标示符。
+
+所以IDFA也不可以作为获取唯一标识的方法，来识别用户。
+
+
+### Vendor标示符(IDFV-identifierForVendor)
+
+`Vendor`标示符，是给`Vendor`标识用户用的，每个设备在所属同一个`Vender`的应用里，都有相同的值。其中的`Vender`是指应用提供商，但准确点说，是通过`BundleID`的反转的前两部分进行匹配，如果相同就是同一个`Vender`，例如对于com.taobao.app1, com.taobao.app2 这两个`BundleID`来说，就属于同一个`Vender`，共享同一个`IDFV`的值。和IDFA不同的是，`IDFV`的值是一定能取到的，所以非常适合于作为内部用户行为分析的主id，来标识用户，替代`OpenUDID`。
+
+它是iOS 6中新增的，跟`advertisingIdentifier`一样，该方法返回的是一个 `NSUUID`对象，可以获得一个`UUID`。如果满足条件“相同的一个程序里面-相同的`Vendor`-相同的设备”，那么获取到的这个属性值就不会变。如果是“相同的程序-相同的设备-不同的`Vendor`，或者是相同的程序-不同的设备-无论是否相同的`Vendor`”这样的情况，那么这个值是不会相同的。
+
+```
+    NSString *strIDFV = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
+```
+
+但是如果用户将属于此`Vender`的所有App卸载，则`IDFV`的值会被重置，即再重装此`Vender`的App，`IDFV`的值和之前不同。
+
+
+### 推送token＋bundle_id
+
+推送token＋bundle_id的方法：
+1、应用中增加推送用来获取token
+2、获取应用bundle_id
+3、根据token+bundle_id进行散列运算
+
+apple push token保证设备唯一，但必须有网络情况下才能工作，该方法并不是依赖于设备本身，而是依赖于apple push机制，所以当苹果push做出改变时, 你获取所谓的唯一标识也就随之失效了。所以此方法还是不可取的。
+
+### NSUUID,CFUUID,IDFA,IDFV获取的标识对比
+
+首次运行:
+
+```
+NSUUID:9D820D3A-4429-4918-97F7-A69588B388A4
+CFUUID:80F961D0-1E6A-4ECD-A0A9-F58ED858FE20
+IDFA:687E6A90-50A3-4424-871C-BE255D050AFD
+IDFV:8E740A99-283B-4F6A-87EF-443FB7778488
+```
+
+二次运行:
+
+```
+>NSUUID:23AB8D3D-4F1D-45E2-8BD7-83B451125326
+CFUUID:14DDBFCF-67A6-46B7-BB48-4EF2ADC5429F
+IDFA:687E6A90-50A3-4424-871C-BE255D050AFD
+IDFV:8E740A99-283B-4F6A-87EF-443FB7778488
+```
+
+卸载后, 重新安装运行:
+
+```
+NSUUID:BD934F9C-B7EC-4BD1-B65E-964C66537CAB
+CFUUID:29654DE0-AC93-40F9-98AB-1E10A271AF8D
+IDFA:687E6A90-50A3-4424-871C-BE255D050AFD
+IDFV:8E740A99-283B-4F6A-87EF-443FB7778488
+```
+
+重启后运行:
+
+```
+NSUUID:82711557-3A17-4B82-8F18-09AADF9DD37B
+CFUUID:FFBC73EC-CFBE-414C-870E-77C0714E0347
+IDFA:687E6A90-50A3-4424-871C-BE255D050AFD
+IDFV:8E740A99-283B-4F6A-87EF-443FB7778488
+```
+
+### 总结
+
+说了这么多, 才发现原来没有一种方法是可行的。没错, 其实自从苹果废除`UDID`后, 就不能达到获取设备真正的唯一标识了。因为这些方法中导致获取的唯一标示产生改变的原因, 或是重新调用方法, 或是重启设备, 或是卸载应用, 或是还原某些标识, 或者刷新系统...
+
+所以, 不能达到从根本上获取唯一标识, 我们只能做到尽可能接近。下面是我用过的方法。
+
+## 如何正确的获取设备的唯一标识
+
+我用的方法是将获取的`UUID`永久存储在设备的`Keychain`中, 这个方法在应用第一次启动时, 将获取的`UUID`存储进`Keychain`中, 每次取的时候, 检查本地钥匙串中有没有, 如果没有则需要将获取的`UUID`存储进去。当你重启设备, 卸载应用再次安装,都不影响, 只是当设备刷机时, `Keychain`会清空, 才会消失, 才会失效。
+
+不只是这一种方法, 你也可以保存除`UUID`之外,其他合适的标识, 但利用`Keychain`去存储标识的方式应该是最接近的。
+
+### 利用keyChain和UUID永久获得设备的唯一标识
+
+开发者可以在应用第一次启动时调用一次，然后将该串存储起来，以便以后替代`UDID`来使用。但是，如果用户删除该应用再次安装时，又会生成新的字符串，所以不能保证唯一识别该设备。这就需要各路高手想出各种解决方案。所以，之前很多应用就采用`MAC Address`。但是现在如果用户升级到iOS7（及其以后的苹果系统）后，他们机子的`MAC Address`就是一样的，没办法做区分，只能弃用此方法，重新使用`UUID`来标识。如果使用`UUID`，就要考虑应用被删除后再重新安装时的处理。
+
+### 什么是钥匙串?
+
+#### 在应用间利用`Keychain`共享数据
+
+我们可以把`Keychain`理解为一个Dictionary，所有数据都以key-value的形式存储，可以对这个Dictionary进行add、update、get、delete这四个操作。对于每一个应用来说，`Keychain`都有两个访问区，私有区和公共区。私有区是一个sandbox，本程序存储的任何数据都对其他程序不可见。而要想在将存储的内容放在公共区，需要先声明公共区的名称，官方文档管这个名称叫“keychain access group”，声明的方法是新建一个plist文件，名字随便起，内容如下：
+
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/uuidsummary/20161107164741873.png" width="70%" img/>
+</center>
+
+
+“yourAppID.com.yourCompany.whatever”就是你要起的公共区名称，除了whatever字段可以随便定之外，其他的都必须如实填写。这个文件的路径要配置在 Project->build setting->Code Signing Entitlements里，否则公共区无效，配置好后，须用你正式的证书签名编译才可通过，否则xcode会弹框告诉你code signing有问题。所以，苹果限制了你只能同公司的产品共享`Keychain`数据，别的公司访问不了你公司产品的`Keychain`。
+ 
+#### 保存私密信息
+
+iOS的`Keychain`服务提供了一种安全的保存私密信息（密码，序列号，证书等）的方式，每个ios程序都有一个独立的`Keychain`存储。相对于`NSUserDefaults`、文件保存等一般方式，`Keychain`保存更为安全，而且`Keychain`里保存的信息不会因App被删除而丢失，所以在重装App后，`Keychain`里的数据还能使用。
+ 
+### 实现代码
+
+首先, 我先推荐两篇文章,里面介绍了如利用`Keychain`和`UUID`永久获得设备的唯一标识, [Classes/KeychainItemWrapper.m](https://developer.apple.com/library/ios/samplecode/GenericKeychain/Listings/Classes_KeychainItemWrapper_h.html)和 [如何使用KeyChain保存和获取UDID](http://www.cnblogs.com/smileEvday/p/UDID.html) 。
+
+然后, 再介绍下我使用的方法以及封装的工具类, 在应用里使用使用`Keychain`，我们需要导入`Security.framework`。下面介绍下, 我在其他库基础上封装的一个获取唯一标识的工具类:
+
+```
+// <LZKeychain.h>
+
+#import <Foundation/Foundation.h>
+#import <Security/Security.h>
+
+NSString * const KEY_UDID_INSTEAD = @"com.myapp.udid.test";
+
+@interface LZKeychain : NSObject
+
+/**
+ 本方法是得到 UUID 后存入系统中的 keychain 的方法
+ 不用添加 plist 文件
+ 程序删除后重装,仍可以得到相同的唯一标示
+ 但是当系统升级或者刷机后,系统中的钥匙串会被清空,此时本方法失效
+ */
++(NSString *)getDeviceIDInKeychain;
+
+@end
+```
+
+```
+// LZKeychain.m
+
+#import "LZKeychain.h"
+
+@implementation LZKeychain
+
++(NSString *)getDeviceIDInKeychain
+{
+    NSString *getUDIDInKeychain = (NSString *)[LZKeychain load:KEY_UDID_INSTEAD];
+    NSLog(@"从keychain中获取到的 UDID_INSTEAD %@",getUDIDInKeychain);
+    if (!getUDIDInKeychain ||[getUDIDInKeychain isEqualToString:@""]||[getUDIDInKeychain isKindOfClass:[NSNull class]]) {
+        CFUUIDRef puuid = CFUUIDCreate( nil );
+        CFStringRef uuidString = CFUUIDCreateString( nil, puuid );
+        NSString * result = (NSString *)CFBridgingRelease(CFStringCreateCopy( NULL, uuidString));
+        CFRelease(puuid);
+        CFRelease(uuidString);
+        NSLog(@"\n \n \n _____重新存储 UUID _____\n \n \n  %@",result);
+        [LZKeychain save:KEY_UDID_INSTEAD data:result];
+        getUDIDInKeychain = (NSString *)[LZKeychain load:KEY_UDID_INSTEAD];
+    }
+    NSLog(@"最终 ———— UDID_INSTEAD %@",getUDIDInKeychain);
+    return getUDIDInKeychain;
+}
+
+#pragma mark - private
+
++ (NSMutableDictionary *)getKeychainQuery:(NSString *)service {
+    return [NSMutableDictionary dictionaryWithObjectsAndKeys:
+            (id)kSecClassGenericPassword,(id)kSecClass,
+            service, (id)kSecAttrService,
+            service, (id)kSecAttrAccount,
+            (id)kSecAttrAccessibleAfterFirstUnlock,(id)kSecAttrAccessible,
+            nil];
+}
+
++ (void)save:(NSString *)service data:(id)data {
+    //Get search dictionary
+    NSMutableDictionary *keychainQuery = [self getKeychainQuery:service];
+    //Delete old item before add new item
+    SecItemDelete((CFDictionaryRef)keychainQuery);
+    //Add new object to search dictionary(Attention:the data format)
+    [keychainQuery setObject:[NSKeyedArchiver archivedDataWithRootObject:data] forKey:(id)kSecValueData];
+    //Add item to keychain with the search dictionary
+    SecItemAdd((CFDictionaryRef)keychainQuery, NULL);
+}
+
++ (id)load:(NSString *)service {
+    id ret = nil;
+    NSMutableDictionary *keychainQuery = [self getKeychainQuery:service];
+    //Configure the search setting
+    //Since in our simple case we are expecting only a single attribute to be returned (the password) we can set the attribute kSecReturnData to kCFBooleanTrue
+    [keychainQuery setObject:(id)kCFBooleanTrue forKey:(id)kSecReturnData];
+    [keychainQuery setObject:(id)kSecMatchLimitOne forKey:(id)kSecMatchLimit];
+    CFDataRef keyData = NULL;
+    if (SecItemCopyMatching((CFDictionaryRef)keychainQuery, (CFTypeRef *)&keyData) == noErr) {
+        @try {
+            ret = [NSKeyedUnarchiver unarchiveObjectWithData:(NSData *)keyData];
+        } @catch (NSException *e) {
+            NSLog(@"Unarchive of %@ failed: %@", service, e);
+        } @finally {
+        }
+    }
+    if (keyData)
+        CFRelease(keyData);
+    return ret;
+}
+
++ (void)delete:(NSString *)service {
+    NSMutableDictionary *keychainQuery = [self getKeychainQuery:service];
+    SecItemDelete((CFDictionaryRef)keychainQuery);
+}
+@end
+```
+
+
+### 相关资料
+
+[The Developer’s Guide to Unique Identifiers](https://possiblemobile.com/2013/04/unique-identifiers/)   
+[获取设备的唯一标识](http://blog.csdn.net/wangkun_510/article/details/51957187)   
+
+
+-------
+
+欢迎指正, [wangyanchang21](https://github.com/wangyanchang21).
+
+
