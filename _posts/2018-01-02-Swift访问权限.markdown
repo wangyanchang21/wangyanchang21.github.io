@@ -18,7 +18,7 @@ Swift提供个五个不同的访问级别,open、public、internal、fileprivate
 	- [fileprivate](#fileprivate)
 	- [internal](#internal)
 	- [public、open](#publicopen)
-- [访问权限级别的注意事项](#访问权限级别的注意事项)
+- [注意事项](#注意事项)
 
 ------
 
@@ -63,7 +63,7 @@ Xcode 中的每个构建目标（例如应用程序包或框架）在 Swift 中�
 显式地标记类为 `open` 意味着你考虑过其他模块使用该类作为父类对代码的影响，并且相应地设计了类的代码。
 
 
-## 访问权限级别的注意事项
+## 注意事项
 
 1.一个 `public` 的变量其类型的访问级别不能是 `internal`, `file-private` 或是 `private`，因为在使用 `public` 变量的地方可能没有这些类型的访问权限。
 
@@ -119,7 +119,7 @@ public class B {
 ```
 
 <center>
-<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/accesscontrol/20180102154931288.png" width="70%" img/>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/accesscontrol/20180102154931288.png" width="80%" img/>
 </center>
 
 
@@ -170,7 +170,7 @@ class E {
 `public`修饰的属性是一个接收类型为`EnumeABC`、访问级别为`fileprivate` 的属性。所以, 该属性的访问级别只能比`fileprivate`一致或更低。否则将会编译报错: Property cannot be declared public because its type 'CompassPoint' uses a fileprivate type。
 
 <center>
-<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/accesscontrol/20180102154343082.png" width="70%" img/>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/accesscontrol/20180102154343082.png" width="80%" img/>
 </center>
 
 
@@ -185,7 +185,7 @@ fileprivate class G: A{}
 ```
 
 <center>
-<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/accesscontrol/20180102154449298.png" width="70%" img/>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/accesscontrol/20180102154449298.png" width="80%" img/>
 </center>
 
 当继承于父类还要重写其属性时, 会出现编译报错Cannot override with a stored property 'op': 
@@ -197,7 +197,7 @@ fileprivate class H: A {
 ```
 
 <center>
-<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/accesscontrol/20180102154546613.png" width="70%" img/>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/accesscontrol/20180102154546613.png" width="80%" img/>
 </center>
 
 问题就在于你不可以在子类中重写这个存储属性, 但如果作为计算属性并指定类型就没有问题了:

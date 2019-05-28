@@ -5,7 +5,7 @@ categories: [iOS, 移动安全]
 tags: [iOS, 移动安全]
 ---
 
-摘要描述...
+由于博主公司是从事金融行业的, 所以在安全方面还是很重视的。而且现在iOS基本全部的应用都改用`HTTPS`协议了, 那还有必要针对`DNS劫持`做出安全措施吗? 今天咱们来谈一谈。
 
 [![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)
 
@@ -25,8 +25,6 @@ tags: [iOS, 移动安全]
 
 
 ------
-
-由于博主公司是从事金融行业的, 所以在安全方面还是很重视的。而且现在iOS基本全部的应用都改用`HTTPS`协议了, 那还有必要针对`DNS劫持`做出安全措施吗? 今天咱们来谈一谈。
 
 ## 关于DNS劫持
 

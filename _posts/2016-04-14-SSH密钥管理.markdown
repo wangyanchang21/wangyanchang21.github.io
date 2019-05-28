@@ -1,0 +1,230 @@
+---
+title:  "SSH、SSH-Agent密钥管理"
+date:   2016-04-14 16:37:08
+categories: [移动安全]
+tags: [移动安全]
+---
+
+SSH为建立在应用层基础上的安全协议, 专为远程登录会话和其他网络服务提供安全性的协议, 可以有效防止远程管理过程中的信息泄露问题。
+
+[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)
+
+------
+
+- [SSH](#ssh)
+	- [基于账号口令的安全验证](#基于账号口令的安全验证)
+	- [基于密钥的安全验证](#基于密钥的安全验证)
+- [通过SSH连接到服务器](#通过ssh连接到服务器)
+	- [生成SSH钥匙对](#生成ssh钥匙对)
+	- [修改SSH私钥的密码口令(passphrase)](#修改ssh私钥的密码口令passphrase)
+	- [添加多个SSH](#添加多个ssh)
+- [SSH-Agent管理](#ssh-agent管理)
+	- [将SSH添加到SSH-Agent](#将ssh添加到ssh-agent)
+	- [添加多个SSH到SSH-Agent](#添加多个ssh到ssh-agent)
+
+------
+
+
+## SSH
+
+`SSH`是 `Secure Shell` 的缩写。`SSH`为建立在应用层基础上的安全协议。`SSH` 是目前较可靠, 专为远程登录会话和其他网络服务提供安全性的协议。利用`SSH` 协议可以有效防止远程管理过程中的信息泄露问题。
+
+### 基于账号口令的安全验证
+
+`SSH`协议的一种验证方式是基于账号密码的安全验证, 会通过账号和密码登录到远程主机。虽然所有传输的数据都会被加密, 但是不能一定保证你正在连接的服务器就是你所想要的服务器。你也可能会连接到伪装的服务器, 也就是受到“中间人”这种方式的攻击, 比如`DNS`劫持或者`IP`欺骗。他们可能截获这些密码口令和数据。
+
+### 基于密钥的安全验证
+
+对于上面的风险可以通过`SSH`协议的另一种验证方式来进行规避, 就是基于密钥的安全验证的方式, 代码管理工具大多都实用`SSH`的这种验证方式。
+
+它需要你生成一个密钥对, 即一个公私钥对。把公钥放在需要访问的服务器上, 自己本地保留私钥。如果你要连接到`SSH`服务器上, 客户端会向服务器发出请求, 请求用你的私钥进行安全验证。服务器收到请求之后, 先在该服务器上你的主目录下寻找你的公钥, 然后把它和你发送过来的公钥进行比较。如果两个密钥一致, 服务器就用公钥加密“质询”（challenge）并把它发送给客户端。客户端收到“质询”之后就可以用你的私钥解密再把它发送给服务器, 这样就完成了你的身份认证的过程。
+
+这种方式不仅加密所有传送的数据, 而且不需要在网络上传送你的密码口令。所以就没有“中间人”这种攻击方式的风险, 因为他没有你的私钥就无法通过验证。这样就规避了`DNS`劫持或者`IP`欺骗的风险。
+
+## 通过SSH连接到服务器
+
+使用`SSH`协议, 可以连接和验证远程服务器和服务。这里说到的, 是使用`SSH`密钥的方式, 可以在每次访问时无需提供用户名或密码即可连接到你的服务器。
+
+### 生成SSH钥匙对
+
+1.检查本地的SSH Keys列表, 查看是否存在现有SSH:
+
+``` swift
+$ ls -al ~/.ssh
+## Lists the files in your .ssh directory, if they exist
+```
+
+2.如果有你想要添加账户的钥匙对不存在列表中, 则需要为你的账号生成一个钥匙对; 否则, 跳过生成步骤, 可以直接使用之前生成的钥匙对。
+
+``` swift
+$ cd ~/.ssh
+$ ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+```
+
+3.执行后, 会有以下提示, 则需要你输入一个名称作为你钥匙对的名称。我这里以`test`为例。
+
+``` swift
+Generating public/private rsa key pair.
+Enter file in which to save the key (/Users/yourname/.ssh/id_rsa): test
+```
+
+4.再次执行, 会提示你输入你密钥的密码口令。口令可以为空, 这里以123456为例。
+
+``` swift
+Enter passphrase (empty for no passphrase): 123456
+Enter same passphrase again: 123456
+```
+
+5.再次执行, 如果出现以下打印内容, 则说明你生成成功了。在`~/.ssh`文件夹中, 便多了两个文件, `test.pub`和`test`。
+
+``` swift
+Your identification has been saved in test.
+Your public key has been saved in test.pub.
+The key fingerprint is:
+SHA256:VULzjkqvZWUeINizwEdg2Xfe4XPMqsidRekaYV4Ss7w your_email@example.com
+The key's randomart image is:
++---[RSA 4096]----+
+|     .o*+o= .    |
+|     .+ +..*+ .. |
+|       o.ooo**.=.|
+|       ..+ **.=o=|
+|        S +o.B .o|
+|         +  E +  |
+|        .. o *   |
+|          o =    |
+|                 |
++----[SHA256]-----+
+```
+
+6.拷贝你刚刚生成的SSH公钥。这里以`test.pub`为例。
+
+``` swift
+$ pbcopy <〜/.ssh/test.pub 
+```
+
+你也可以选择直接在`~/.ssh`中打开`test.pub`文件进行拷贝。但要注意`.ssh`文件夹默认是隐藏文件夹, 你需要先显示隐藏文件。
+
+7.将`SSH`的公钥粘贴到你服务器上的账户中, 比如`GitHub`或者`GitLab`的服务器的个人设置的SSH Keys中。
+
+8.这样你就可以通过`SSH`密钥的方式进行代码版本管理了。
+
+### 修改`SSH`私钥的密码口令(passphrase)
+
+1.可以通过以下命令来更改现有私钥的密码，而无需重新生成密钥对：
+
+``` swift
+$ ssh-keygen -p
+```
+
+2.执行后, 需要输入你想要修改的`SSH`私钥的名称。以`test`为例。
+
+``` swift
+Enter file in which the key is (/Users/yourname/.ssh/id_rsa): test
+```
+
+3.然后, 输入旧的口令, 再输入新的口令。
+
+``` swift
+Enter old passphrase:
+Key has comment 'your_email@example.com'
+Enter new passphrase (empty for no passphrase):
+Enter same passphrase again:
+```
+
+4.当终端打印出以下文字, 说明已经修改成功了。
+
+``` swift
+Your identification has been saved with the new passphrase.
+```
+
+
+### 添加多个SSH
+
+这只是上面一个重复的过程, 你通过上面的步骤生成一个你的GitHub账号的SSH Keys, 然后你还可以再生成一个你的另一个GitHub账号或者一个GitLab账号的SSH keys。它们是可以同时存在的, 你只需要注意对它们的命名做好管理就可以了。
+
+
+## SSH-Agent管理
+
+`ssh-agent`是密钥管理器，运行`ssh-agent`以后，使用`ssh-add`命令将私钥交给`ssh-agent`保管，其他程序需要身份验证的时候默认将验证申请交给`ssh-agent`来完成整个认证过程。它是用来帮助免密登录, 而且`ssh-agent`可以同时管理多个私钥。
+
+当你不使用`ssh-agent`来管理密钥时, 当你每次登录远程机器都需要你输入密码口令(即上面的passphrase)。而当你使用`ssh-agent`时, 它就不需要你每次都输入密码口令, 因为`ssh-agent`可以帮助你完成整个认证过程。
+
+
+### 将SSH添加到SSH-Agent
+
+1.在后台启动ssh-agent
+
+``` swift
+$ eval "$(ssh-agent -s)"
+```
+
+2.需要修改`~/.ssh/config`文件以设置`SSH`私钥在`ssh-agent`中的属性。如果没有config文件, 则需要手动进行创建。在config中将以`text`的`SSH`配置为例。 
+
+``` swift
+## Host	HostName别名
+## HostName 要登录的主机的主机名
+## Port	连接到远程主机的端口号(自己搭建的git服务器可能会用到)
+## User github登录名
+## IdentityFile 私钥路径
+## UseKeychain 是否使用Keychain来存储
+## RSAAuthentication	设置是否使用RSA算法进行安全验证
+## PreferredAuthentications   指定优先使用哪种方式验证，支持密码和密钥验证方式。可设为 publickey
+
+Host *
+AddKeysToAgent yes
+UseKeychain yes
+IdentityFile ~/.ssh/test
+PreferredAuthentications publickey
+```
+
+3.将`SSH`添加到`ssh-agent`并将密码存储在`keychain`中。将`test`中的`SSH`添加到`ssh-agent`中。
+
+``` swift
+$ ssh-add -K ~/.ssh/test
+```
+
+4.`ssh-add`命令会将私钥加入`ssh-agent`。执行后会提示你输入`passphrase`后以解密私钥，然后将解密后的私钥加入到`ssh-agent`中管理。
+
+``` swift
+Enter passphrase for /Users/yourname/.ssh/test: 123456
+Identity added: /Users/yourname/.ssh/test (your_email@example.com)
+```
+
+5.完成后, 则添加成功, `ssh-agent`可以帮助你完成整个认证过程, 不需要你每次都输入密码口令了。
+
+### 添加多个SSH到SSH-Agent
+
+同样, 按照上述步骤操作就可以了, 只是`config`文件中多加入一个`SSH`的信息。下面例子中包含一个GitHub的`SSH`和一个GitLab账号的`SSH`:
+
+``` swift
+## Host	HostName别名
+## HostName 要登录的主机的主机名
+## Port	连接到远程主机的端口号(自己搭建的git服务器可能会用到)
+## User github登录名
+## IdentityFile 私钥路径
+## UseKeychain 是否使用Keychain来存储
+## RSAAuthentication	设置是否使用RSA算法进行安全验证
+## PreferredAuthentications   指定优先使用哪种方式验证，支持密码和密钥验证方式。可设为 publickey, 
+
+## github
+Host github.com
+HostName github.com
+AddKeysToAgent yes
+UseKeychain yes
+IdentityFile ~/.ssh/github
+PreferredAuthentications publickey
+
+## gitlab
+Host gitlab.yourserver.com
+HostName gitlab.yourserver.com
+PreferredAuthentications publickey
+AddKeysToAgent yes
+UseKeychain yes
+IdentityFile ~/.ssh/gitlab
+```
+
+-------
+
+欢迎指正, [wangyanchang21](https://github.com/wangyanchang21).
+
+
