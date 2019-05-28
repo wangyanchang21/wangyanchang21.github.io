@@ -2,7 +2,7 @@
 title:  "Architectures与指令集架构"
 date:   2016-10-26 16:29:59
 categories: [iOS, 指令集架构]
-tags: [iOS，指令集架构]
+tags: [iOS, 指令集架构]
 ---
 
 关于iOS设备中CPU架构或指令集架构的介绍，如armv6, armv7, armv7s, arm64, i386, x86_64。

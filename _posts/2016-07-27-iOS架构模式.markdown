@@ -2,7 +2,7 @@
 title:  "iOS架构模式(MVC/MVCS/MVP/MVVM/VIPER)"
 date:   2016-07-27 22:30:20
 categories: [iOS, 架构]
-tags: [iOS，架构]
+tags: [iOS, 架构]
 ---
 
 iOS架构模式中的MVC、MVCS、MVP、MVVM、VIPER的特点和具体分工，且介绍如何选择最合适的架构模式。
