@@ -1,0 +1,473 @@
+---
+title:  "ZeroC-ICE详解与配置应用"
+date:   2017-01-18 17:17:57
+categories: [iOS, ice]
+tags: [iOS, ice]
+---
+
+ICE是ZeroC下的开源通信协议产品，RPC通信领域里的中间件, 特别适合于当前互联网领域中一个平台存在多种开发语言编程, 以及网站和 App应用并存的复杂大型项目。
+
+[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)
+
+------
+
+- [前言](#前言)
+- [ZeroC-ICE详解](#zeroc-ice详解)
+	- [RPC是什么?](#rpc是什么)
+	- [ICE是什么?](#ice是什么)
+	- [ICE协议](#ice协议)
+	- [ICE关键特性](#ice关键特性)
+	- [为什么会有ICE?](#为什么会有ice)
+	- [ICE是如何工作的?](#ice是如何工作的)
+	- [ICE调用模式](#ice调用模式)
+	- [客户端与服务端的结构](#客户端与服务端的结构)
+	- [ICE的性能和效率](#ice的性能和效率)
+	- [ICE的优点](#ice的优点)
+	- [ICE书籍推荐](#ice书籍推荐)
+- [在iOS中配置ICE](#在ios中配置ice)
+	- [官方教程及相关工具](#官方教程及相关工具)
+	- [详细配置步骤](#详细配置步骤)
+	- [Ice Touch代码](#ice-touch代码)
+
+------
+
+
+## 前言
+
+从16年初我开始接触到`ZeroC-ICE`, 紧接着公司的项目中也应用了`Ice框架`, 到现在也一年多了。 今天我就来做个总结, 谈谈`Ice`, `Ice`的优势, 还有iOS端的集成应用等。 博主才疏学浅, 若有不对之处, 还望大家指正。
+
+## ZeroC-ICE详解
+
+### RPC是什么?
+
+`RPC`目前比较主流的远程通信机制有远程过程调用(`RPC`通信)/消息队列/远程共享数据。
+`RPC`（Remote Procedure Call Protocol）——[远程过程调用协议](http://baike.baidu.com/view/431455.htm)，它是一种通过网络从远程计算机程序上请求服务，而不需要了解底层网络技术的协议。`RPC`协议假定某些传输协议的存在，如`TCP`或`UDP`，为通信程序之间携带信息数据。在OSI网络通信模型中，`RPC`跨越了传输层和应用层。`RPC`使得开发包括网络分布式多程序在内的应用程序更加容易。
+
+`RPC`采用客户机/服务器模式。请求程序就是一个客户机，而服务提供程序就是一个服务器。首先，客户机调用进程发送一个有进程参数的调用信息到服务进程，然后等待应答信息。在服务器端，进程保持睡眠状态直到调用信息到达为止。当一个调用信息到达，服务器获得进程参数，计算结果，发送答复信息，然后等待下一个调用信息，最后，客户端调用进程接收答复信息，获得进程结果，然后调用执行继续进行。
+
+### ICE是什么? 
+
+`ICE`是`ZeroC`下的开源通信协议产品, `Ice`是Internet Communications Engine的简称，翻译为中文是互联网通信引擎。`Ice`类似于`SOCKET通信`技术，是现在比较流行比较稳定的服务通信技术。`Ice` 实现各个进程之间的通信用来传输数据，使我们能够以最小的代价构建分布式应用程序。`Ice`使我们专注于应用逻辑的开发，它来处理所有底层的网络接口编程，这样我们就不用去考虑这样的细节：打开网络连接、网络数据传输的序列化与反序列化、连接失败的尝试次数等。 
+
+`Ice` 是一种面向对象的中间件，为构建面向对象的Client-Sever应用提供了工具、API 和库支持。`Ice` 应用适合于异构平台环境中使用：客户和服务器可以采用不同的编程语言，可以运行在不同的操作系统和机器架构上，并且可以使用多种网络技术进行通信。无论部署环境如何，这些应用的源码都是可移植的。
+
+`Ice` 是 `RPC` 通信领域里最稳定、强大、高性能、跨平台、多语言支持的老牌开源中间件, 特别适合于当前互联网领域中一个平台存在多种开发语言编程,以及网站和 App 应用并存的复杂大型项目。
+
+`Ice` 实现了语言和平台中立, 高效通信, 通过与具体编程语言无关的中立语言 SlIce (Specification Language For Ice)来描述服务的接口,从而达到对象接口与其实现相分离的目的。
+
+### ICE协议
+
+`Ice` 提供了一种 `RPC` 协议,既可以把 `TCP/IP`、也可以把 `UDP` 用作底层传输机制。此外, `Ice` 还允许你把 `SSL` 用作传输机制, 让客户与服务器间的 所有通信都进行加密。
+
+`Ice` 协议定义了:
+
+1. 一些消息类型,比如请求和答复类型。
+2. 协议状态机,确定客户与服务器以怎样的序列交换不同的消息类型,同时还包括相关的 TCP/IP 连接建立和关闭语义。
+3. 编码规则,确定在线路上怎样表示数据的类型。
+4. 每种消息类型的头,其中含有像这样的细节:消息类型、消息尺寸、所使用的协议及编码版本。
+
+`Ice` 还支持在线路上进行压缩:通过设置一个配置参数,你可以让所有 的网络通信数据都被压缩,从而节省带宽。如果你的应用要在客户与服务 器间交换大量数据,这种功能会很有用。 
+
+`Ice` 协议适用于构建高效的事件转发机制,因为要想转发消息,你不需 要了解消息内部的详细信息。这意味着,消息交换机不需要对消息进行任 何解编或重整编——它们可以简单地把消息当作不透明的字节缓冲区加以转发。
+
+`Ice` 协议还适用于构建双向操作:如果服务器想要把一条消息发送给客户提供的某个回调对象,这个回调对象可以通过客户原来创建的连接传给服务器。如果客户在防火墙后面,连接只能外出,不能进入,这种特性就特别重要。
+
+### ICE关键特性
+
+1. 提供适用于异种环境的面向对象中间件平台。 
+2. 支持多语言之间的 `RPC` 互通, 即使是服务器端也可以用几种语言去开发, 不同语言的客户端和服务器可以安全互通;
+3. 提供一组完整的特性,支持广泛的领域中的实际的分布式应用的开发,多平台支持,包括 x86系统, ARM, 移动设备。 PC平台支持 Windows 和主流的 Linux 发行版,移动设备支持 Windows Mobile, Android, iOS;
+4. 高性能 `RPC` 调用;
+5. 支持传统的 `RPC` 调用、异步调用、One-Way 调用、批量发起请求, 支持 TCP 通信、UDP 通信, 适用于不同的业务场景, 提供一种在网络带宽、内存使用和 CPU 开销方面都很高效的实现;
+6. 支持安全通信, SSL安全加密, 提供一种具有内建安全性的实现,使它适用于不安全的公共网络;
+7. 移动端可以直接使用统一定义的数据模型进行数据传输, 就省去了解析, 模型转换的过程了。
+
+
+### 为什么会有ICE? 
+
+`Ice`是分布式应用的一种比较好的解决方案，虽然现在也有一些比较流行的分布式应用解决方案，如微软的.NET（以及原来的DCOM）、CORBA及WEB SERVICE等，但是这些面向对象的中间件都存在一些不足： 
+
+1. .NET是微软产品，只面向WINDOWS系统，而实际的情况是在当前的网络环境下，不同的计算机会运行不同的系统，如LINUX上面就不可能使用.NET。 
+2. CORBA虽然在统一标准方面做了很多的工作，但是不同的供应商实现之间还是缺乏互操作性，并且目前还没有一家供应商可以针对所有的异种环境提供所有的实现支持，且CORBA的实现比较复杂，学习及实施的成本都会比较高。
+3. WEB SERVICE最要命的缺点就是他的性能问题，对于要求比较高的行业是很少会考虑WEB SERVICE的。 
+
+`Ice`的产生就是源于.NET、CORBA及WEB SERVICE这些中间件的不足，它可以支持不同的系统，如WINDOWS、LINUX等，也可以支持在多种开发语言上使用，如C++、C、Java、RUBY、Python、VB等，服务端可以是上面提到的任何一种语言实现的，客户端也可以根据自己的实际情况选择不同的语言实现，如服务端采用C语言实现，而客户端采用JAVA语言实现，底层的通讯逻辑通过`Ice`的封装实现，我们只需要关注业务逻辑。 
+
+### ICE是如何工作的? 
+
+`Ice` 是一种面向对象的中间件平台，这意味着 `Ice`为构建面向对象的客户－服务器应用提供了工具、API 和库支持。要与`Ice`持有的对象进行通信，客户端必须持有这个对象的代理（与CORBA的引用是相同的意思），这里的代理指的是这个对象的实例，`Ice`在运行时会定位到这个对象，然后寻找或激活它，再把In参数传给远程对象，再通过Out参数获取返回结果。 
+
+这里提到的代理又分为直接代理和间接代理，直接代理其内部保存有某个对象的标识，以及它的服务器的运行地址；间接代理指的是其内部保存有某个对象的标识，以及对象适配器名（object adapter name），间接代理没有包含寻址信息，为了正确地定位服务器，客户端在运行时会使用代理内部的对象适配器名，将其传给某个定位器服务，比如IcePack服务，然后，定位器会把适配器名当作关键字，在含有服务器地址的表中进行查找，把当前的服务器地址返回给客户，客户端 run time现在知道了怎样联系服务器，就会像平常一样分派（dispatch）客户请求。
+
+`Ice`可以保证在任何的网络环境或者操作系统下，成功的调用只有一次，它在运行时会尽力的定位到远程服务器，在连接失败的情况下会做尝试性重复性连接，确实连不上的情况会给用户以提示。 
+
+客户端在调用服务端的方法时，可以采取同步或异步的方式实现，同步调用就相当于调用自己本地的方法一样，其它行为会被阻塞；异步调用是非常有用的调用方式，如服务端需要准备的数据来自于其它异步接口，这个时候客户端就不需要等待，待服务端数据准备充份后，以消息的方式通知客户端，服务端就可以去干其它的事情了，而客户端也可以到服务端获取数据了。 
+
+### ICE调用模式 
+
+`Ice`采用的网络协议有TCP、UDP以及SSL三种，不同于WebService，`Ice`在调用模式上有好几种选择方案，并且每种方案正对不同的网络协议的特性做了相应的选择。 
+
+- `Oneway`(单向调用)：客户端只需将调用注册到本地传输缓冲区（Local Transport Buffers）后就立即返回，不会等待调用结果的返回，不对调用结果负责。 
+- `Twoway`（双向调用）：最通用的模式，同步方法调用模式，只能用TCP或SSL协议。 
+- `Datagram`（数据报）：类似于Oneway调用，不同的是 Datagram调用只能采用UDP协议而且只能调用无返回值和无输出参数的方法。 
+- `BatchOneway`（批量单向调用）：先将调用存 在调用缓冲区里面，到达一定限额后自动批量发送所有请求（也可手动刷除缓冲区）。 
+- `BatchDatagram`（批量数据报）：与上类似。 
+
+不同的调用模式其实对应着不动的业务，对于大部分的有返回值的或需要实时响应的方法，我们可能都采用Twoway方式调用，对于一些无需返回值或 者不依赖返回值的业务，我们可以用Oneway或者BatchOneway方式，例如消息通知；剩下的Datagram和BatchDatagram方式 一般用在无返回值且不做可靠性检查的业务上，例如日志。 
+
+### 客户端与服务端的结构 
+￼ 
+这个图示显示了使用`Ice`做为中间件平台，客户端及服务端的应用都是由应用代码及`Ice`的库代码混合组成的。 客户应用及服务器应用分别对应用的是客户端与服务端。代理是根据SLICE定义的`Ice`文件实现，它提供了一个向下调用的接口，提供了数据的序列化与反序化。 
+
+`Ice`的核心部份，提供了客户端与服务端的网络连接等核心通信功能，以及其它的网络通信功能的实现及可能的问题的处理，让我们在编写应用代码的时候不必要去关注这一块，而专注于应用功能的实现。 
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/zerocice/20170118162747721.png" width="70%" img/>
+</center>
+
+
+
+### ICE的性能和效率
+
+#### 调用速度测试
+
+做了简单的性能测试对比，传递的都是4个英文字符。`Ice`也是采用Java调用的。   
+条件：jdk8 x64位，编译等级1.7，本机windows 64位，4核4g内存测试。Google Protocol Buffer版本2.5。`Ice`采用windows 32位，3.5.1版。   
+代码没有做过多的优化，连接的时间没有计算。   
+
+1. java直接socket调用：
+
+```
+TCP 调用100000次耗时： 4264 毫秒。
+TCP 调用100000次耗时： 4093 毫秒。
+TCP 调用100000次耗时： 3896 毫秒。
+TCP 调用100000次耗时： 3904 毫秒。
+```
+
+2. 第一种方法
+
+```
+ICE 调用100000次耗时： 6172 毫秒。
+ICE 调用100000次耗时： 5987 毫秒。
+ICE 调用100000次耗时： 5782 毫秒。
+ICE 调用100000次耗时： 5715 毫秒。
+```
+
+3. 第二种方法:
+
+```
+ICE 调用100000次耗时： 6376 毫秒。
+ICE 调用100000次耗时： 6390 毫秒。
+ICE 调用100000次耗时： 6561 毫秒。
+ICE 调用100000次耗时： 6373 毫秒。
+```
+
+4.本地方法:
+
+```
+本地调用100000次耗时： 0 毫秒。
+本地调用100000次耗时： 1 毫秒。
+本地调用100000次耗时： 0 毫秒。
+本地调用100000次耗时： 0 毫秒。
+```
+
+#### 传输速度测试
+
+采用smartsniff进行网络抓包，客户端和服务器端部署在内部网络的不同服务器上，jdk采用了jdk7。传输的字段都是一样的，拷贝了一个比较长的字符串。
+
+##### socket包
+
+TCP 调用100000次耗时： 56028 毫秒。50492个包，数据大小31,012,042字节，总大小33,031,781字节，数据速率539.4kb/秒
+
+TCP 调用100000次耗时： 58455 毫秒。54702个包，数据大小33,054,892字节，总大小35,243,031字节，数据速率551.2kb/秒
+
+##### socketgzip包
+
+TCP启用双工和压缩方式传输，发送和接收是一套的，他们耗时是需要合并起来算。
+
+TCP 发送调用100000次耗时： 347 毫秒。422个包，数据大小204,602 字节，总大小221,532 字节，数据速率94.2 KB/秒
+
+TCP 接收调用100000次耗时： 2100 毫秒。252个包，数据大小190,380 字节，总大小200,510 字节，数据速率476.7 KB/秒
+
+##### demo包
+
+`Ice` 调用100000次耗时： 65945 毫秒。59533个包，数据大小37,450,532字节，总大小39,831,906字节，数据速率553.4kb/秒
+
+`Ice` 调用100000次耗时： 66572 毫秒。59957个包，数据大小37,081,340字节，总大小39,479,674字节，数据速率542.9kb/秒
+
+##### shareiceserver包
+
+`Ice` 调用100000次耗时： 63871 毫秒。47599个包，数据大小30,144,721字节，总大小32,048,735字节，数据速率459.5kb/秒
+
+`Ice` 调用100000次耗时： 65792 毫秒。58960个包，数据大小36,939,761字节，总大小39,298,215字节，数据速率556.3kb/秒
+
+
+本地调用100000次耗时： 5 毫秒。  
+本地调用100000次耗时： 5 毫秒。   
+
+通过上面测试来看，`Ice`的性能很优越， 和直接tcp/ip方式差距不大，时间方面差10%左右，包大小也是差距10%左右。
+
+当然了，socket方式如果启动压缩流，实现双工，效果更好。
+
+
+### ICE的优点 
+
+1. 支持同步和异步的消息传递； 
+2. 支持多个接口； 
+3. 机器无关性，客户及服务器与底层的机器架构屏蔽开来。对于应用代码而言，像字节序和填充这样的问题都隐藏了起来；
+4. 语言无关性，客户和服务器可以分别部署，所用语言也可以不同； 
+5. 实现无关性，客户不知道服务器是怎样实现其对象的。这意味着，在客户部署之后，服务器的实现可以改变；
+6. 操作系统无关性，Ice API 完全是可移植的，所以同样的源码能够在 Windows和 UNIX 上编译和运行； 
+7. 线程支持，Ice run time 完全是线程化的，其 API 是线程安全的，作为应用开发者，（除了在访问共享数据时进行同步）无需为开发线程化的高性能客户和服务器付出额外努力。 
+传输机制无关性，`Ice` 目前采用了TCP/IP 和 UDP作为传输协议。客户和服务器代码都不需要了解底层的传输机制； 
+8. 位置和服务器透明性，Ice run time 会负责定位对象，并管理底层的传输机制，比如打开和关闭连接； 
+9. 安全性，通过 SSL强加密，可以使客户和服务器完全安全地进行通信，这样，应用可以使用不安全的网络安全地进行通信，你可以使用 Glacier穿过防火墙，实现安全的请求转发，并且完全支持回调； 
+10. 内建的持久机制，使用 Freeze，创建持久的对象实现变成了一件很容易的事情，`Ice`提供了对高性能数据库 Berkeley DB[18] 的内建支持； 
+11. 开放源码。 
+
+### ICE书籍推荐
+
+给大家推荐一本书 [ZeroC Ice权威指南] , 是业界第一本关于`Ice`这个知名开源分布式`RPC`中间件的纸质书籍，全书内容涵盖了分布式系统架构概述、`RPC`原理、`Ice`基础源码研读、高级进阶、多语言调用、性能调优、SSL安全调用、IceGrid运维与开发、分布式部署、移动应用开发实战等精彩内容。
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/zerocice/20170118163351864.png" img/>
+</center>
+
+
+## 在iOS中配置ICE
+
+苹果设备使用 `Ice` 框架, 可以使用`Ice` ,也可以使用的是 `Ice Touch`。 由于博主应用的是`Ice Touch` , 下面以`Ice Touch`举例。 
+如果你想要集成使用的话, 最好是了解下面的思路和流程, 但还是建议你自己阅读下面官方的文档, 毕竟每个开发者的实际情况不同, 需要根据自己的需求进行配置和应用。
+
+
+### 官方教程及相关工具
+
+[Ice官方网站教程](https://doc.zeroc.com/display/Ice36/Using+the+Ice+Touch+Binary+Distribution)   
+[icetouch](https://github.com/zeroc-ice/icetouch)   
+[ice-builder For Xcode 7](https://github.com/zeroc-ice/ice-builder-xcode/tree/xcode7-plugin)   
+[ice-builder For Xcode](https://github.com/zeroc-ice/ice-builder-xcode)   
+[ice-demos](https://github.com/zeroc-ice/ice-demos)   
+
+### 详细配置步骤
+
+下面的配置步骤是博主亲身查询摸索并应用过的, 按照每一步细心来做, 肯定没问题的。 `Ice Touch` 的使用和配置, 主要分下面3步:
+
+#### 1.为 OS X 配置 Ice Touch 环境
+
+通过 `Homebrew` 来安装 `Ice Touch`到当前 OS X 。 (如果mac 上没有安装过Homebrew 的话, 按照其官网教程中的安装 http://brew.sh)
+
+安装操作:
+
+``` swift
+$ brew tap zeroc-ice/tap
+$ brew install icetouch36
+```
+
+更新操作:
+
+``` swift
+$ brew update
+$ brew install icetouch36
+```
+
+按照brew 命令执行完成后, 需要进行检查下面路径 /usr/local/lib/IceTouch,看看是否有`IceTouch`的 SDK。 如果有第一步就完成了。
+
+注:安装icetouch36 的时候, 终端可能报错。
+
+>Error: Failed to download resource "icetouch36"
+Failure while executing: git submodule -q update --init --recursive
+
+输入以下命令
+
+``` swift
+$ git submodule -q update --init --recursive
+```
+
+如果又报错:
+
+```
+fatal: Not a git repository (or any of the parent directories): .git
+```
+
+则先执行下面命令, 然后在执行以上命令
+
+``` swift
+$ git init
+```
+
+#### 2.为 Xcode 配置 Ice Touch SDK
+
+(1)target -> build setting -> Additional SDKs 设置为 `/usr/local/lib/IceTouch/ObjC/$(PLATFORM_NAME).sdk`
+
+(2)target -> Code Signing -> Code Signing Resource Rules Path 设置为 `$(SDKROOT)/ResourceRules.plist`
+
+(3)为 Xcode 添加 framework ,CFNetwork.framework, Security.framework, Foundation.framework
+
+(4)对于非 SDK 项目, 需要添加Header Search Paths setting和Library Search Paths setting
+
+- Add Ice installation/include to the Header Search Paths setting.
+- Add Ice installation/lib to the Library Search Paths setting.
+
+
+(5) 这个步骤是添加某些工具在Xcode编译的时候对 .ice文件进行.h和.m文件的转化. 但有个问题Xcode8开始, 苹果公司为了安全考虑,可能是防止类似XcodeGhost事件再次发生, 不再支持第三方插件了。 那这样很多插件就不可用了, 包括 ice-touch-builder, 所以Xcode8开始使用其他的方法。
+所以根据你的需求, Xcode7及之前,请看(6)忽略(7); Xcode8及之后, 请跳过(6)直接看(7)。
+
+(6)Xcode7及之前:  
+
+在github上下载Ice Builder for Xcode plug-in., 然后build下, 安装此插件, 重启Xcode, 查看build settings 中是否有 ice builder选项。
+
+可能出现的问题:
+
+我在配置的过程中并没有进行(3)(4)步, 但是可以正常使用, 如果你的不可以使用的话, 可以进行设置。 而且在新工程中需要使用 `Ice Touch` 的话, 只需要进行 Xcode 配置就可以使用了。 但有一点需要注意, 就是配置的时候有可能会遇到一下错误:
+￼
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/zerocice/20170118165638135.png" width="80%" img/>
+</center>
+
+
+```
+Undefined symbols for architecture x86_64:
+  "_OBJC_CLASS_$_ICEUtil", referenced from:
+      objc-class-ref in LZICENetHandler.o
+  "_OBJC_EHTYPE_$_ICEException", referenced from:
+      GCC_except_table7 in LZICENetHandler.o
+ld: symbol(s) not found for architecture x86_64
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+```
+
+这个错误不是你配置的有问题, 其实在ice-builder Xcode in github 上说明了, 要添加一个 .ice 文件, 因为只有你添加了 .ice 文件并进行编辑之后, ice-builder Xcode才会安装到 Xcode 上面。 
+
+最后, 如下图, 当你的 build setting 中有下面的配置选项的时候, 配置到此完成
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/zerocice/20170118165713140.png" width="80%" img/>
+</center>
+
+
+或者, 可能是你的Build Phases -> Compile Sources 中没有添加你的.ice文件
+
+(7)Xcode8及之后:
+
+通过 TARGET->Xcode Build Rule 自定义生成规则来转化.ice文件。 当然, 操作步骤要比之前用插件复杂好多。
+
+① 安装ice文件转化工具 icebuilder, 下载网址是ice-builder-xcode, 
+
+安装方式一: 通过Homebrew方式安装
+
+``` swift
+$ brew tap zeroc-ice/tap
+$ brew install ice-builder-xcode
+```
+
+安装方式二: 手动的下载安装
+
+手动下载ice-builder-xcode, 文件夹中有icebuilder, 一般将其放入`/usr/local/bin/icebuilder`目录, 或者你也可以自定义位置, 只要后面Xcode配置中设置一致即可。 
+
+② 在Xcode Build Rule中配置*.ice自定义生成规则
+
+- Process: *.ice
+- Using: Custom script
+/usr/local/bin/icebuilder [options]
+- Output Files:
+	- `$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).h`
+	- `$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).m `
+
+如下图:
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/zerocice/20170118165218075.png" width="80%" img/>
+</center>
+
+
+③ Additional SDKs 配置
+
+TARGET->Build Settings->Architectures->Additional SDKs 设置SDK路径,如果上面配置过了,则可跳过。
+
+Ice Touch 3.6:`/usr/local/lib/IceTouch/ObjC/$(PLATFORM_NAME).sdk`   
+Ice 3.7:`/usr/local/lib/IceSDK/$(PLATFORM_NAME).sdk`   
+
+④ Other Linker Flags 配置
+
+TARGET->Build Settings->Other Linker Flags 中配置如下:
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/zerocice/20170118165345451.png" width="80%" img/>
+</center>
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/zerocice/20170118165353341.png" width="80%" img/>
+</center>
+
+不过我的项目目前还是3.6.3, 而且也并没有3.7的正式版, 所以博主还是按照3.6的来做的, 不用做这里的操作。 我的配置如下:
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/zerocice/20170118165423336.png" width="80%" img/>
+</center>
+
+⑤ 只针对 ice 3.7
+对于 Ice 3.7 (iOS and OS X) or Ice Touch (OS X only), 还需要添加  -lbz2 和 -liconv。
+
+还要在TARGET->Build Phase 中必须添加以下framework:
+- Security.framework (Ice Touch all the time, Ice when linking with IceSSL)
+- CFNetwork.framework (iOS)
+- UIKit.framework (iOS)
+- ExternalAccessory.framework (iOS when linking with IceIAP)
+
+
+#### 注意
+
+1.第(2)步可以不添加, 且添加后, 版本发布的时候, 具体说是upload的时候, 上传会报错。
+
+```
+ERROR ITMS-90339: "This bundle is invalid.  The Info.plist contains an invalid key 'CFBundleResourceSpecification' in the bundle 
+```
+
+删除(2)中的设置就可以了
+
+
+### Ice Touch代码
+
+1.因为 ice 是跨平台的, 所以需要学习Ice 的使用语言(Slice 语言), 参考 OC 语言对应的映射。  
+2.在 Xcode 中添加一个空白的文件, 命名方式以 .ice 结尾, 比如 Message.ice 。 当工程build succeeded 后, Message.ice 就会自动释放 Message.h 和 Message.m 文件。  使用的时候需要导入头文件, 应该导入`<objc/Ice.h>`和`"Message.h"`。 这也是官方 Demo中的方法。
+
+具体的代码可以参照 ice demos 中OC 的工程
+//
+//
+
+3.还有另外一个方法, 就是拿到定好的 ice 文件后, 用本地命令行进行生成可见的 .h/.m文件, 然后手动添加到项目中。 这样的方式有一点问题就是接口每变动一次, 就需要我们重新生成导入一次 .h/.m文件, 貌似有些繁琐。 
+
+命令行生成.h/.m文件的方法:   
+[官方指导](https://doc.zeroc.com/display/Ice36/Writing+an+Ice+Application+with+Objective-C)
+
+官方的资料中, 输入命令:  
+
+``` swift
+$ slice2objc Printer.ice
+```
+
+ 便会自动生成 .h/.m文件。 
+ 
+1.生成到指定路径,  
+
+``` swift
+$ cd 
+```
+
+2.指定需要转化的 ice 文件,  
+
+``` swift
+$ slice2objc /Users/MyMac/Desktop/work/slice/trunk/com/jpgk/catering/rpc/UCenter.ice
+```
+
+也可以转化指定某一文件夹下面的所有 ice 文件,
+  
+``` swift
+$ slice2objc /Users/MyMac/Desktop/work/slice/trunk/com/jpgk/catering/rpc/*.ice
+```
+
+
+-------
+
+欢迎指正, [wangyanchang21](https://github.com/wangyanchang21).
+
+
