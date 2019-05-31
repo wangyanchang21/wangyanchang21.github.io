@@ -42,6 +42,17 @@ tags: [iOS]
 | AES | 128、192、256位 | 快 | 高 | 低 |
 
 
+```swift
+class MyApplication: UIApplication {
+    override func sendEvent(_ event: UIEvent) {
+        super.sendEvent(event)
+        print("截获的Event出发时间戳: \(event.timestamp)");
+    }
+}
+```
+
+
+
 ## 相关资料
 
 [以太坊钱包 Trust项目解读之架构和流程](https://wangyanchang21.github.io/2018/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85-Trust%E9%A1%B9%E7%9B%AE%E8%A7%A3%E8%AF%BB%E4%B9%8B%E6%9E%B6%E6%9E%84%E5%92%8C%E6%B5%81%E7%A8%8B)   

@@ -304,9 +304,17 @@ waring.someWarningMethod()
 
 标有 `objc` 特性的类必须继承自 Objective-C 中定义的类。如果你将 `objc` 特性应用于一个类或协议，它也会隐式地应用于类或协议中兼容 Objective-C 的成员。对于标记了 `objc` 特性的类，编译器会隐式地为它的子类添加 `objc` 特性。标记了 `objc` 特性的协议不能继承没有标记 `objc` 的协议。
 
-如果你将 `objc` 特性应用于枚举，每一个枚举用例都会以枚举名称和用例名称组合的方式暴露在 Objective-C 代码中。例如，在 Planet 枚举中有一个名为 Venus 的用例，该用例暴露在 Objective-C 代码中时叫做 PlanetVenus。
 
-`objc` 特性有一个可选的参数，由标识符构成。当你想把 `objc` 所修饰的实体以一个不同的名字暴露给 Objective-C 时，你就可以使用这个特性参数。你可以使用这个参数来命名类、枚举类型、枚举用例、协议、方法、存取方法以及构造器。下面的例子把 ExampleClass 中的 enabled 属性的取值方法暴露给 Objective-C，名字是 isEnabled，而不是它原来的属性名。
+`objc`特性同样会在下面的情况中隐式地添加：
+
+- 声明是子类的重写，并且父类的声明有 objc 特性；
+- 声明满足的需求来自一个拥有 objc 特性的协议；
+- 声明有 `IBAction` , `IBOutlet` , `IBDesignable` , `IBInspectable` , `NSManaged` , 或者 `GKInspectable` 特性。
+
+如果你在一个枚举中使用 `objc` 特性，枚举名和每个成员名串联起来，作为枚举成员暴露给 Objective-C 代码。成员名首字母大写。例如，在Swift中  Planet 枚举成员叫做 venus ，它作为一个叫 PlanetVenus 的成员暴露到 Objective-C 代码中。
+
+`objc` 特性可以接受一个特性实际参数，由一个标识符组成。当你想在 Objective-C 中为 `objc` 特性标记的实体暴露一个不同的名字时，用这个特性。你可以把这个实际参数用在命名类，枚举，枚举成员，协议，方法，`getter`，`setter`，初始化器。下面的例子把 ExampleClass 中 enabled 属性的 getter 作为 isEnabled 暴露给 Objective-C 代码，而不仅仅是属性本身的名字。
+
 
 ``` swift
 //@objc
@@ -410,28 +418,10 @@ Swift 类被命名空间化---他们局限于被编译的模块中（最典型�
 @testable import someModule
 ```
 
-#### @NSApplicationMain
-
-在类上使用该特性表示该类是应用程序委托类，使用该特性与调用 `NSApplicationMain(_:_:)` 函数并且把该类的名字作为委托类的名字传递给函数的效果相同。
-
-如果你不想使用这个特性，可以提供一个 `main.swift` 文件，并在代码顶层调用`NSApplicationMain(_:_:)` 函数,如下所示:
-
-``` swift
-import AppKit
-NSApplicationMain(CommandLine.argc, CommandLine.unsafeArgv)
-```
-
-没看懂不要紧, 向下看。
-
 
 #### @UIApplicationMain
 
-在类上使用该特性表示该类是应用程序委托类，使用该特性与调用 `UIApplicationMain`函数并且把该类的名字作为委托类的名字传递给函数的效果相同。
-
-如果你不想使用这个特性，可以提供一个 `main.swift` 文件，并在代码顶层调用 `UIApplicationMain(_:_:_:)` 函数。比如，如果你的应用程序使用一个继承于 `UIApplication` 的自定义子类作为主要类，你可以调用 `UIApplicationMain(_:_:_:)` 函数而不是使用该特性。
-
-又没看懂, 不要紧, 我们来分析一下: 
-XCode 中创建一个基于 Objective-C 的 `iOS App` 工程。`Supporting Files`目录下会自动创建一个`main.m`文件。里面的代码段如下：
+我们先来看一个问题，创建一个基于 Objective-C 的 `iOS App` 工程。XCode 目录下会自动创建一个`main.m`文件。里面的代码段如下：
 
 ``` swift
 #import <UIKit/UIKit.h>
@@ -443,8 +433,7 @@ int main(int argc, char * argv[]) {
 }
 ```
 
-其实上面这段代码在OC工程中所做的事情, 就是 Swift 的项目中引入`@NSApplicationMain` 和 `@UIApplicationMain`两个特性所做的事情。
-苹果对 Swift 的项目进行了简化，使用`@NSApplicationMain` 放在 `OSX` 桌面应用工程代理类前面，使用`@UIApplicationMain`放在 `iOS app` 工程代理类前面。与 OC 工程中的`main.m`的功能一模一样。这里我们使用 `iOS app`作为例子，`@NSApplicationMain` 在 `OSX` 桌面应用工程里面的用法是一样的, 当你使用Xcode 创建一个 Swift iOS 工程时，自动生成的 `AppDelegate.swift` 里面，会看到以下代码：
+其实上面这段代码在OC工程的`main.m`中所做的事情, 就是 Swift 的项目中引入 `@UIApplicationMain`特性的作用。苹果对 Swift 的项目进行了简化，在 `iOS App` 工程的某个类上使用`@UIApplicationMain`特性，就表示该类是当前应用程序的代理类。这是十分便利的，也是当你创建 Swift iOS工程时，系统会自动生成的 `AppDelegate.swift` 里面，会看到以下代码：
 
 ``` swift
 @UIApplicationMain
@@ -452,7 +441,46 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 ...
 ```
 
-大家平时可以忽悠这个特性点，因为 Xcode 已经自动帮你加上了。不用自己添加任何东西，只需要关注代理类中要去实现的相关的业务逻辑。但是对这个特性的理解，有助于你去理解整个 app 的生命周期。
+了解`@UIApplicationMain`特性后，再来看一看不使用这个特性需要怎么做呢？如果不通过`@UIApplicationMain`特性的话，我们也可以通过调用 `UIApplicationMain(_:_:_:)`函数并且把该类的名字作为代理类的类型传递进函数，来达到同样的效果。具体做法是，自己提供一个 `main.swift` 文件，并在代码顶层调用 `UIApplicationMain(_:_:_:)` 函数来设置自己定义的`Application`和`AppDelegate`。
+
+举个例子，比如说我要自定义一个`Application`去监听所有的`Event`，那么我就可以通过`UIApplicationMain(_:_:_:)` 函数来传入自己定义的`Application`了。代码如下：
+
+``` swift
+import UIKit
+
+class MyApplication: UIApplication {
+    override func sendEvent(_ event: UIEvent) {
+        super.sendEvent(event)
+        print("截获的Event出发时间戳: \(event.timestamp)");
+    }
+}
+
+UIApplicationMain(CommandLine.argc, CommandLine.unsafeArgv,
+                  NSStringFromClass(MyApplication.self),
+                  NSStringFromClass(AppDelegate.self))
+```
+
+大家平时可以忽略这个特性，因为 Xcode 已经自动帮你加上了。不用自己添加任何东西，只需要关注代理类中要去实现的相关的业务逻辑。但是对这个特性的理解，有助于你去理解整个 app 的生命周期。当然也包括下面要说的`@NSApplicationMain`特性。
+
+#### @NSApplicationMain
+
+在某个类上使用`@NSApplicationMain`特性表示该类是应用程序代理类，使用该特性与调用 `NSApplicationMain(_:_:)` 函数并且把该类的名字作为代理类的类型传递给函数的效果相同。
+
+
+其实`@UIApplicationMain`和`@NSApplicationMain` 两个特性所做的事情是一样，唯一的区别是针对的项目不同。在`OSX` 桌面应用的开发中，使用`@NSApplicationMain` ；在 `iOS App` 工程中使用`@UIApplicationMain`。所以当你使用Xcode 创建一个 Swift MacOS工程时，自动生成的 `AppDelegate.swift` 里面，会看到以下代码：
+
+```swift
+@NSApplicationMain
+class AppDelegate: NSObject, NSApplicationDelegate {
+...
+```
+
+当然，如果你不想使用这个特性，也可以提供一个 `main.swift` 文件，并在代码顶层调用`NSApplicationMain(_:_:)` 函数,如下所示:
+
+```swift
+import AppKit
+NSApplicationMain(CommandLine.argc, CommandLine.unsafeArgv)
+```
 
 
 ### Interface Builder使用的声明特性

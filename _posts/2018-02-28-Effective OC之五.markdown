@@ -129,6 +129,7 @@ personOne和personTwo已经到了作用范围，因此ARC需要清理他们。
 personOne 拥有对象，所以需要release, 在MRC中这里需要添加代码 [personOne release]。
 personTwo 不拥有对象，所以不需要release。
 */  
+}
 ```
 
 而且`ARC`是包含运行期组件的, `ARC`中还做了其他的很多优化, 下面举个例子:
