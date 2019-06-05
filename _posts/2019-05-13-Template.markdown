@@ -1,5 +1,5 @@
 ---
-title:  "Template Wellcome"
+title:  "Template"
 date:   2019-05-13 18:23:23
 categories: [iOS]
 tags: [iOS]
