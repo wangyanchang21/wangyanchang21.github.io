@@ -173,9 +173,18 @@ struct IntStack: Container {
 }
 ```
 
-`IntStack`为了实现 `Container`协议，指定了适用于`ItemType`的类型是 `Int`类型。`typealias ItemType = Int`把 `ItemType`抽象类型转换为了具体的 `Int`类型。
+`IntStack`为了实现 `Container`协议，指定了适用于`ItemType`的类型是 `Int`类型。`typealias ItemType = Int`把 `ItemType`抽象类型转换为了具体的 `Int`类型。如果你从代码中删除了 `typealias ItemType = Int`，一切都会正常运行，因为 `ItemType` 会由Swift的类型推断推断出来。
 
-如果你从代码中删除了 `typealias ItemType = Int`，一切都会正常运行，因为 `ItemType` 会由Swift的类型推断推断出来。
+另外，还可以为协议定义默认的`associatedtype`，可以用于不能进行类型推断的时候。这样，在默认的实现中，就可以省略类型关联了。
+
+```swift
+protocol Statistic {
+    associatedtype result: Codable = String
+
+    var count: Int { get }
+}
+```
+
 
 
 ### subscript
