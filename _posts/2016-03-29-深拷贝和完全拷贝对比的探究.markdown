@@ -251,7 +251,7 @@ arr_mdc->dic:第一层 = 0x7fe488d06e00, 第二层 = 0x7fe488d94170, 第三层el
 
 ## 相关资料
 
-[assign/retain/copy及深浅拷贝的区别]()  
+[assign/retain/copy及深浅拷贝的区别](https://dcsnail.blog.csdn.net/article/details/50723731)  
 
 -------
 
