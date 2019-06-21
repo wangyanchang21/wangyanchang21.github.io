@@ -230,10 +230,10 @@ redview=< UIView: 0x7fe63a4aeaf0; frame = (0 0; 100 100); layer = < CALayer: 0x7
 
 ## 相关资料
 
-[ARC到底帮我们做了哪些工作?](https://dcsnail.blog.csdn.net/article/details/79461511)
-[高效 OC开发之内存管理](https://blog.csdn.net/wangyanchang21/article/details/79356164)
- [ARC下的注意事项](http://blog.csdn.net/wangyanchang21/article/details/50731028)
-[ARC指南1 - strong和weak指针](http://blog.csdn.net/q199109106q/article/details/8565017)
+[ARC到底帮我们做了哪些工作?](https://dcsnail.blog.csdn.net/article/details/79461511)   
+[高效 OC开发之内存管理](https://blog.csdn.net/wangyanchang21/article/details/79356164)   
+ [ARC下的注意事项](http://blog.csdn.net/wangyanchang21/article/details/50731028)   
+[ARC指南1 - strong和weak指针](http://blog.csdn.net/q199109106q/article/details/8565017)   
 
 
 -------
