@@ -1,0 +1,260 @@
+---
+title:  "深拷贝和完全拷贝对比的探究"
+date:   2016-03-29 18:52:20
+categories: [iOS, 内存管理]
+tags: [iOS, 内存管理]
+---
+
+之前探讨过assign、retain、copy及深浅拷贝的区别。今天就深拷贝和完全拷贝来做一些探究。
+
+[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)
+
+------
+
+- [注意](#注意)
+- [深拷贝数组](#深拷贝数组)
+	- [深拷贝打印结果](#深拷贝打印结果)
+	- [深拷贝总结](#深拷贝总结)
+- [完全拷贝](#完全拷贝)
+	- [自定义完全拷贝](#自定义完全拷贝)
+	- [数组两层完全拷贝](#数组两层完全拷贝)
+	- [数组三层完全拷贝](#数组三层完全拷贝)
+	- [字典两层完全拷贝](#字典两层完全拷贝)
+	- [字典三层完全拷贝](#字典三层完全拷贝)
+	- [数组字典混合三层完全拷贝](#数组字典混合三层完全拷贝)
+	- [完全拷贝总结](#完全拷贝总结)
+- [相关资料](#相关资料)
+
+------
+
+
+## 注意
+
+这里集合类中的对象使用的是储存在堆区的对象，不可以用常量区的对象，否则会影响最终结果。
+
+## 深拷贝数组
+
+```swift
+NSString *elementOne = [NSString stringWithFormat:@"我屮艸芔茻"];
+NSArray *array = [NSArray arrayWithObjects:elementOne, nil];
+    
+NSMutableArray *arr_mc = [array mutableCopy];
+    
+NSLog(@"array:  第一层 = %p, 第二层element = %p",array,array[0]);
+NSLog(@"arr_mc: 第一层 = %p, 第二层element = %p",arr_mc,arr_mc[0]);
+```
+
+### 深拷贝打印结果
+
+```
+array:  第一层 = 0x7ff50bf16b60, 第二层element = 0x7ff50bf16b30
+arr_mc: 第一层 = 0x7ff50bf51270, 第二层element = 0x7ff50bf16b30
+```
+
+### 深拷贝总结
+
+根据打印结果可以发现，深拷贝上面的数组时，其中`数组arr_mc` 会另外开辟一个空间来存储，但是其中的元素的地址却没有另外开辟一个空间来存储。 这个理解是不对的，其实深拷贝时`数组arr_mc` 和其中的元素的地址确实改变了，不要忘了`数组arr_mc`的地址就等于它首元素的地址(%p打印&array[0])。
+
+但是，这个元素中存储的是一个指针,而且这个指针就是`数组array`中的`elementOne`的指针。 这就说明当进行 `mutableCopy` 时，会将整个集合拷贝到一个新开辟的内存空间，但是里面的内容或者说指针并没有改变，而是一并拷贝过来。 
+
+那么如何做到全部都拷贝过来呢？这就是完全拷贝了。
+
+## 完全拷贝
+
+这里要说的完全拷贝，顾名思义，就是利用递归的原理，将集合以及集合中所有层次的集合和对象进行 `mutableCopy`，达到完全复制的效果。
+
+### 自定义完全拷贝
+
+利用递归的原理，将集合以及集合中所有层次的集合和对象进行 `mutableCopy`，达到完全复制的效果。
+
+```swift
+//NSDictionary (DCCompleteCopy)
+- (NSMutableArray *)mutableDeepCopy
+{
+    NSUInteger count = [self count];
+    id cArray[count];
+    
+    for (NSUInteger i = 0; i < count; i++) {
+        id obj = self[i];
+        
+        if ([obj respondsToSelector:@selector(mutableDeepCopy)]) {
+            cArray[i] = [obj mutableDeepCopy];
+        } else if ([obj respondsToSelector:@selector(mutableCopyWithZone:)]) {
+            cArray[i] = [obj mutableCopy];
+        } else if ([obj respondsToSelector:@selector(deepCopy)]) {
+            cArray[i] = [obj deepCopy];
+        } else if ([obj respondsToSelector:@selector(copyWithZone:)]) {
+            cArray[i] = [obj copy];
+        } else {
+            //DLog(@"********Error:NSArray MutableDeepCopy Failed!!! ********");
+            return nil;
+        }
+    }
+    return [NSMutableArray arrayWithObjects:cArray count:count];
+}
+
+//NSDictionary (DCCompleteCopy)
+- (NSMutableDictionary *)mutableDeepCopy
+{
+    NSUInteger count = [self count];
+    id cObjects[count];
+    id cKeys[count];
+    NSEnumerator *e = [self keyEnumerator];
+    NSUInteger i = 0;
+    id thisKey;
+    while ((thisKey = [e nextObject]) != nil) {
+        id obj = self[thisKey];
+        if ([obj respondsToSelector:@selector(mutableDeepCopy)]) {
+            cObjects[i] = [obj mutableDeepCopy];
+        } else if ([obj respondsToSelector:@selector(mutableCopyWithZone:)]) {
+            cObjects[i] = [obj mutableCopy];
+        } else if ([obj respondsToSelector:@selector(deepCopy)]) {
+            cObjects[i] = [obj deepCopy];
+        } else if ([thisKey respondsToSelector:@selector(copyWithZone:)]) {
+            cObjects[i] = [thisKey copy];
+        } else {
+            //DLog(@"********Error:NSDictionary Key DeepCopy Failed!!! ********")
+            return nil;
+        }
+        if ([thisKey respondsToSelector:@selector(deepCopy)]) {
+            cKeys[i] = [thisKey deepCopy];
+        } else if ([thisKey respondsToSelector:@selector(copyWithZone:)]) {
+            cKeys[i] = [thisKey copy];
+        } else {
+            //DLog(@"********Error:NSDictionary Key DeepCopy Failed!!! ********")
+            return nil;
+        }
+        
+        ++i;
+    }
+    return [NSMutableDictionary dictionaryWithObjects:cObjects forKeys:cKeys count:count];
+}
+```
+
+### 数组两层完全拷贝
+
+```swift
+NSString *elementOne = [NSString stringWithFormat:@"我屮艸芔茻"];
+NSArray *array = [NSArray arrayWithObjects:elementOne, nil];
+    
+NSMutableArray *arr_mc = [array mutableCopy];
+NSMutableArray *arr_mdc = [array mutableDeepCopy];
+    
+NSLog(@"array:  第一层 = %p, 第二层element = %p",array,array[0]);
+NSLog(@"arr_mc: 第一层 = %p, 第二层element = %p",arr_mc,arr_mc[0]);
+NSLog(@"arr_mdc:第一层 = %p, 第二层element = %p",arr_mdc,arr_mdc[0]);
+```
+
+打印结果:
+
+```
+array:  第一层 = 0x7fe488e12f90, 第二层element = 0x7fe488e16910
+arr_mc: 第一层 = 0x7fe488e0a6b0, 第二层element = 0x7fe488e16910
+arr_mdc:第一层 = 0x7fe488e0f880, 第二层element = 0x7fe488e12f50
+```
+
+### 数组三层完全拷贝
+
+```swift
+NSString *elementOne = [NSString stringWithFormat:@"我屮艸芔茻"];
+NSArray *arr_one = [NSArray arrayWithObjects:elementOne, nil];
+NSArray *array = [NSArray arrayWithObjects:arr_one, nil];
+    
+NSMutableArray *arr_mc = [array mutableCopy];
+NSMutableArray *arr_mdc = [array mutableDeepCopy];
+    
+NSLog(@"array:  第一层 = %p, 第二层 = %p, 第三层element = %p",array,array[0],array[0][0]);
+NSLog(@"arr_mc: 第一层 = %p, 第二层 = %p, 第三层element = %p",arr_mc,arr_mc[0],arr_mc[0][0]);
+NSLog(@"arr_mdc:第一层 = %p, 第二层 = %p, 第三层element = %p",arr_mdc,arr_mdc[0],arr_mdc[0][0]);
+```
+
+打印结果:
+
+```
+>array:  第一层 = 0x7fe488e138e0, 第二层 = 0x7fe488e16df0, 第三层element = 0x7fe488e08f80
+arr_mc: 第一层 = 0x7fe488e13900, 第二层 = 0x7fe488e16df0, 第三层element = 0x7fe488e08f80
+arr_mdc:第一层 = 0x7fe488e16890, 第二层 = 0x7fe488e16860, 第三层element = 0x7fe488e138a0
+```
+
+### 字典两层完全拷贝
+
+```swift
+NSString *elementOne = [NSString stringWithFormat:@"我屮艸芔茻"];
+NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:elementOne, @"element", nil];
+    
+NSMutableDictionary *dic_mc = [dic mutableCopy];
+NSMutableDictionary *dic_mdc = [dic mutableDeepCopy];
+    
+NSLog(@"dic:    第一层 = %p, 第二层element = %p",dic,dic[@"element"]);
+NSLog(@"dic_mc: 第一层 = %p, 第二层element = %p",dic_mc,dic_mc[@"element"]);
+NSLog(@"dic_mdc:第一层 = %p, 第二层element = %p",dic_mdc,dic_mdc[@"element"]);
+```
+
+打印结果:
+
+```
+dic:    第一层 = 0x7fe488c0a070, 第二层element = 0x7fe488c0d3c0
+dic_mc: 第一层 = 0x7fe488c05370, 第二层element = 0x7fe488c0d3c0
+dic_mdc:第一层 = 0x7fe488c24a10, 第二层element = 0x7fe488c1ed70
+```
+
+### 字典三层完全拷贝
+
+```swift
+NSString *elementOne = [NSString stringWithFormat:@"我屮艸芔茻"];
+NSDictionary *dic_one = [NSDictionary dictionaryWithObjectsAndKeys:elementOne, @"element", nil];
+NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:dic_one, @"one", nil];
+    
+NSMutableDictionary *dic_mc = [dic mutableCopy];
+NSMutableDictionary *dic_mdc = [dic mutableDeepCopy];
+    
+NSLog(@"dic:    第一层 = %p, 第二层 = %p, 第三层element = %p",dic,dic[@"one"],dic[@"one"][@"element"]);
+NSLog(@"dic_mc: 第一层 = %p, 第二层 = %p, 第三层element = %p",dic_mc,dic_mc[@"one"],dic_mc[@"one"][@"element"]);
+NSLog(@"dic_mdc:第一层 = %p, 第二层 = %p, 第三层element = %p",dic_mdc,dic_mdc[@"one"],dic_mdc[@"one"][@"element"]);
+```
+
+打印结果:
+
+```
+dic:    第一层 = 0x7fe488e14c60, 第二层 = 0x7fe488e168c0, 第三层element = 0x7fe488e14c30
+dic_mc: 第一层 = 0x7fe488e14ca0, 第二层 = 0x7fe488e168c0, 第三层element = 0x7fe488e14c30
+dic_mdc:第一层 = 0x7fe488e14ec0, 第二层 = 0x7fe488e14e50, 第三层element = 0x7fe488e14dd0
+```
+
+### 数组字典混合三层完全拷贝
+
+```swift
+NSString *elementOne = [NSString stringWithFormat:@"我屮艸芔茻"];
+NSDictionary *dic_one = [NSDictionary dictionaryWithObjectsAndKeys:elementOne, @"element", nil];
+NSArray *array = [NSArray arrayWithObjects:dic_one, nil];
+    
+NSMutableArray *arr_mc = [array mutableCopy];
+NSMutableArray *arr_mdc = [array mutableDeepCopy];
+    
+NSLog(@"array->dic:  第一层 = %p, 第二层 = %p, 第三层element = %p",array,array[0],array[0][@"element"]);
+NSLog(@"arr_mc->dic: 第一层 = %p, 第二层 = %p, 第三层element = %p",arr_mc,arr_mc[0],arr_mc[0][@"element"]);
+NSLog(@"arr_mdc->dic:第一层 = %p, 第二层 = %p, 第三层element = %p",arr_mdc,arr_mdc[0],arr_mdc[0][@"element"]);
+```
+
+打印结果:
+
+```
+array->dic:  第一层 = 0x7fe488d086d0, 第二层 = 0x7fe488da0220, 第三层element = 0x7fe488da1a80
+arr_mc->dic: 第一层 = 0x7fe488d94730, 第二层 = 0x7fe488da0220, 第三层element = 0x7fe488da1a80
+arr_mdc->dic:第一层 = 0x7fe488d06e00, 第二层 = 0x7fe488d94170, 第三层element = 0x7fe488d14c70
+```
+
+### 完全拷贝总结
+
+根据递归原理，关于集合的每个层次都会遍历到，而且其中的元素也都会遍历到，也就是每个层次都进行了一个`mutableCopy`，这样在开发中很容易会用到。尤其是在数据源比较复杂，且不可以更改数据源的情况下。
+
+
+## 相关资料
+
+[assign/retain/copy及深浅拷贝的区别]()  
+
+-------
+
+欢迎指正, [wangyanchang21](https://github.com/wangyanchang21).
+
+

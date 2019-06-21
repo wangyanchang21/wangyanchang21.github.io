@@ -13,7 +13,7 @@ tags: [iOS, 内存管理]
 
 - [直接区别](#直接区别)
 - [深层区别](#深层区别)
-- [关于->xx和_xx](#关于xx和_xx)
+- [关于->xx和_xx](#关于xx和xx)
 - [相关资料](#相关资料)
 
 
@@ -97,6 +97,7 @@ TestA的成员变量在外部的使用:
 [在对象内部尽量直接访问实例变量](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%BA%94/#-%E5%9C%A8-dealloc%E6%96%B9%E6%B3%95%E4%B8%AD%E5%8F%AA%E9%87%8A%E6%94%BE%E5%BC%95%E7%94%A8%E5%B9%B6%E8%A7%A3%E9%99%A4%E7%9B%91%E5%90%AC)
 
 ## 相关资料
+
 [属性详解(@property/@dynamic/@synthesize)](http://blog.csdn.net/wangyanchang21/article/details/50608097)  
 [在对象内部尽量直接访问实例变量](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%BA%94/#-%E5%9C%A8-dealloc%E6%96%B9%E6%B3%95%E4%B8%AD%E5%8F%AA%E9%87%8A%E6%94%BE%E5%BC%95%E7%94%A8%E5%B9%B6%E8%A7%A3%E9%99%A4%E7%9B%91%E5%90%AC)  
 
