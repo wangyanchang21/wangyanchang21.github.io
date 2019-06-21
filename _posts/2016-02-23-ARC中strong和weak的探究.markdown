@@ -26,6 +26,7 @@ tags: [iOS, 内存管理]
 ## 简介
 
 `ARC`是自iOS5之后增加的新特性，完全消除了手动管理内存的烦琐，编译器会自动在适当的地方插入适当的`retain`、`release`、`autorelease`语句。你不再需要担心内存管理，因为编译器为你处理了一切。
+
 注意：`ARC` 是编译器特性，而不是 iOS 运行时特性(除了weak指针系统)，它也不是类似于其它语言中的垃圾收集器。因此`ARC`和手动内存管理性能是一样的，有时还能更加快速，因为编译器还可以执行某些优化。
 
 ## ARC原理
@@ -40,9 +41,10 @@ tags: [iOS, 内存管理]
 </center>
 
 如上图面的关系图，总结为以下几点:
-1.`strong指针`和`weak指针`都指向同一个对象，但`weak指针`不是拥有者。
-2.如果`strong指针`不在指向该对象，则该对象就没有拥有者，就会被释放，此时 `weak指针`会自动变成`nil`，称为空指针。 所以，weak型的指针变量自动变为nil是非常方便的，这样避免了`weak指针`继续指向已释放对象，避免了野指针相关问题的产生。
-3.对于解决循环引用的问题来说，`weak指针`是极其便利的。在`delegate模式`下，一个weak就能解决循环引用的问题，且不会造成野指针的后顾之忧。
+
+- 1.`strong指针`和`weak指针`都指向同一个对象，但`weak指针`不是拥有者。  
+- 2.如果`strong指针`不在指向该对象，则该对象就没有拥有者，就会被释放，此时 `weak指针`会自动变成`nil`，称为空指针。 所以，weak型的指针变量自动变为nil是非常方便的，这样避免了`weak指针`继续指向已释放对象，避免了野指针相关问题的产生。  
+- 3.对于解决循环引用的问题来说，`weak指针`是极其便利的。在`delegate模式`下，一个weak就能解决循环引用的问题，且不会造成野指针的后顾之忧。  
 
 ## 代码实践
 
@@ -230,10 +232,9 @@ redview=< UIView: 0x7fe63a4aeaf0; frame = (0 0; 100 100); layer = < CALayer: 0x7
 
 ## 相关资料
 
-[ARC到底帮我们做了哪些工作?](https://dcsnail.blog.csdn.net/article/details/79461511)   
-[高效 OC开发之内存管理](https://blog.csdn.net/wangyanchang21/article/details/79356164)   
- [ARC下的注意事项](http://blog.csdn.net/wangyanchang21/article/details/50731028)   
-[ARC指南1 - strong和weak指针](http://blog.csdn.net/q199109106q/article/details/8565017)   
+[ARC到底帮我们做了哪些工作?](https://wangyanchang21.github.io/2018/ARC%E5%88%B0%E5%BA%95%E5%B8%AE%E6%88%91%E4%BB%AC%E5%81%9A%E4%BA%86%E5%93%AA%E4%BA%9B%E5%B7%A5%E4%BD%9C/)   
+[高效 OC开发之内存管理](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%BA%94/)   
+[ARC下的注意事项](http://blog.csdn.net/wangyanchang21/article/details/50731028)   
 
 
 -------
