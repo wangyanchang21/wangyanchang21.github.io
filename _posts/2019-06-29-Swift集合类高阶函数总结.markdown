@@ -1,0 +1,539 @@
+---
+title:  "Swift集合类高阶函数总结"
+date:   2019-06-29 18:08:37
+categories: [Swift]
+tags: [Swift]
+---
+
+在`Swift`的集合类型中，有许多十分便捷的函数，本文对`Swift`集合类中的这些高阶函数进行总结。
+
+[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)
+
+------
+
+- [1.sort函数](#1sort函数)
+- [2.sorted函数](#2sorted函数)
+	- [闭包的省略写法](#闭包的省略写法)
+- [3.map函数](#3map函数)
+	- [可选类型的map,flatMap函数](#可选类型的mapflatmap函数)
+- [4.flatMap函数](#4flatmap函数)
+	- [flatMap和compactMap的关系](#flatmap和compactmap的关系)
+- [5.compactMap函数](#5compactmap函数)
+- [6.filter函数](#6filter函数)
+- [7.reduce函数](#7reduce函数)
+- [8.prefix函数](#8prefix函数)
+- [9.drop函数](#9drop函数)
+- [10.first函数](#10first函数)
+- [11.last函数](#11last函数)
+- [12.firstIndex函数](#12firstindex函数)
+- [13.lastIndex函数](#13lastindex函数)
+- [14.partition函数](#14partition函数)
+- [15.min函数](#15min函数)
+- [16.max函数](#16max函数)
+- [17.removeAll函数](#17removeall函数)
+- [18.集合遍历](#18集合遍历)
+- [19.shuffled函数](#19shuffled函数)
+- [20.contains函数](#20contains函数)
+- [21.split和joined函数](#21split和joined函数)
+
+------
+
+
+在`Swift`的集合类型中，有许多十分便捷的函数。相比于`Objective-C`，这些高阶函数会引起你的极度舒适。因为在`Swift`的许多函数中引入了闭包元素，这就直接造就了它的灵活性，简直就是极致的便捷。
+
+下面就来对`Swift`集合类中的这些高阶函数进行总结。
+
+```swift
+// 全文的基础数据
+let numbers = [7, 6, 10, 9, 8, 1, 2, 3, 4, 5]
+```
+
+### 1.sort函数
+
+对原集合进行给定条件排序。   
+无返回值，直接修改原集合，所以这个集合应该是可变类型的。
+
+```swift
+var sortArr = numbers
+numbers.sort { a, b in
+    return a < b
+}		
+// [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+```
+
+另外，系统还定义了一个`sort()`函数，即对集合进行升序排序的函数。但这个函数并不是上面函数不传入缺省值的情况，而是另外一个函数。
+
+```swift
+var sortArr2 = numbers
+numbers.sort()		
+// [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+```
+
+### 2.sorted函数
+
+`sorted函数`与`sort函数`对应。   
+将集合进行给定条件排序，返回一个新的集合，不修改原集合。
+
+```swift
+let sortedArr = numbers.sorted { a, b in
+    return a > b
+}
+// [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+
+// sorted()函数
+let sortedArr2 = numbers.sorted()
+// [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+
+// 闭包简写
+let sortedArr3 = sortedArr2.sorted(by: >)
+// [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+```
+
+#### 闭包的省略写法
+
+因为在高阶函数中大部分都使用了闭包，所以我认为有必要做一个铺垫，以更好地理解本文。`清楚闭包简写的请跳过本段，直奔第3条`。
+
+由于`sort函数`使用了闭包，所以自主定义的闭包可以简写为如下格式：
+
+```swift
+numbers.sort(by: >)		
+// [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+```
+
+以上述方法为例，一个完整的闭包应该是这样的：
+
+```swift
+numbers.sorted { (a: Int, b: Int) -> Bool in
+    return a > b
+}
+```
+
+然后，可以省略闭包中的返回值。
+
+```swift
+numbers.sorted { (a: Int, b: Int) in
+    return a > b
+}
+```
+
+然后，再可以省略形参的类型，让编译器去自主推断。
+
+```swift
+numbers.sorted { a, b in
+    return a > b
+}
+```
+
+再然后，还可以让`$0`，`$1`...来代替第一个，第二个形参，以此类推。
+
+```swift
+numbers.sorted { return $0 > $1 }
+```
+
+再然后，省略`return`。一般的，到这里也就足够简化了。毕竟在实际开发中我们需要使用闭包中的参数进行一些复杂的判断。
+
+```swift
+numbers.sorted { $0 > $1 }
+```
+
+如果你不需要复杂的判断，那么还可以写成下面这样，代表降序排序。
+
+```swift
+numbers.sorted(by: >)
+```
+
+### 3.map函数
+
+按照闭包中的返回结果，将集合中对应元素进行替代，也就是映射函数。
+
+```swift
+// 数组数值转换为其各自平方
+let mapArr = numbers.map { $0 * $0 }
+// [49, 36, 100, 81, 64, 1, 4, 9, 16, 25]
+```
+
+#### 可选类型的map,flatMap函数
+
+另外，不仅`CollectionType`有`map`和`flatMap`函数，在`Optional`类型中，也存在这两个函数。   
+它们的作用是对可选类型就行解包操作，若有值则进入闭包，并返回一个 `Optional`类型；若为nil，则直接返回当前可选类型的nil。
+
+```swift
+let num1: Int? = 3
+let num2: Int? = nil
+
+let numMap1 = num1.map {
+    $0 * 2
+}
+numMap1              // 6
+type(of: numMap1)    // Optional<Int>.Type
+
+let numMap2 = num2.map {
+    $0 == 0
+}
+numMap2              // nil
+type(of: numMap2)    // Optional<Bool>.Type
+
+
+let numFlatMap1 = num1.flatMap {
+    $0 * $0
+}
+numFlatMap1              // 9
+type(of: numFlatMap1)    // Optional<Int>.Type
+
+let numFlatMap2 = num2.flatMap {
+    $0 == 0
+}
+numFlatMap2              // nil
+type(of: numFlatMap2)    // Optional<Bool>.Type
+```
+
+还有一种应用场景，就是解析可选类型的时候，`map`和`flatMap`函数会让你的代码更加优雅。
+
+举个例子，当解析并判断可选类型的时候，你可能会经过一堆`if`或者`guard`判断，如下所示：
+
+```swift
+func loadURL(url: URL) {
+    print(url.absoluteString)
+}
+
+let urlStr: String? = "https://github.com/wangyanchang21"
+guard let siteStr = urlStr else {
+    assert(false)
+}
+guard let url = URL(string: siteStr) else {
+    assert(false)
+}
+loadURL(url: url)
+```
+
+如果使用`map`和`flatMap`函数的话，就会有十分优雅的感觉。
+
+```swift
+// 这行优雅的代码代替上面的代码
+urlStr.flatMap(URL.init).map(loadURL)
+```
+
+但有一点需要注意，这里 map替换 flatMap会报错, 原因在于 flatMap闭包可以返回 nil, 而 map闭包不可以。就如下面的代码编译不会通过：
+
+```swift
+// compile error
+// urlStr.map(URL.init).map(loadURL)
+```
+
+再举一个例子:
+
+```swift
+let date: Date? = Date()
+let format = date.map(DateFormatter().string)
+```
+
+我在[函数的闭包形式](https://dcsnail.blog.csdn.net/article/details/88045303)中也写过这种优雅的写法具体是怎么回事。有兴趣可以了解一下。
+
+
+### 4.flatMap函数
+
+也是一种映射函数，这个函数具有多重功能，所以也就造成了这个函数有一个历史问题，稍后会解释。
+
+第一种情况，解析首层元素，若有nil则过滤，就不会降维
+
+```swift
+let optLatticeNumbers = [[1, Optional(2), 3], [3, nil, 5], nil]
+// 解析首层元素, 若有nil则过滤, 就不会降维
+let flatMapArr2 = optLatticeNumbers.flatMap { $0 }
+// [[1, 2, 3], [3, nil, 5]]
+```
+
+第二种情况，解析首层元素，若没有nil，则会降维
+
+```swift
+let latticeNumbers = [[1, Optional(2), 3], [3, nil, 5]]
+// 解析首层元素, 若没有nil, 则会降维
+let flatMapArr = latticeNumbers.flatMap { $0 }
+// [1, 2, 3, 3, nil, 5]
+```
+
+所以`flatMap`的功能就有两个了，一个功能是解析并过滤首层元素为nil的元素，一个功能是对多维集合进行降维。原因是，其实这是两个功能是`两个函数`，只是在调用时代码上没有区别。
+
+#### flatMap和compactMap的关系
+
+但从表面上看，`flatMap`函数违背了单一功能原则，将`过滤nil`和`降维`两个功能于隐藏条件中进行判定。这也就是那个历史问题。
+
+因此，为了将`过滤nil`和`降维`两个功能于区分开，swift4.1开始，就只保留了`降维的flatMap函数`，并弃用了`过滤nil的flatMap函数`，又用开放的新函数`compactMap`来替代弃用的函数。
+
+所以，当需要过滤nil的时候，请使用`compactMap`函数；当需要进行降维时，请使用`flatMap`函数。这也就是`flatMap`和`compactMap`之间的区别。
+
+### 5.compactMap函数
+
+Swift4.1开始开放的一种映射函数，会解析并过滤首层元素为nil的元素。
+
+```swift
+let compactMapArr = optLatticeNumbers.compactMap { $0 }
+// [[1, 2, 3], [3, nil, 5]]
+let compactMapArr2 = latticeNumbers.compactMap { $0 }
+// [[1, 2, 3], [3, nil, 5]]
+```
+
+`compactMap`函数作为`过滤nil的flatMap`函数的替代函数。当集合中的元素为一个一维集合，他们之间的功能是没有差别的。
+
+```swift
+let flatNumbers = [1, Optional(2), 3, nil, Optional(5), nil]
+
+let flatMapArr = latticeNumbers.flatMap { $0 }
+// [1, 2, 3, 5]
+let compactMapArr = optLatticeNumbers.compactMap { $0 }
+// [1, 2, 3, 5]
+```
+
+### 6.filter函数
+
+按照条件进行元素过滤。
+
+```swift
+let filterArr = numbers.filter { num in
+    return num < 3 || num > 8
+}
+// [10, 9, 1, 2]
+```
+
+### 7.reduce函数
+
+以指定参数为基础，按照条件进行拼接
+
+```swift
+let reduceNumber = numbers.reduce(100) { result, num in
+    return result + num
+}
+// 155
+
+let reduceString = ["C", "O", "D", "E"].reduce("word: ") { result, num in
+    return result + num
+}
+// "word: CODE"
+```
+
+### 8.prefix函数
+
+正向取满足条件的元素，进行新集合创建。一旦出现不满足条件的元素，则跳出循环，不再执行。
+
+```swift
+let prefixArr = numbers.prefix { $0 < 10 }
+// [7, 6]
+```
+
+`prefix`相关函数：   
+`upTo`: 正向取元素创建数组, 包含小于指定index的元素   
+
+```swift
+let prefixUpToArr = numbers.prefix(upTo: 5)
+// [7, 6, 10, 9, 8]
+```
+
+`through`: 正向取元素创建数组, 包含小于等于指定index的元素
+
+```swift
+let prefixThroughArr = numbers.prefix(through: 2)
+// [7, 6, 10]
+```
+
+`maxLength`: 正向取元素创建数组, 包含指定的元素个数
+
+```swift
+let prefixMaxLengthArr = numbers.prefix(6)
+// [7, 6, 10, 9, 8, 1]
+```
+
+### 9.drop函数
+
+与`prefix函数`对应。正向跳过满足条件的元素，进行新集合创建。一旦出现不满足条件的元素，则跳出循环，不再执行。
+
+```swift
+let dropArr = numbers.drop { $0 < 10 }
+// [10, 9, 8, 1, 2, 3, 4, 5]
+```
+
+`drop`相关函数：   
+`dropFirst`: 正向跳过元素创建数组, 跳过指定元素个数, 缺省值为1
+
+```swift
+let dropFirstArr = numbers.dropFirst(3)
+// [7, 6, 10, 9, 8]
+```
+
+`dropLast`: 返向跳过元素创建数组, 跳过指定元素个数, 缺省值为1
+
+```swift
+let dropLastArr = numbers.dropLast(5)
+// [7, 6, 10, 9, 8]
+```
+
+### 10.first函数
+
+正向找出第一个满足条件的元素。
+
+```swift
+let first = numbers.first { $0 < 7 }
+// 6
+```
+
+### 11.last函数
+
+与`first`函数对应。反向找出第一个满足条件的元素。
+
+```swift
+let last = numbers.last { $0 > 5 }
+// 8
+```
+### 12.firstIndex函数
+
+正向找出第一个满足条件的元素下标。
+
+```swift
+let firstIndex = numbers.firstIndex { $0 < 7 }
+// 1
+```
+
+### 13.lastIndex函数
+
+反向找出第一个满足条件的元素下标。
+
+```swift
+let lastIndex = numbers.lastIndex { $0 > 5 }
+// 4
+```
+
+### 14.partition函数
+
+按照条件进行重新排序，不满足条件的元素在集合前半部分，满足条件的元素后半部分，但不是完整的升序或者降序排列。   
+返回值为排序完成后集合中第一个满足条件的元素下标。   
+
+```swift
+var partitionNumbers = [20, 50, 30, 10, 40, 20, 60]
+let pIndex = partitionNumbers.partition { $0 > 30 }
+// partitionNumbers = [20, 20, 30, 10, 40, 50, 60]
+// pIndex = 4
+```
+
+### 15.min函数
+
+按条件排序后取最小元素。
+
+```swift
+let min = numbers.min { $0 % 5 < $1 % 5 }
+// 10
+```
+
+`min()`函数，自然升序取最小。
+
+```swift
+let minDefault = numbers.min()
+// 1
+```
+
+### 16.max函数
+
+按条件排序后取最大元素。
+
+```swift
+let maxDictionary = ["aKey": 33, "bKey": 66, "cKey": 99]
+let max = maxDictionary.max { $0.value < $1.value }
+// (key "cKey", value 99)
+```
+
+`max()`函数，自然升序取最大。   
+
+```swift
+let maxDefault = numbers.max()
+// 10
+```
+
+### 17.removeAll函数
+
+移除原集合中所有满足条件的元素。   
+无返回值，直接修改原集合，所以这个集合应该是可变类型的。   
+
+```swift
+var removeArr = numbers
+removeArr.removeAll { $0 > 6 }
+// [6, 1, 2, 3, 4, 5]
+```
+
+### 18.集合遍历
+
+`forEach`函数：
+
+```swift
+numbers.forEach { num in
+    print(num)
+}
+```
+
+`for-in`函数:
+
+```swift
+for num in numbers where num < 5 {
+    print(num)
+}
+```
+
+与`enumerated()`函数配合使用：
+
+```swift
+for (index, num) in numbers.enumerated() {
+    print("\(index)-\(num)")
+}
+```
+
+关于集合遍历的性能问题，可以看这里[enumerated() 和 enumerateObjectsUsingBlock](https://dcsnail.blog.csdn.net/article/details/88045303)。
+
+### 19.shuffled函数
+
+`shuffled`函数，打乱集合中元素的的顺序。
+
+```swift
+let ascendingNumbers = 0...9
+let shuffledArr = ascendingNumbers.shuffled()
+// [3, 9, 2, 6, 4, 5, 0, 1, 7, 8]
+```
+
+### 20.contains函数
+
+`contains`函数，判断集合中是否包含某元素。
+
+```swift
+let containsBool = numbers.contains(8)
+let containsBool1 = numbers.contains(11)
+// true
+// false
+```
+
+### 21.split和joined函数
+
+`split`函数，字符串的函数，按条件分割字符串，为子字符串创建集合。与`Objective-C`中的`componentsSeparatedByString:`方法类似。
+
+```swift
+let line = "123Hi!123I'm123a123coder.123"
+let splitArr = line.split { $0.isNumber }
+// ["Hi!", "I'm", "a", "coder."]
+
+// 也可指定字符
+let splitArr2 = line.split(separator: "1")
+// ["23Hi!", "23I'm", "23a", "23coder.", "23"]
+```
+
+`joined`函数，数组元素连接指定字符拼接成一个字符串。与`Objective-C`中的`componentsJoinedByString:`方法类似。
+
+```swift
+let joined = splitArr.joined(separator: "_")
+// "Hi!_I'm_a_coder."
+
+// 也可以只传入字符
+let joined2 = splitArr2.joined(separator: "#")
+// "23Hi!#23I'm#23a#23coder.#23"
+```
+
+
+-------
+
+欢迎指正, [wangyanchang21](https://github.com/wangyanchang21).
+
+
