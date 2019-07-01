@@ -35,6 +35,7 @@ tags: [Swift]
 - [19.shuffled函数](#19shuffled函数)
 - [20.contains函数](#20contains函数)
 - [21.split和joined函数](#21split和joined函数)
+- [22.zip函数](#22zip函数)
 
 ------
 
@@ -531,6 +532,25 @@ let joined2 = splitArr2.joined(separator: "#")
 // "23Hi!#23I'm#23a#23coder.#23"
 ```
 
+### 22.zip函数
+将两个数组合并为一个元组组成的数组。
+
+```swift
+let titles = ["aaa", "bbb", "ccc"]
+let numbers = [111, 222, 333]
+let zipA = zip(titles, numbers)
+for (title, num) in zipA {
+    print("\(title)-\(num)")
+}
+```
+
+打印结果：
+
+```
+aaa-111
+bbb-222
+ccc-333
+```
 
 -------
 
