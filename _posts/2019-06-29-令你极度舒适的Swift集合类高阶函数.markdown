@@ -1,5 +1,5 @@
 ---
-title:  "Swift集合类高阶函数总结"
+title:  "令你极度舒适的Swift集合类高阶函数"
 date:   2019-06-29 18:08:37
 categories: [Swift]
 tags: [Swift]
