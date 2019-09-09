@@ -54,7 +54,7 @@
   <meta name="msapplication-TileImage" content="/images/favicons/mstile-144x144.png">
   <meta name="theme-color" content="#ffffff">
   
-  <link rel="stylesheet" href="/css/main.css?1558344697863960000">
+  <link rel="stylesheet" href="/css/main.css?1561804051806426000">
   <link rel="canonical" href="http://localhost:4000/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6/">
   <link rel="alternate" type="application/rss+xml" title="DCSnail" href="/feed.xml">
 </head>
@@ -182,9 +182,30 @@
 
 <hr />
 
-<p><a href="https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6">以太坊钱包 Trust项目解读之架构和流程</a></p>
-
-<p><a href="https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6">由Trust Wallet理解以太坊钱包管理和智能合约</a></p>
+<ul>
+  <li><a href="#钱包管理">钱包管理</a>
+    <ul>
+      <li><a href="#钱包创建">钱包创建</a></li>
+      <li><a href="#钱包的导入">钱包的导入</a></li>
+      <li><a href="#钱包导出删除等">钱包导出、删除等</a></li>
+      <li><a href="#etherkeystore-模块结构图">EtherKeystore 模块结构图</a></li>
+    </ul>
+  </li>
+  <li><a href="#智能合约">智能合约</a>
+    <ul>
+      <li><a href="#合约调用方式">合约调用方式</a></li>
+      <li><a href="#合约调用">合约调用</a></li>
+      <li><a href="#网络层其他请求">网络层其他请求</a></li>
+    </ul>
+  </li>
+  <li><a href="#交易">交易</a>
+    <ul>
+      <li><a href="#交易的结构">交易的结构</a></li>
+      <li><a href="#交易的流程">交易的流程</a></li>
+    </ul>
+  </li>
+  <li><a href="#相关资料">相关资料</a></li>
+</ul>
 
 <hr />
 
@@ -202,7 +223,7 @@
 <h4 id="创建公钥私钥">创建公钥私钥</h4>
 
 <p>创建钱包就相当于生成一对密钥, 公钥(PublicKey)和私钥(PrivateKey)。公钥其实就相当于你账户在区块链中的地址(Address); 私钥就相当于你钱包的账号密码, 它是证明你是钱包主人的唯一证明, 一旦丢失就不可找回。当然, 公钥并不完全等于地址, 地址是由公钥经过一系列的算法生成的, 需要经过<code class="highlighter-rouge">SHA3-256</code>(Keccak)哈希然后转化为符合<code class="highlighter-rouge">EIP55</code>规则的字符串。</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> (sk, pk) = generateKeys(keysize) 
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="p">(</span><span class="n">sk</span><span class="p">,</span> <span class="n">pk</span><span class="p">)</span> <span class="o">=</span> <span class="nf">generateKeys</span><span class="p">(</span><span class="n">keysize</span><span class="p">)</span> 
 </code></pre></div></div>
 <p>上面这段伪代码中, generateKeys方法把 keysize作为输入, 来产生一对公钥和私钥。私钥sk被安全保存## ，并用来签名一段消息；公钥pk是人人都可以找到的，拿到它，就可以用来验证你的签名。下图是<code class="highlighter-rouge">TrustCore</code>中对以太坊私钥和地址的<code class="highlighter-rouge">keysize</code>定义, 私钥是32字节, 公钥地址是20字节, 所以十六进制的私钥长度为64位, 而公钥地址长度为40位。</p>
 
@@ -440,7 +461,7 @@
 <h3 id="网络层其他请求">网络层其他请求</h3>
 
 <p>在<code class="highlighter-rouge">Trust</code>中, 获取区块链上的数据, 其实分为两种, 一种是上面提到的直接通过智能合约获取的数据。另一种就是<code class="highlighter-rouge">Trust</code>官网已经封装过的一些接口, 它们是关于多币种的, 大多需要在区块链中去查找, 接口不单一且有大工作量的请求, 如transactions, getTokes等。这些接口是直接使用网络库<code class="highlighter-rouge">Moya</code>进行封装的, 而没有调用智能合约。而这些<code class="highlighter-rouge">HTTP</code>请求的服务器是:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>let trustAPI = URL(string: "https://public.trustwalletapp.com")
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="nv">trustAPI</span> <span class="o">=</span> <span class="kt">URL</span><span class="p">(</span><span class="nv">string</span><span class="p">:</span> <span class="s">"https://public.trustwalletapp.com"</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p><code class="highlighter-rouge">TrustAPI</code>类中将这些接口清楚的列举了出来, 并且将它们集体封装在<code class="highlighter-rouge">TrustNetwork</code>类中来管理。</p>
@@ -504,16 +525,14 @@
 <p><strong>交易发起。</strong> 在<code class="highlighter-rouge">Web3</code>浏览器中的<code class="highlighter-rouge">DApp</code>中, 发起转账交易, 发起方式就是<code class="highlighter-rouge">JS</code>调用<code class="highlighter-rouge">iOS原生</code>。通过传入的数据, 在<code class="highlighter-rouge">BrowserCoordinator</code>模块中, 将数据进行解析。</p>
 
 <p><strong>解析。</strong> 通过<code class="highlighter-rouge">DAppAction</code>、<code class="highlighter-rouge">DappCommand</code>、<code class="highlighter-rouge">DAppRequester</code>等类进行解析, 完成后, 封装入<code class="highlighter-rouge">DAppAction</code>内, 来决定需要进行哪种操作、需要调用合约中的哪种API。它有6种响应事件, 分别是:</p>
-<blockquote>
-  <ul>
-    <li>1.signMessage</li>
-    <li>2.signPersonalMessage</li>
-    <li>3.signTypedMessage</li>
-    <li>4.signTransaction</li>
-    <li>5.sendTransaction</li>
-    <li>6.unknown</li>
-  </ul>
-</blockquote>
+<ul>
+  <li>1.signMessage</li>
+  <li>2.signPersonalMessage</li>
+  <li>3.signTypedMessage</li>
+  <li>4.signTransaction</li>
+  <li>5.sendTransaction</li>
+  <li>6.unknown</li>
+</ul>
 
 <p><strong>构建交易数据</strong> 和 <strong>智能合约调用。</strong> 这两个步骤和原生的之间基本一致, 都是通过数据构建出<code class="highlighter-rouge">Transaction</code>, 用来做交易准备。然后进行校验, 再调用智能合约。所以就不具体说明了, 请参照<code class="highlighter-rouge">原生App</code>。</p>
 
@@ -527,6 +546,13 @@
 
 <p><code class="highlighter-rouge">Trust</code>项目到这里基本就很清晰了, 这两篇文章虽然只是对<code class="highlighter-rouge">Trust 
 wallet</code>的解读, 很局限。但是由它们能延伸到的知识, 如以太坊的智能合约的知识、钱包和私钥管理的知识等等, 还有你对区块链的认知, 这些不是狭义的。所以无论你认为区块链是好是坏, 或者有没有实际的应用和市场的欢迎, 这门技术都带来了无限创新。</p>
+
+<h2 id="相关资料">相关资料</h2>
+
+<p><a href="https://wangyanchang21.github.io/2018/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85-Trust%E9%A1%B9%E7%9B%AE%E8%A7%A3%E8%AF%BB%E4%B9%8B%E6%9E%B6%E6%9E%84%E5%92%8C%E6%B5%81%E7%A8%8B">以太坊钱包 Trust项目解读之架构和流程</a><br />
+<a href="https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6">由Trust Wallet理解以太坊钱包管理和智能合约</a></p>
+
+<hr />
 
 <p>欢迎指正, <a href="https://github.com/wangyanchang21">wangyanchang21</a>.</p>
 
@@ -544,7 +570,7 @@ wallet</code>的解读, 很局限。但是由它们能延伸到的知识, 如以
 </footer>
 
 <script type="text/javascript" src="https://ajax.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script type="text/javascript" src="/js/main.js?1558344697863960000"></script>
+<script type="text/javascript" src="/js/main.js?1561804051806426000"></script>
 
 
     </div>

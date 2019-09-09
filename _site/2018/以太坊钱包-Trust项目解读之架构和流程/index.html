@@ -7,7 +7,7 @@
   
 
   <title>以太坊钱包 Trust项目解读之架构和流程</title>
-  <meta name="description" content="由于前阵子工作涉及到区块链方面的业务, 再加上自己对技术的热忱, 本人也是不断地学(恶)习(补)这方面的知识。在 github上的有很多优秀的开源钱包的代码, 比如说今天要分享的iOS版本的 Trust, 还有这个月24号刚刚官宣开源的 imToken。
+  <meta name="description" content="解读以太坊钱包 Trust App，从架构、流程、功能模块的角度进行分析。并结合区块链和智能合约来介绍以太坊交易的结构和流程等业务。
 
 ">
   <meta name="author" content="DCSnail">
@@ -19,7 +19,7 @@
 
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="以太坊钱包 Trust项目解读之架构和流程">
-  <meta name="twitter:description" content="由于前阵子工作涉及到区块链方面的业务, 再加上自己对技术的热忱, 本人也是不断地学(恶)习(补)这方面的知识。在 github上的有很多优秀的开源钱包的代码, 比如说今天要分享的iOS版本的 Trust, 还有这个月24号刚刚官宣开源的 imToken。
+  <meta name="twitter:description" content="解读以太坊钱包 Trust App，从架构、流程、功能模块的角度进行分析。并结合区块链和智能合约来介绍以太坊交易的结构和流程等业务。
 
 ">
   
@@ -29,7 +29,7 @@
 
   <meta property="og:type" content="article">
   <meta property="og:title" content="以太坊钱包 Trust项目解读之架构和流程">
-  <meta property="og:description" content="由于前阵子工作涉及到区块链方面的业务, 再加上自己对技术的热忱, 本人也是不断地学(恶)习(补)这方面的知识。在 github上的有很多优秀的开源钱包的代码, 比如说今天要分享的iOS版本的 Trust, 还有这个月24号刚刚官宣开源的 imToken。
+  <meta property="og:description" content="解读以太坊钱包 Trust App，从架构、流程、功能模块的角度进行分析。并结合区块链和智能合约来介绍以太坊交易的结构和流程等业务。
 
 ">
   <meta property="og:image" content="/images/favicons/favicon-194x194.png" />
@@ -54,7 +54,7 @@
   <meta name="msapplication-TileImage" content="/images/favicons/mstile-144x144.png">
   <meta name="theme-color" content="#ffffff">
   
-  <link rel="stylesheet" href="/css/main.css?1558344697863960000">
+  <link rel="stylesheet" href="/css/main.css?1561804051806426000">
   <link rel="canonical" href="http://localhost:4000/2018/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85-Trust%E9%A1%B9%E7%9B%AE%E8%A7%A3%E8%AF%BB%E4%B9%8B%E6%9E%B6%E6%9E%84%E5%92%8C%E6%B5%81%E7%A8%8B/">
   <link rel="alternate" type="application/rss+xml" title="DCSnail" href="/feed.xml">
 </head>
@@ -176,19 +176,37 @@
   </header>
 
   <section class="post">
-    <p>由于前阵子工作涉及到区块链方面的业务, 再加上自己对技术的热忱, 本人也是不断地学(恶)习(补)这方面的知识。在 github上的有很多优秀的开源钱包的代码, 比如说今天要分享的iOS版本的 <code class="highlighter-rouge">Trust</code>, 还有这个月24号刚刚官宣开源的 <code class="highlighter-rouge">imToken</code>。</p>
-
-<p>文章中, 会涉及到一些区块链的基础知识如以太坊、智能合约、节点、Token、地址等等, 这些基础知识就不介绍了, 还请自行查阅吧。</p>
+    <p>解读以太坊钱包 Trust App，从架构、流程、功能模块的角度进行分析。并结合区块链和智能合约来介绍以太坊交易的结构和流程等业务。</p>
 
 <p><a href="https://github.com/wangyanchang21"><img src="https://img.shields.io/badge/contact-wangyanchang21-green.svg" alt="Contact" /></a></p>
 
 <hr />
 
-<p><a href="https://wangyanchang21.github.io/2018/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85-Trust%E9%A1%B9%E7%9B%AE%E8%A7%A3%E8%AF%BB%E4%B9%8B%E6%9E%B6%E6%9E%84%E5%92%8C%E6%B5%81%E7%A8%8B">以太坊钱包 Trust项目解读之架构和流程</a></p>
-
-<p><a href="https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6">由Trust Wallet理解以太坊钱包管理和智能合约</a></p>
+<ul>
+  <li><a href="#前言">前言</a></li>
+  <li><a href="#以太坊钱包平台介绍">以太坊钱包平台介绍</a>
+    <ul>
+      <li><a href="#mist">Mist</a></li>
+      <li><a href="#parity">Parity</a></li>
+      <li><a href="#trust">Trust</a></li>
+      <li><a href="#imtoken">imToken</a></li>
+      <li><a href="#myetherwallet">MyEtherWallet</a></li>
+      <li><a href="#metamask">MetaMask</a></li>
+      <li><a href="#主要模块">主要模块</a></li>
+      <li><a href="#项目架构">项目架构</a></li>
+      <li><a href="#项目流程">项目流程</a></li>
+    </ul>
+  </li>
+  <li><a href="#相关资料">相关资料</a></li>
+</ul>
 
 <hr />
+
+<h1 id="前言">前言</h1>
+
+<p>由于前阵子工作涉及到区块链方面的业务, 再加上自己对技术的热忱, 本人也是不断地学(恶)习(补)这方面的知识。在 github上的有很多优秀的开源钱包的代码, 比如说今天要分享的iOS版本的 <code class="highlighter-rouge">Trust</code>, 还有这个月24号刚刚官宣开源的 <code class="highlighter-rouge">imToken</code>。</p>
+
+<p>文章中, 会涉及到一些区块链的基础知识如以太坊、智能合约、节点、Token、地址等等, 这些基础知识就不介绍了, 还请自行查阅吧。</p>
 
 <h2 id="以太坊钱包平台介绍">以太坊钱包平台介绍</h2>
 
@@ -196,53 +214,45 @@
 
 <h3 id="mist">Mist</h3>
 
-<p><code class="highlighter-rouge">Mist</code>是一个全节点的钱包, 以太坊的官方钱包。</p>
-
-<p>官方地址: <a href="https://ethereum.org/">ethereum</a></p>
+<p><code class="highlighter-rouge">Mist</code>是一个全节点的钱包, 以太坊的官方钱包。<br />
+官方地址: <a href="https://ethereum.org/">ethereum</a></p>
 
 <h3 id="parity">Parity</h3>
 
-<p><code class="highlighter-rouge">Parity</code>也是一个全节点钱包, 原以太坊基金会部分成员开发的。</p>
-
-<p>官方地址: <a href="https://www.parity.io/">Parity</a></p>
+<p><code class="highlighter-rouge">Parity</code>也是一个全节点钱包, 原以太坊基金会部分成员开发的。<br />
+官方地址: <a href="https://www.parity.io/">Parity</a></p>
 
 <h3 id="trust">Trust</h3>
 
-<p>在国外 App Store已经上架, 目前有 <code class="highlighter-rouge">iOS</code>和 <code class="highlighter-rouge">Android</code>移动端的应用, 应用中有 <code class="highlighter-rouge">Web3浏览器</code>并支持很多 <code class="highlighter-rouge">DApp</code>使用。</p>
-
-<p>官方地址: <a href="https://trustwalletapp.com/">TrustWalletApp</a></p>
+<p>在国外 App Store已经上架, 目前有 <code class="highlighter-rouge">iOS</code>和 <code class="highlighter-rouge">Android</code>移动端的应用, 应用中有 <code class="highlighter-rouge">Web3浏览器</code>并支持很多 <code class="highlighter-rouge">DApp</code>使用。<br />
+官方地址: <a href="https://trustwalletapp.com/">TrustWalletApp</a></p>
 
 <h3 id="imtoken">imToken</h3>
 
-<p><code class="highlighter-rouge">imToken</code>是一个中国团队开发的, 目前只有 <code class="highlighter-rouge">iOS</code>和 <code class="highlighter-rouge">Android</code>移动端的应用。</p>
-
-<p>官方地址: <a href="https://token.im/">ImToken</a></p>
+<p><code class="highlighter-rouge">imToken</code>是一个中国团队开发的, 目前只有 <code class="highlighter-rouge">iOS</code>和 <code class="highlighter-rouge">Android</code>移动端的应用。<br />
+官方地址: <a href="https://token.im/">ImToken</a></p>
 
 <h3 id="myetherwallet">MyEtherWallet</h3>
 
-<p><code class="highlighter-rouge">MyEtherWallet</code> 作为一个轻钱包，无需下载，直接在 Web端进行操作。</p>
-
-<p>官方地址: <a href="https://www.myetherwallet.com/">MyEtherWallet</a></p>
+<p><code class="highlighter-rouge">MyEtherWallet</code> 作为一个轻钱包，无需下载，直接在 Web端进行操作。<br />
+官方地址: <a href="https://www.myetherwallet.com/">MyEtherWallet</a></p>
 
 <h3 id="metamask">MetaMask</h3>
 
-<p><code class="highlighter-rouge">MetaMask</code>是一个轻量级钱包, 以Chrome扩展程序存在的 Web端钱包。</p>
-
-<p>官方地址: <a href="https://metamask.io/">MetaMask</a></p>
+<p><code class="highlighter-rouge">MetaMask</code>是一个轻量级钱包, 以Chrome扩展程序存在的 Web端钱包。<br />
+官方地址: <a href="https://metamask.io/">MetaMask</a></p>
 
 <h2 id="trust-wallet">Trust Wallet</h2>
 
 <p>了解过各种钱包平台后, 进入今天主要对应用 <a href="https://github.com/TrustWallet/trust-wallet-ios">trust-wallet-ios</a>进行源码解析, 它在 github上已经是开源的了。并且在众多开源的虚拟货币钱包项目中，<code class="highlighter-rouge">Trust</code>已经十分完善和稳定了，已经在国外的 App Store上架了，对应的 Android版本也已开源(但貌似 Android版本并不是最新版本的)。</p>
 
 <p><code class="highlighter-rouge">Trust</code>可与任何<code class="highlighter-rouge">ERC20</code>和<code class="highlighter-rouge">ERC223</code>代币配合使用，并支持以太坊生态系统中的以太坊主链、侧链，以及所有服从以太坊协议的加密货币。<code class="highlighter-rouge">Trust</code>为用户提供统一的钱包地址，可用于管理以太坊和所有代币。还有一个功能齐全的<code class="highlighter-rouge">Web3</code>浏览器，可与任何分布式的应用程式(<code class="highlighter-rouge">DApp</code>)配合使用。在它的官网有这样的介绍:</p>
-<blockquote>
-  <ul>
-    <li>无服务器环境完全本地化了每个已安装的应用程序</li>
-    <li>以客户端为基础架构,可确保密钥本地存储在您的设备上</li>
-    <li>银行级安全保护您的数字资产免受潜在威胁。</li>
-    <li>应用级认证系统可以防止未经授权的设备进行访问</li>
-  </ul>
-</blockquote>
+<ul>
+  <li>无服务器环境完全本地化了每个已安装的应用程序</li>
+  <li>以客户端为基础架构,可确保密钥本地存储在您的设备上</li>
+  <li>银行级安全保护您的数字资产免受潜在威胁。</li>
+  <li>应用级认证系统可以防止未经授权的设备进行访问</li>
+</ul>
 
 <h3 id="主要模块">主要模块</h3>
 
@@ -374,6 +384,13 @@
 
 <p>到此为止 Trust Wallet项目以 iOS的角度, 按照架构和主要功能对其源码解析完了。然后, 真正关于区块链的核心功能, 如智能合约调用、私钥公钥管理等, 会以<code class="highlighter-rouge">Trust</code>钱包为例让你逐步理解。具体请阅读下一篇<a href="https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6">由Trust Wallet理解以太坊钱包管理和智能合约</a>。</p>
 
+<h2 id="相关资料">相关资料</h2>
+
+<p><a href="https://wangyanchang21.github.io/2018/%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85-Trust%E9%A1%B9%E7%9B%AE%E8%A7%A3%E8%AF%BB%E4%B9%8B%E6%9E%B6%E6%9E%84%E5%92%8C%E6%B5%81%E7%A8%8B">以太坊钱包 Trust项目解读之架构和流程</a><br />
+<a href="https://wangyanchang21.github.io/2018/%E7%94%B1Trust-Wallet%E7%90%86%E8%A7%A3%E4%BB%A5%E5%A4%AA%E5%9D%8A%E9%92%B1%E5%8C%85%E7%AE%A1%E7%90%86%E5%92%8C%E6%99%BA%E8%83%BD%E5%90%88%E7%BA%A6">由Trust Wallet理解以太坊钱包管理和智能合约</a></p>
+
+<hr />
+
 <p>欢迎指正, <a href="https://github.com/wangyanchang21">wangyanchang21</a>.</p>
 
   </section>
@@ -389,7 +406,7 @@
 </footer>
 
 <script type="text/javascript" src="https://ajax.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script type="text/javascript" src="/js/main.js?1558344697863960000"></script>
+<script type="text/javascript" src="/js/main.js?1561804051806426000"></script>
 
 
     </div>
