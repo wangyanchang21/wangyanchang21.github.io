@@ -8,7 +8,7 @@ Location: Minneapolis, MN, USA
 Name: Dale Anthony
 
 /* SITE */
-Last update: 2019/06/29
+Last update: 2019/11/08
 Standards: HTML5, CSS3
 Components: Jekyll
 Software: Sublime Text, Photoshop
