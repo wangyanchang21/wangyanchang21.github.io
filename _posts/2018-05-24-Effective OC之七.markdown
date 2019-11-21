@@ -96,11 +96,10 @@ NSEnumerator遍历方式:
 使用`无缝桥接`技术，可以在定义于`Foundation框架`中的Objective-C类和定义与`CoreFoundation框架`中的C数据结构之间互相转换。笔者将C语言级别的API称为数据结构, 而没有称其为类或对象, 这是因为它们与Objective-C中的类或对象并不相同。
 
 
-以下这三种转换方式称为`桥式转换`(bridged cast)：
-
-1.`__bridge`只做Objective-C的对象和Core Foundation对象的相互转换，但不涉及对象所有权的改变，所以`ARC`仍然具备这个对象的所有权。
-2.`__bridge_retained`意味着Objective-C的对象转换为Core Foundation的对象，同时将对象的所有权由`ARC`交给我们。
-3.`__bridge_transfer`来实现将Core Foundation的对象转换为Objective-C的对象，同时将对象所有权交于`ARC`。
+以下这三种转换方式称为`桥式转换`(bridged cast)：     
+1.`__bridge`只做Objective-C的对象和Core Foundation对象的相互转换，但不涉及对象所有权的改变，所以`ARC`仍然具备这个对象的所有权。     
+2.`__bridge_retained`意味着Objective-C的对象转换为Core Foundation的对象，同时将对象的所有权由`ARC`交给我们。     
+3.`__bridge_transfer`来实现将Core Foundation的对象转换为Objective-C的对象，同时将对象所有权交于`ARC`。     
 
 可以参考我之前的一篇文章：[对象桥接转换(__bridge,__bridge_transfer,__bridge_retained)](https://dcsnail.blog.csdn.net/article/details/48714409)
 
