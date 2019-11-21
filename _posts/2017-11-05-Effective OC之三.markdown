@@ -45,8 +45,8 @@ Apple宣称其保留使用所有`两字母前缀`(two-letter prefix)的权利，
 ``` swift
 - (id)initWithWidth:(float)width andHeight:(float)height {
 	if (self = [super init]){
-	_width = width;
-	_height = height;
+		_width = width;
+		_height = height;
 	}
 	return self;
 }

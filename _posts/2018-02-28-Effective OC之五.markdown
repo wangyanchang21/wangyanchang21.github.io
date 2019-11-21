@@ -65,7 +65,7 @@ NSNumber *number =[[NSNumber alloc] initWithInt: 1337];
 ``` swift
 - (void)setFoo:(id)foo {
 	[foo retain];
-	[foo release];
+	[_foo release];
 	_foo = foo;
 }
 ```
@@ -208,7 +208,7 @@ id objc_retainAutoreleasedReturnValue(id object) {
 
 ``` swift
 - (void)setObject:(id)object {
-	[object release];
+	[_object release];
 	_object = [object retain];
 }
 ```
@@ -346,11 +346,10 @@ Objective-C的错误模型表明, 异常只应在发生严重错误后抛出(参
 将自动释放池嵌套用的好处是, 可以借此控制应用程序的内存峰值, 使其不致过高。比如, 在执行`for循环`时, 应用程序所占内存量就会持续上涨, 而等到所有临时对象都释放后, 内存用量又会突然下降。加上一层自动释放池之后, 应用程序在执行循环时的内存峰值就会降低, 不再像原来那么高了。
 
 ``` swift
-    NSMutableArray *collection = [NSMutableArray array];
-    for (int i = 0; i < 10e6; ++i) {
+for (int i = 0; i < 99999999; ++i) {
         @autoreleasepool {
             NSString *str = [NSString stringWithFormat:@"hi + %d", i];
-            [collection addObject:str];
+            // some operation
         }
     }
 ```

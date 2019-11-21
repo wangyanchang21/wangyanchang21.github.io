@@ -65,7 +65,7 @@ OC中有`头文件`(header file)和`实现文件`(implementation file), 也就�
 在头文件中通过`@class`来声明这个类, 而不是直接导入头文件; 在实现文件中, 就必须要引入其头文件了。这样就延后了导入头文件的时机。
 
 但是有时必须要在头文件中引入其他头文件。  
-1.如果你写的类继承自某个超类, 则必须引入定义那个超类的头文件。  
+1.如果你写的类继承自某个父类, 则必须引入定义那个父类的头文件。  
 2.如果要声明你写的类遵从某个协议(protocol), 那么该协议必须要有完整定义, 所以不能使用向前声明。  
 
 ``` swift
@@ -221,10 +221,10 @@ typedef NS_ENUM(NSUInteger, EOCConnectionState) {
 	EOCConnectionStateConnected,
 };
 typedef NS_OPTIONS(NSUInteger, EOCPermittedDirection) {
-	EOCPermittedDirection = 1 << 0,
-	EOCPermittedDirection = 1 << 1,
-	EOCPermittedDirection = 1 << 2,
-	EOCPermittedDirection = 1 << 3,
+	EOCPermittedDirectionUp    = 1 << 0,
+	EOCPermittedDirectionLeft  = 1 << 1,
+	EOCPermittedDirectionDown  = 1 << 2,
+	EOCPermittedDirectionRight = 1 << 3,
 };
 ```
 

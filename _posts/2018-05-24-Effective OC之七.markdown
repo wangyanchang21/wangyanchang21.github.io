@@ -37,7 +37,7 @@ Objective-C编程时会经常需要使用底层的C语言级API。用C语言来�
 5.`CoreGraphics`框架是用C语言写成的，其中提供了2D渲染所必备的数据结构与函数。   
 6.`CoreAnimation`是用Objective-C语言写成的，它提供了一些工具，而UI框架则用这些工具来渲染图形并播放动画。  
 
-还有许多其他的框架, 如`MapKit框架`，它为iOS程序提供地图功能。又比如`Social框架`，它为`MacOS`及iOS程序提供了社交网络功能。更多可以了解一下: [Cocoa Touch框架](https://blog.csdn.net/wangyanchang21/article/details/51028697#t11)。
+还有许多其他的框架, 如`MapKit框架`，它为iOS程序提供地图功能。又比如`Social框架`，它为`MacOS`及iOS程序提供了社交网络功能。更多可以了解一下: [Cocoa Touch框架](https://dcsnail.blog.csdn.net/article/details/49764453#t11)。
 
 ### 总结
 
@@ -95,7 +95,13 @@ NSEnumerator遍历方式:
 
 使用`无缝桥接`技术，可以在定义于`Foundation框架`中的Objective-C类和定义与`CoreFoundation框架`中的C数据结构之间互相转换。笔者将C语言级别的API称为数据结构, 而没有称其为类或对象, 这是因为它们与Objective-C中的类或对象并不相同。
 
-转换中的`__bridge`告诉`ARC`如何处理转换所涉及的Objective-C对象。`__bridge`表示`ARC`仍然具备这个Objective-C对象的所有权。而`__bridge_retained`意味着`ARC`将交出对象的所有权。与之相似，反向转换可通过`__bridge_transfer`来实现。这三种转换方式成为`桥式转换`(bridged cast)。
+
+以下这三种转换方式称为`桥式转换`(bridged cast)：
+1.`__bridge`只做Objective-C的对象和Core Foundation对象的相互转换，但不涉及对象所有权的改变，所以`ARC`仍然具备这个对象的所有权。
+2.`__bridge_retained`意味着Objective-C的对象转换为Core Foundation的对象，同时将对象的所有权由`ARC`交给我们。
+3.`__bridge_transfer`来实现将Core Foundation的对象转换为Objective-C的对象，同时将对象所有权交于`ARC`。
+
+可以参考我之前的一篇文章：[对象桥接转换(__bridge,__bridge_transfer,__bridge_retained)](https://dcsnail.blog.csdn.net/article/details/48714409)
 
 `Foundation框架`中的Objective-C类所具备的某些功能，是`CoreFoundation框架`中的C语言数据结构所不具备的，反之亦然。在使用`Foundation框架`中的字典对象时会遇到一个大问题，那就是其键的内存管理语义为`拷贝`，而值的语义却是`保留`。除非使用强大的无缝桥接技术，否则无法改变其语义。
 
@@ -261,7 +267,7 @@ NSMutableDictionary *anNSDictinary =
 
 在执行子类的`load方法`之前，必定会先执行所有超类的`load方法`，所以在`load方法`里不用写[super load]。而如果代码还依赖了其他程序库，那么程序库里相关类的`load方法`也必定会先执行。
 
-有个重要的事情需注意，那就是`load方法`并不像普通的方法那样，它并不遵从那套继承规则，如果某个类本身没实现`load方法`，那么不管其各级超类是否实现此方法，系统都不会调用。
+有个重要的事情需注意，那就是`load方法`并不像普通的方法那样，它并不遵从那套继承规则，如果某个类本身没实现`load方法`，那么不管其各级父类是否实现此方法，系统都不会调用。所以，这就是为什么+load方法只会执行一次的原因。
 
 而且load方法务必实现得精简一些，也就是要尽量减少其所执行的操作，因为整个应用程序在执行`load方法`时都会阻塞。
 
@@ -286,7 +292,7 @@ NSMutableDictionary *anNSDictinary =
 
 在`load`和`initialize`方法中尽量精简代码，在里面设置一些状态，使本类能够正常运作就可以了，不要执行那种耗时太久或需要加锁的任务。
 
-之前也曾写过一篇关于`load`和`initialize`方法比较的博客: [NSObject的load和initialize方法比较](https://blog.csdn.net/wangyanchang21/article/details/77483749)。
+之前也曾写过一篇关于`load`和`initialize`方法比较的博客: [NSObject的load和initialize方法比较](https://wangyanchang21.github.io/2017/load和initialize方法的探究/)。
 
 ### 总结 
 
