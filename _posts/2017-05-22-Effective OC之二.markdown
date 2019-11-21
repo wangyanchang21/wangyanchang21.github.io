@@ -205,7 +205,7 @@ OC对应的方法是, 把成员变量当做一种存储偏移量所用的特殊�
 
 所以说, 当我们在父类的`init`方法中, 使用了`self.xx`的方式, 而且其子类又重写了此属性的`setter`方法。 这时代码是这样执行的, `SubDog`在`init`时, 以`super` 的方式调用了`init`, 在`SuperDog`的`init`中, [self calss]应该是`SubDog`, 所以`self.xx`执行的是SubDog的setter方法。
 
-但是在某些情况下必须要在初始化方方中调用`setter`方法: 如果待初始化的实例变量声明在超类中，而我们又无法在子类中直接访问此实例变量的话，那么就需要调用`setter方法`了。
+但是在某些情况下必须要在初始化方方中调用`setter`方法: 如果待初始化的实例变量声明在父类中，而我们又无法在子类中直接访问此实例变量的话，那么就需要调用`setter方法`了。
 
 
 ### 总结
@@ -286,7 +286,7 @@ NSObject协议中有两个用于判断等同性的关键方法：
 
 如果经常需要判断等同性，那么可能会自己来创建等同性判定方法，因为无须检测参数类型，所以能大大提升检测速度。
 
-在编写判定方法时，也应一并重写`isEqual:`方法。后者的常见实现方式为：如果受测的参数与接收该消息的对象都属于同一个类，那么就调用自已编写的判定方法，否则就交由超类来判断。例如，在EOCPerson类中可以实现如下两个方法：
+在编写判定方法时，也应一并重写`isEqual:`方法。后者的常见实现方式为：如果受测的参数与接收该消息的对象都属于同一个类，那么就调用自已编写的判定方法，否则就交由父类来判断。例如，在EOCPerson类中可以实现如下两个方法：
 
 ``` swift
 - (BOOL)isEqualToPerson:(EOCPerson*)otherPerson {  
@@ -392,7 +392,7 @@ if ([maybeAnArray isKindOfClass:[NSArray class]]) {
 我们经常需要向类簇中新增实体子类，所需遵循的规范一般都会定义于基类的文档之中，而且需要遵守几条规则:   
 1.子类应该继承自类簇中的抽象基类。若要编写`NSArray类簇`的子类，则需令其继承自不可变数组的基类或可变数组的基类。   
 2.子类应该定义自己的数据存储方式。子类必须用一个实例变量来存放数组中的对象。NSArray本身只不过是包在其他隐藏对象外面的壳，它仅仅定义了所有数组都需具备的一些接口。   
-3.子类应当重写超类文档中指明需要重写的方法。   
+3.子类应当重写父类文档中指明需要重写的方法。   
 
 ### 总结
 
@@ -480,7 +480,7 @@ id returnValue = objc_msgSend(someObject, @selector(messageName:), parameter);
 
 `objc_msgSendSuper`
 
-如果要给超类发消息，例如[super message:parameter]，那么就交由此函数处理。也有另外两个与objc_msgSend_stret和objc_msgSend_fpret等效的函数，用于处理发给super的相应消息。
+如果要给父类发消息，例如[super message:parameter]，那么就交由此函数处理。也有另外两个与objc_msgSend_stret和objc_msgSend_fpret等效的函数，用于处理发给super的相应消息。
 
 ### 总结
 
@@ -561,7 +561,7 @@ return [super resolveInstanceMethod:selector];
 - (void)forwardInvocation:(NSInvocation*)invocation 
 ```
 
-这个方法可以实现得很简单：只需改变调用目标，使消息在新目标上得以调用即可。实现此方法时，若发现某调用操作不应由本类处理，则需调用超类的同名方法。这样的话，继承体系中的每个类都有机会处理此调用请求，直至`NSObject`。如果最后调用了NSObject类的方法，那么该方法还会继而调用`doesNotRecognizeSelector:`以抛出异常，此异常表明选择子最终未能得到处理。
+这个方法可以实现得很简单：只需改变调用目标，使消息在新目标上得以调用即可。实现此方法时，若发现某调用操作不应由本类处理，则需调用父类的同名方法。这样的话，继承体系中的每个类都有机会处理此调用请求，直至`NSObject`。如果最后调用了NSObject类的方法，那么该方法还会继而调用`doesNotRecognizeSelector:`以抛出异常，此异常表明选择子最终未能得到处理。
 
 ### 消息转发全流程
 
