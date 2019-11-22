@@ -16,8 +16,8 @@ block在ARC和MRC下的几种类型，block的内部结构和作用。
 - [block的类型](#block的类型)
 	- [NSGlobalBlock](#nsglobalblock)
 	- [NSStackBlock 或 NSMallocBlock](#nsstackblock-或-nsmallocblock)
-	- [NSMallocBlock](#NSMallocBlock)
-	- [NSStackBlock](#NSStackBlock)
+	- [NSMallocBlock](#nsmallocblock)
+	- [NSStackBlock](#nsstackblock)
 	- [block类型总结](#block类型总结)
 - [相关资料](#相关资料)
  
