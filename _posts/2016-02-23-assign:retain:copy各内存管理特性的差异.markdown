@@ -21,10 +21,6 @@ tags: [iOS,内存管理]
 	- [assign/retain/copy区别](#assignretaincopy区别)
 	- [字符串的copy和strong](#字符串的copy和strong)
 	- [容器类型的copy和strong](#容器类型的copy和strong)
-	- [Mist](#mist)
-	- [Mist](#mist)
-	- [Mist](#mist)
-- [相关资料](#相关资料)
 
 ------
 
@@ -74,7 +70,7 @@ tags: [iOS,内存管理]
 ```
 
 关于深浅拷贝和完全拷贝的概念如果不太清楚，请参考[关于浅拷贝、深拷贝的探究](https://dcsnail.blog.csdn.net/article/details/51145690)。     
-如果对深拷贝和完全拷贝需要透彻理解，请参考 [深拷贝和完全拷贝对比的探究](https://dcsnail.blog.csdn.net/article/details/51008130)。     
+如果对深拷贝和完全拷贝需要透彻理解，请参考 [深拷贝和完全拷贝对比的探究](https://wangyanchang21.github.io/2016/深拷贝和完全拷贝对比的探究/)。     
 这里就不再赘述了。
 
 ## 各特性差异
