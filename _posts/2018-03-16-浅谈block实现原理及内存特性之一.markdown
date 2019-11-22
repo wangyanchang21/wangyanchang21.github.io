@@ -15,7 +15,9 @@ block在ARC和MRC下的几种类型，block的内部结构和作用。
 - [block 的内部结构和作用](#block-的内部结构和作用)
 - [block的类型](#block的类型)
 	- [NSGlobalBlock](#nsglobalblock)
-	- [NSStackBlock 和 NSMallocBlock](#nsstackblock-和-nsmallocblock)
+	- [NSStackBlock 或 NSMallocBlock](#nsstackblock-或-nsmallocblock)
+	- [NSMallocBlock](#NSMallocBlock)
+	- [NSStackBlock](#NSStackBlock)
 	- [block类型总结](#block类型总结)
 - [相关资料](#相关资料)
  
@@ -115,7 +117,7 @@ GlobalBlock：<__NSGlobalBlock__: 0x108e070d0>
 可以看出block存储于全局静态区, 是`NSGlobalBlock`类型。
 
 
-### NSStackBlock  或 NSMallocBlock
+### NSStackBlock 或 NSMallocBlock
 
 为什么把它们两者放在一起来说呢? `栈块`和`堆块`的表现可能比较复杂一些。而且, 下面这些代码在`ARC`和`MRC`的表现效果是不同的。还是先来看代码吧。
 

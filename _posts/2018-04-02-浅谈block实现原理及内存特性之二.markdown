@@ -245,7 +245,7 @@ static void _I_ViewController_capture__blockVariable(ViewController * self, SEL 
 
 ### block捕获当前类的属性
 
-###例子和打印结果
+### 例子和打印结果
 
 当属性变量被block捕获时, 原理与`捕获局域变量`和`捕获由__block修饰的变量`不完全相同。下面以捕获ViewController中的属性为例:
 

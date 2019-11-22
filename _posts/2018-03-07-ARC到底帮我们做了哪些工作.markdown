@@ -244,9 +244,9 @@ VC中的代码应该是这样的:
 }
 ```
 
-`objc_autoreleaseReturnValue`: 这个函数的作用相当于代替我们手动调用 autorelease, 而且还有一些优化。编译器会检测之后的代码, 根据返回的对象是否执行 retain操作, 来设置全局数据结构中的一个标志位, 来决定是否会执行 autorelease操作。该标记有两个状态, `ReturnAtPlus0`代表执行 autorelease, 以及`ReturnAtPlus1`代表不执行 autorelease。
+`objc_autoreleaseReturnValue`: 这个函数的作用相当于代替我们手动调用 autorelease, 创建了一个autorelease对象。编译器会检测之后的代码, 根据返回的对象是否执行 retain操作, 来设置全局数据结构中的一个标志位, 来决定是否会执行 autorelease操作。该标记有两个状态, `ReturnAtPlus0`代表执行 autorelease, 以及`ReturnAtPlus1`代表不执行 autorelease。
 
-`objc_unsafeClaimAutoreleasedReturnValue`: 这个函数的作用是替我们手动调用`objc_release`函数，而且还有一些优化。编译器会根据存储的标记来决定需要不需要对其进行 release操作, 当然如果它创建时执行了 autorelease操作就不需要对其进行 release操作了。
+`objc_unsafeClaimAutoreleasedReturnValue`: 这个函数的作用是对autorelease对象不做处理仅仅返回，对非autorelease对象调用`objc_release`函数并返回。所以本情景中它创建时执行了 autorelease操作了，就不会对其进行 release操作了。只是返回了对象，在合适的实际autoreleasepool会对其进行释放的。
 
 
 #### 情景5
@@ -272,9 +272,9 @@ VC中的代码应该是这样的:
 }
 ```
 
-`objc_retainAutoreleasedReturnValue`: 这个函数将替代 MRC中的 retain方法, 此函数也会检测刚才提到的那个标志位, 根据标志位来决定是否执行 retain操作。
+`objc_retainAutoreleasedReturnValue`: 这个函数将替代 MRC中的 retain方法, 此函数也会检测刚才提到的那个标志位, 如果为`ReturnAtPlus0`怎执行该对象的 retain操作，否则直接返回对象本身。
 
-在这个例子中, 由于代码中没有对对象进行保留, 所以创建时`objc_autoreleaseReturnValue`函数设置的标志位状态是应该是`ReturnAtPlus0`, 表示需要执行 autorelease操作的。所以, 该函数在此处是会进行 retain操作的。
+在这个例子中, 由于代码中没有对对象进行保留, 所以创建时`objc_autoreleaseReturnValue`函数设置的标志位状态是应该是`ReturnAtPlus0`。所以, 该函数在此处是会进行 retain操作的。
 
 
 #### 情景6
@@ -301,7 +301,7 @@ VC中的代码应该是这样的:
 }
 // VC
 - (void)testForARC {
-    id temp = _objc_retainAutoreleasedReturnValue([Zoo createZoo]); 
+    id temp = objc_retainAutoreleasedReturnValue([Zoo createZoo]); 
     [self setZoo:temp];
     objc_release(temp);
 }
@@ -310,12 +310,14 @@ VC中的代码应该是这样的:
 }
 ```
 
-在这个例子中, 由于代码中 zoo属性对对象进行了保留, 所以创建时`objc_autoreleaseReturnValue`函数设置的标志位状态是应该是`ReturnAtPlus1`, 表示不需要执行 autorelease操作的。所以, 该函数在此处是不会进行 retain操作的, 所以此时的引用计数就是创建时的那个, 并没有做多余的操作。而且通过ARC的这种设置并检测标志位的方法要比调用 autorelease和 retain更快。
+在这个例子中，autorelease对象在`objc_autoreleaseReturnValue`函数中retain给了临时变量`temp`了。`temp`经过`objc_storeStrong`函数，将其所指向的内存又让`_zoo`进行了retain。最终，`temp`进行调用`objc_release`函数进行释放，`_zoo`持有了那块内存。
+
+而且`objc_autoreleaseReturnValue`函数通过ARC的这种设置并检测标志位的方法要比调用频繁低啊用 autorelease和 retain要更快。
 
 
 ### 对变量修饰符的优化
 
-在应用程序中，修饰符来改变局部变量与实例变量的语义: `__strong`, `__unsafe_unretained`, `__weak`, `__autorelease`。具体含义就不絮述了, 可以约我我之前的博客:[高效 OC之内存管理](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%BA%94/#-%E4%BB%A5arc%E7%AE%80%E5%8C%96%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0)。
+在应用程序中，修饰符来改变局部变量与实例变量的语义: `__strong`, `__unsafe_unretained`, `__weak`, `__autorelease`。具体含义就不絮述了, 可以阅读我之前的博客:[高效 OC之内存管理](https://wangyanchang21.github.io/2018/Effective-OC%E4%B9%8B%E4%BA%94/#-%E4%BB%A5arc%E7%AE%80%E5%8C%96%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0)。
 
 现在单纯为了研究修饰符的语义, 就以`需要手动释放返回对象`的环境为背景来做比较, 修改VC中`testForARC`的方法:
 
@@ -396,7 +398,7 @@ VC中的代码应该是这样的:
 }
 ```
 
-`__unsafe_unretained`类型，不具有所有权，所以只是简单的指针赋值, 没有runtime的函数使用。当临时变量`temp`销毁后, 指针`objc3`仍然是指向那块内存, 所以是不不安全的。正如其名, unretained, unsafe。
+`__unsafe_unretained`类型，不具有所有权，所以只是简单的指针赋值, 没有runtime的函数使用。当临时变量`temp`销毁后, 指针`objc3`仍然是指向那块内存, 所以是不安全的。正如其名, unretained, unsafe。
 
 #### `__autoreleasing`(情景10)
 
