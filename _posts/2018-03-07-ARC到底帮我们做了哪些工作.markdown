@@ -1,8 +1,8 @@
 ---
 title:  "ARC到底帮我们做了哪些工作?"
 date:   2018-03-07 18:47:08
-categories: [iOS, 内存管理]
-tags: [iOS, 内存管理]
+categories: [iOS, 内存管理, runtime]
+tags: [iOS, 内存管理, runtime]
 ---
 
 ARC将内存管理交由编译器和运行时来做。编译器根据语义，自动调用内存管理的底层C函数。这样就不需要频繁执行保留及释放操作，提高了效率和执行效率。

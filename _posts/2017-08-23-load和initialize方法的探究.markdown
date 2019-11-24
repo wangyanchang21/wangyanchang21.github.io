@@ -1,8 +1,8 @@
 ---
 title:  "+load和+initialize方法的探究"
 date:   2017-08-23 16:02:49
-categories: [iOS]
-tags: [iOS]
+categories: [iOS, runtime]
+tags: [iOS, runtime]
 ---
 
 关于+load方法和+initialize方法的联系和区别。
