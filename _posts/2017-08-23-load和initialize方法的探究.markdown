@@ -32,13 +32,16 @@ tags: [iOS]
 ## load的相关特点
 
 ### 运行时机
-+load方法的执行时机在 App启动时, 而且是在`main函数`之前。
++load方法的执行时机在 App启动后, 而且是在`main函数`之前。
 
-### 加载的内容
-①你程序链接的framework的初始化。
-②镜像中的所有+load方法。
-③镜像中所有的`C++`静态初始化和`__attribute __`构造函数的初始化。
-④链接到你的framework的初始化。
+### load 和 runtime
+而且当执行+load方法前，正是从`dyld`(the dynamic link editor)到`runtime`的过程。并且此时已经完成了如下的操作：
+   
+- 加载程序中链接的framework和lib，包括系统和三方的。
+- 当前类镜像中所有`C++`静态对象和`__attribute__`构造函数的初始化。
+- 当前类镜像的`map_images`函数执行。
+- 当前类镜像的`load_images`函数执行，进而触发+load方法。
+
 
 ### 执行顺序
 一个类的+load方法不需要显式调用`[super load]`，且父类会先执行自己类中的+load方法，再执行子类的+load方法。
