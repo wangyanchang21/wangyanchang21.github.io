@@ -35,12 +35,16 @@ tags: [iOS, runtime]
 +load方法的执行时机在 App启动后, 而且是在`main函数`之前。
 
 ### load 和 runtime
-而且当执行+load方法前，正是从`dyld`(the dynamic link editor)到`runtime`的过程。并且此时已经完成了如下的操作：
-   
-- 加载程序中链接的framework和lib，包括系统和三方的。
-- 当前类镜像中所有`C++`静态对象和`__attribute__`构造函数的初始化。
+当`main函数`执行前，正是从`dyld`(the dynamic link editor)到`runtime`的过程。大致过程如下：
+
+- 系统调用当前App的进程，初始化运行环境。
+- `dyld`读取并加载程序的mach-o文件，即程序的二进制可执行文件。
+- 开启缓存策略，加载程序中你链接的动态库，如 `framework`、`tbd`等。
+- `ImageLoader`加载所有`image`（镜像）到内存。
 - 当前类镜像的`map_images`函数执行。
 - 当前类镜像的`load_images`函数执行，进而触发+load方法。
+- 当前类镜像中所有`C++`全局静态变量和`__attribute__`修饰的构造函数的初始化。
+- `main函数`执行。
 
 
 ### 执行顺序
