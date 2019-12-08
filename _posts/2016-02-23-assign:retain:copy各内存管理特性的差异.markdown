@@ -115,11 +115,11 @@ NSLog(@"%lu",[per retainCount]);
 
 ``` swift
  NSString *string = [NSString stringWithFormat:@"不可变字符串"];
-    self.strongString = string;
-    self.copyedString = string;
-    NSLog(@"origin string: %p, %p", string, &string);
-    NSLog(@"strong string: %p, %p", _strongString, &_strongString);
-    NSLog(@"copy string: %p, %p", _copyedString, &_copyedString);
+self.strongString = string;
+self.copyedString = string;
+NSLog(@"origin string: %p, %p", string, &string);
+NSLog(@"strong string: %p, %p", _strongString, &_strongString);
+NSLog(@"copy string: %p, %p", _copyedString, &_copyedString);
 ```
 
 我们用一个不可变字符串来为这两个属性赋值， 输出结果为:
@@ -151,7 +151,7 @@ NSMutableString *string = [NSMutableString stringWithFormat:@"此行改为了可
 
 所以，在声明NSString属性时，到底是选择strong还是copy，可以根据实际情况来定。不过，一般我们将对象声明为NSString时，都不希望它改变，所以大多数情况下，我们建议用copy，以免因可变字符串的修改导致的一些非预期问题。
 
-但是有个问题， 就是当你避开属性的修饰符特性进行赋值时， 这个是不成立的， 因为他仅仅是赋值操作， 修饰符失效。也就是说将代码中的`self.strongString = string;`和`self.copyedString = string;` 换成 `_strongString = string;`和`_copyedString = string`。具体原因请看 [property之 self.xx与_xx的区别](http://blog.csdn.net/wangyanchang21/article/details/50607651)
+但是有个问题， 就是当你避开属性的修饰符特性进行赋值时，`copy`也会与`strong`的结果一样，因为他仅仅是赋值操作，修饰符失效。也就是说将代码中的`self.strongString = string;`和`self.copyedString = string;` 换成 `_strongString = string;`和`_copyedString = string`。具体原因请看 [property之 self.xx与_xx的区别](http://blog.csdn.net/wangyanchang21/article/details/50607651)
 
 
 ### 容器类型的copy和strong
