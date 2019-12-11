@@ -177,6 +177,11 @@ tags: [iOS, 移动安全]
 4. 接收方用与发送方计算`摘要`一致的算法对收到的原始数据进行计算，得到由原始数据计算得到的本地`摘要`。   
 5. 接收方将本地计算的`摘要`和发送方的`摘要`进行对比。若结果一致，则证明没有被篡改过。   
 
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/algorithmsummary/20191211124216662.png" img/>
+</center>
+
+
 在这个过程中，就是一个私钥加密，公钥解密的过程，用于验证数据完整性和发送方身份的。而公钥加密，私钥解密，是用于防止数据被第三方得到。当然，签名的效率要比非对称加密的效率要高的多。
 
 ### 非对称加密对比
