@@ -180,6 +180,7 @@ tags: [iOS, 移动安全]
 <center>
 <img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/algorithmsummary/20191211124216662.png" img/>
 </center>
+<center>[图片来源](http://blog.cnbang.net/tech/3386/)</center>
 
 
 在这个过程中，就是一个私钥加密，公钥解密的过程，用于验证数据完整性和发送方身份的。而公钥加密，私钥解密，是用于防止数据被第三方得到。当然，签名的效率要比非对称加密的效率要高的多。
