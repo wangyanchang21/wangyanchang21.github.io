@@ -489,7 +489,7 @@ _tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNe
 
 - @property(nonatomic, readonly) UIEdgeInsets adjustedContentInset API_AVAILABLE( ios(11.0), tvos(11.0));
 
-这是UIScrollView的属性, 且为只读属性, 当contentInsetAdjustmentBehavior允许时，他是`safeAreaInsets`和`adjustedContentInset` 的和。
+这是UIScrollView的属性, 且为只读属性, 当contentInsetAdjustmentBehavior允许时，他是`safeAreaInsets`和`contentInset` 的和。
 
 如果当我们调整tablevew的contentInset时:
 
