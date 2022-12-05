@@ -1,0 +1,637 @@
+---
+title:  "Swift环境及编译优化调研"
+date:    2020-09-28 18:21:58
+categories: [iOS, Swift]
+tags: [iOS, ]
+---
+
+
+
+> 此文章首次发表在京东零售技术公众号：[Swift环境及编译优化调研](https://mp.weixin.qq.com/s/cM4arazOf9npcO7Ws0fnJA)
+
+[![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)
+
+
+
+## 目录
+
+- [背景](#背景)
+- [Swift VS Objective-C](#swift-vc-objective-c)
+- [Swift优势](#swift优势)
+- [Swift劣势](#swift劣势)
+- [ABI 稳定和 Module Stability](#abi-稳定和-module-stability)
+- [苹果对 Swift 的态度](#苹果对-swift-的态度)
+- [Swift对包体积的影响](#swift对包体积的影响)
+- [Swift编译器的优化](#swift编译器的优化)
+- [SIL做了什么](#sil做了什么)
+- [总结](#总结)
+
+
+
+## 背景
+
+苹果在 2014 年发布了 Swift，这门语言一诞生就备受开发者们的关注。由于其多方面的优势和苹果的极力推崇，Swift 也愈演愈烈。但就如很多语言一样，初期的 Swift 也有许多诟病，一度让开发者们又爱又恨。近年，Swift 也逐步实现了 ABI 稳定、模块稳定、SPM 完善等等。我们的团队也从今年初将 Swift 混编提上日程，经过充分的调研工作和紧锣密鼓的混编实施后，在 7 月份已经顺利上线了。本篇文章对之前的调研内容重新做了梳理，在技术和环境等各方面做一个完备的分析。
+
+
+
+
+## Swift VS Objective-C
+
+### TIOBE 语言排名
+
+在 TIOBE 公布的2020年9月份的编程语言排名中，`Swift`以 1.38% 的占有率排名第 `12` 位，而 `Objective-C` 在上个月又重返前20名后占有率继续下降，以 0.85% 的占有率排名第`19`位。
+
+
+### 社区活跃度
+
+对 Github 网站上托管的 Swift 库和 Objective-C 库进行活跃度比较。从`Pull Request`、`Issue`、`Push`、`Star`等各个方面的详细数据来看，Swift 在2017年就已经实现对 Objective-C 完全超越。而且近年来，Swift 在活跃度和贡献度上与 Objective-C 差距有逐渐拉开趋势。
+
+开发者在 Stack Overflow 上，对 Swift 和 Objective-C 提问数量比例的变化趋势，也能够很清晰的说明两者间的关系。Objective-C 问题占比近些年来逐年下降，而 Swift 问题占比从横空出世一年内就实现强势超越。Swift 提问热度也比较稳定，而且目前比 Objective-C 高出1.5% 左右，差距较大。
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/swiftresearch/swift-env-compiler-3.png" width="80%" img/>
+</center>
+
+
+### Swift应用现状
+
+
+想要得到 Swift 的实际应用现状，最直接的方式就是对 App Store 中的应用进行分析。然后，我们就基于8月1日的国内 App Store 应用免费排行榜，对前100名的应用进行了可执行文件的扫描分析。结果中已经实现 Swift 开发的有31个，没有实现的有69个，具体数据如下：
+
+
+| 排名 |        应用        | 是否支持Swift |
+| :--: | :----------------: | :-----------: |
+|  1   |     个人所得税     |               |
+|  2   |       拼多多       |               |
+|  3   |     淘宝特价版     |               |
+|  4   |     交管12123      |               |
+|  5   |        钉钉        |               |
+|  6   |        剪映        |       ✔       |
+|  7   |        微信        |       ✔       |
+|  8   |        微视        |       ✔       |
+|  9   |     抖音短视频     |               |
+|  10  |      腾讯会议      |               |
+|  11  |      企业微信      |               |
+|  12  |       支付宝       |               |
+|  13  |        百度        |       ✔       |
+|  14  |      七猫小说      |       ✔       |
+|  15  |         QQ         |               |
+|  16  |       爱奇艺       |       ✔       |
+|  17  |      手机淘宝      |       ✔       |
+|  18  |     快手极速版     |               |
+|  19  |        美团        |               |
+|  20  |      优酷视频      |       ✔       |
+|  21  |        得物        |       ✔       |
+|  22  |       芒果TV       |       ✔       |
+|  23  |       58同城       |               |
+|  24  |      高德地图      |               |
+|  25  |      BOSS直聘      |               |
+|  26  |      阿里巴巴      |               |
+|  27  |    中国建设银行    |               |
+|  28  |        快手        |               |
+|  29  |    农行掌上银行    |               |
+|  30  |       云闪付       |               |
+|  31  |        闲鱼        |               |
+|  32  |     闽政通APP      |       ✔       |
+|  33  |       小红书       |       ✔       |
+|  34  |      腾讯视频      |               |
+|  35  |       QQ音乐       |               |
+|  36  |    中国工商银行    |       ✔       |
+|  37  |        京东        |       ✔       |
+|  38  |     网易云音乐     |               |
+|  39  |       安居客       |               |
+|  40  |      手机天猫      |               |
+|  41  |      京东金融      |               |
+|  42  |      酷狗音乐      |               |
+|  43  |      哔哩哔哩      |       ✔       |
+|  44  |  中国银行手机银行  |       ✔       |
+|  45  |      中国移动      |               |
+|  46  |      贝壳找房      |               |
+|  47  |      人人视频      |               |
+|  48  |     抖音极速版     |               |
+|  49  |      美图秀秀      |       ✔       |
+|  50  |      QQ浏览器      |               |
+|  51  |     WPS Office     |               |
+|  52  |        陌声        |       ✔       |
+|  53  |      轻颜相机      |       ✔       |
+|  54  |      哈啰出行      |               |
+|  55  |      百度网盘      |       ✔       |
+|  56  |      驾考宝典      |               |
+|  57  |     扫描全能王     |               |
+|  58  |       学小易       |               |
+|  59  |       天眼查       |               |
+|  60  |        Soul        |       ✔       |
+|  61  |        Keep        |       ✔       |
+|  62  |       QQ邮箱       |               |
+|  63  |      招商银行      |               |
+|  64  |    WiFi万能钥匙    |               |
+|  65  |      美团外卖      |               |
+|  66  |        微博        |               |
+|  67  |    邮储手机银行    |               |
+|  68  |      UC浏览器      |               |
+|  69  |      喜马拉雅      |               |
+|  70  |        夸克        |               |
+|  71  |     平安好车主     |               |
+|  72  |        醒图        |       ✔       |
+|  73  | 中国联通手机营业厅 |               |
+|  74  |      网上国网      |               |
+|  75  |      学习强国      |               |
+|  76  |      大众点评      |               |
+|  77  |      番茄小说      |               |
+|  78  |       饿了么       |               |
+|  79  |     搜狗输入法     |               |
+|  80  |     铁路12306      |               |
+|  81  |       作业帮       |               |
+|  82  |        知位        |               |
+|  83  |       懂车帝       |       ✔       |
+|  84  |      掌上生活      |               |
+|  85  |        识货        |       ✔       |
+|  86  |        袋鼠        |               |
+|  87  |     京东极速版     |               |
+|  88  |      百度地图      |               |
+|  89  |       货拉拉       |               |
+|  90  |      苏宁易购      |               |
+|  91  |        知乎        |       ✔       |
+|  92  |      腾讯新闻      |       ✔       |
+|  93  |      全民K歌       |               |
+|  94  |      滴滴出行      |       ✔       |
+|  95  |     万能遥控器     |               |
+|  96  |       链工宝       |               |
+|  97  |      今日头条      |       ✔       |
+|  98  |      汽车之家      |               |
+|  99  |      携程旅行      |       ✔       |
+| 100  |     肯德基KFC      |       ✔       |
+
+
+国内 App Store 应用免费排行榜数据分析如下：
+
+```mermaid
+pie title 中国区 Top 100 App Swift 支持度
+"支持" : 31
+"不支持" : 69
+```
+
+
+但对于美国 App Store 应用免费排行榜进行分析后，发现数据上基本与国内相反，使用Swift的应用占比81%，不包含Swift的仅有19%。国外开发者对于 Swift 的使用力度还是很高的，与国内的数据形成一个十分明显的对比，所以国内开发者整体对于 Swift 的支持度还是有一定差距的。
+
+```mermaid
+pie title 美国区 Top 100 App Swift 支持度
+"支持" : 81
+"不支持" : 19
+```
+
+
+由于只采样前100个应用，所以数据并不能精确说明 Swift 在 iOS 中的应用比例，只能作为一个参考。2019年开发者曾对国内外 Top 1000 的 App 做过同样的分析，他们的结论是国内使用 Swift 的 APP 占比约22%，美区使用 Swift 的 APP 占比约78%。
+
+
+
+## Swift 优势
+
+- 性能高、速度快
+
+Swift 性能高，速度快，在复杂数据的处理上尤为明显。在 WWDC 2015 时苹果就曾发布过一组 Swift 和 ObjC 性能对比的数据。在 Richards 的基准测试中，Swift 的运行速度是 ObjC 的 4.29 倍。在 DeltaBlue 的基准测试中，Swift 的运行速度是 ObjC 的 2.67 倍。
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/swiftresearch/swift-env-compiler-6.png" width="80%" img/>
+</center>
+
+Swfit 中的类分为值类型和引用类型，值类型是没有引用计数的，纯粹的值类型是存储于栈区的。Swift 中的 struct 能替代绝大数 ObjC 中的类，通过入栈出栈方式进行分配和销毁，大幅减少了在堆区内存的分配和回收，提高了效率。Swift 还在一些细节上做了内存优化，比如集合类型的 Copy-on-Write 特性。
+
+
+- 安全性高
+
+Swift 从设计之初就比基于 C 的语言更安全，另外还清除了不安全的代码。Swift 具有静态调度安全的特性，所以许多问题在编译时就能提前发现。
+Swift 还是强类型语言，默认情况下 Swift 对象不能为 nil，只有在初始化之后才可以使用，否则便会编译报错。另外，可选类型(Optionals)是 Swift 专门设计用于支持对象为 nil 的场景的。这就使得代码更加安全、简洁，防止了许多由于 nil 而造成的运行时难以查找的崩溃问题。
+Array、Dictionary、Set 集合类型以及其他的值类型，在一定程度上解决了一部分线程安全的问题，比如值类型的的存储属性、非全局的值类型变量等。
+当代码中发生内存溢出时，编译器会发送诊断信息。比如，常量计算中的内存溢出是很难查找的，Swift 编译器会把这个错误信息警示于开发者，而不是取值错误。
+从过往经验中来看，Swift 的整体崩溃率是低于 ObjC 的。这些强大的内置错误处理，给了 Swift 很高的安全性，但这一切都归根结底于 Swift 在编译器中所作的工作。
+
+- 先进性
+
+泛型、协议扩展在很大程度上提高了代码的复用率，使代码更加灵活。
+元组、关联枚举、下标语法、自定义运算符、字面量语法等，这些 ObjC 不具备的特性，可以十分简单地实现场景定制化，让代码更加灵活自如。
+结构体作为值类型的对象结构，可以满足绝大多数业务场景，做到更好的内存管理，也更符合线程安全的设计。
+Swift 引入模块的概念，解决了 ObjC 中长久以来为人诟病的命名空间问题。访问权限由 private 到 open 分为五级，使模块间的调用把控力更容易掌握。
+Swift 中闭包占有很重的戏份，但却拥有十分轻量级语法，许多便捷的高阶函数都是以闭包的形式展开进行的。这里面也体现了一些函数式编程的思想，而且其实所有的函数都可以作为一个闭包进行调用。
+
+- 开发效率
+
+Swift 指针的概念更加淡化了，内存管理也更加简单便利了，就连 ObjC 中需要手动管理的 CF 对象内存，也可以自动管理了。与 ObjC 相比，程序开发更傻瓜化，能让开发者有更多的精力放在业务逻辑层面，提升了开发效率。
+通过 Swift Playgrounds，无需复杂的项目配置就可以快速建立一个 Swift 运行环境，并且支持 UI 调试。无需进行手动编译便可以快速反馈给开发者，所以在某些场景下提高了开发者的调试效率。
+
+
+- 代码量减少
+
+由于 Swift 语言简洁明确，实现同样的功能，代码量明显比 ObjC 有所减少，估计减少 15~30%。我们曾尝试把京东中几个具有独立业务的 ObjC 页面用 Swift 重写了，最终代码量降低了 20.13%。
+
+- 跨平台
+
+Swift 可以在所有的 Apple Platform 中开发使用，包括 iOS，macOS，watchOS 和 tvOS。除此之外，还支持 Linux、Windows、Ubuntu、CentOS 等平台。
+Swift 从开发调试到二进制构建，再到打包分发，这些都已经完全集成在 Xcode 及其工具链中了。另外，Swift Package Manager 在 5.3 版本对二进制包分发和资源的打包的支持，使其跨品台的生态更加完整了。
+
+- 广泛的应用
+
+ Swift 在应用上很广泛，并不局限于苹果平台的开发。它有专门的团队 Swift Server Work Group (SSWG) 在从事服务端的建设，还有相应而生的后端框架 Perfect，Vapor 等。在人工智能领域 Swift for TensorFlow 的发展也如火如荼，还有 Web 前端、Linux等等。
+
+- 开源、持续发展
+
+Swift 是一门静态语言，面世以来就是开源的身份。苹果在 Swift Forums 和 Swift evolution 中广泛接受开发者们的建议和提案，这也促使着 Swift 近年来的飞快发展。苹果在 Swift 中倾尽心血，在短短几年时间内，语言完善和生态建立的速度之快，让业内人士瞠目结舌。但无论如何，Swift 还是一个很年轻的语言，而且它发展的脚步也不会停下。
+
+
+
+## Swift 劣势
+
+- 对于 Swift 混编工程来说，Swift 是可以无障碍调用 ObjC 的，但是反之不一定。虽然苹果的优化让 Swift 完美地兼容了 ObjC，但 Swift 中一些独有的特性，ObjC 是不能够支持的，在语言的转义过程中很容易出现问题，造成程序错误。
+- Swift 工程在编译时长上一般大于 ObjC。主要原因是静态调度的 Swift 在编译期就需要做更多的工作，会做许多检查和优化。编译器在优化阶段，估计就要占用三分之一左右的编译时间。但目前 Xcode 中有一些 Swift 的编译选项，通过调整这些策略，编译时长上还是有一定的优化空间的。
+- 单纯就某些简单的基础操作来说，如某些循环、拼接、元素增减等方面，Swift 速度上甚至不如 ObjC，但并不影响其复杂场景下以及整体的性能优势。
+- 在 Swift5.0 之前，或者在低于 iOS 12.2 以下的操作系统中 Swift runtime 和标准库包仍然会打包到工程的包中，仍然占用和应用的包体积。
+
+
+
+## ABI 稳定和 Module Stability
+
+Swift5.0 开始，ABI 稳定。这意味着通过 Swift5.0 及以上的编译器编译出来的应用二进制，就可以运行在任意 Swift5.0 及以上的 swift runtime 上。ABI 稳定后，Swift runtime 和标准库已经植入 `macOS 10.14.4`、`iOS 12.2`、`watchOS 5.2` 及以上系统中。因此，已经使用 Swift 的应用包体积将会减少，一般来说可以减小 10M 左右。WWDC 大会上苹果发布数据来看，在 iOS 12.2 中更新为 Swift5.0 后，iOS 应用单从 Swift 库方面就减少 7.5M ，watchOS 应用单从 Swift 库就减少 11.6M。当然，这个数据不是一个定值，会由代码中调用的标准库的数量来决定。
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/swiftresearch/swift-env-compiler-7.png" width="80%" img/>
+</center>
+
+根据苹果官方给出的数据，截止到 2020年6月17日，市场上所有 iPhone 中能支持 Swift runtime 内置的设备比例在 81%~94% 之间。因为从 iOS12.2 开始支持的，理论上来说这个值应该更接近 94%，估计在 90% 左右。而且，从长远角度来看，随着苹果系统的更新，这个数据也会越来越高。
+
+Swift5.1 开始 Module Stability。这意味着使用不同版本编译器构建的 Swift 模块可以在同一个应用程序中一起使用。开发者可以使用第三方库，而不必担心它们使用的是哪个版本的 Swift 编译器。无论是 ABI 稳定还是模块稳定，对于开发者来说都是非常值得庆贺的事情。
+
+
+
+## 苹果对 Swift 的态度
+
+苹果官方的 SDK 中，纯 Swift 的框架已经越来越多，比如 Combine、SwiftUI、RealityKit、Create ML、CryptoKit 等等。这些都是苹果主推的技术，而且这些库不能被 Objective-C 直接混编。在 WWDC 2020 上，发布了新功能 App Widget 组件。值得注意的是，App Widget 开发仅限于 SwiftUI。
+
+国外开发者 Alexandre Colucci 曾分析过苹果系统中 Swift 的使用情况。除了 Swift 库之外，iOS 13.1 中已经有 141 个二进制文件使用了 Swift。而且近两年来，增长速度惊人。
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/swiftresearch/swift-env-compiler-8.png" width="80%" img/>
+</center>
+
+总之，自 WWDC 2019 以来，越来越多的框架和功能向纯 Swift 倾斜。另外，WWDC 的示例代码早已经不见 ObjC 的踪影，越来越多的系统 App 使用 Swift 重写，这些都明显地体现了苹果在 ObjC 向 Swift 跨进这件事情上的趋势和态度。
+
+
+
+## Swift 对包体积的影响
+
+### 空白工程对比
+
+创建两个空白工程，分别对 ObjC 和 Swift 在 ABI 稳定前后的不同系统中做了一个对比，结果如下：
+
+|  开发语言  | iOS系统  | ipa包体积 |
+| :--------: | :------: | :-------: |
+| Objctive-C | iOS 13.0 |   69KB    |
+| Swift 5.1  | iOS 13.0 |   70KB    |
+| Objctive-C | iOS 8.0  |   176KB   |
+| Swift 5.1  | iOS 8.0  |   4.8MB   |
+
+可以明显看出在 ABI 稳定后，由于内置了 Swift 标准库和 runtime 的缘故，包体积已经缩减了约 4.7M。但在 ABI 稳定前，还是需要内置到 ipa 包中的。
+
+
+### 仅支持 Swift 混编环境的工程
+
+对纯 ObjC 工程实施 Swift 环境支持后，不添加任何 Swift 代码。在一个 arm64 的设备下，LinkMap 中会增加如下内容：
+
+|                动态/静态库                 |   大小   |
+| :----------------------------------------: | :------: |
+|              libswiftCore.tbd              |   32 B   |
+|         libswiftCompatibility50.a          | 321	B |
+| libswiftCompatibilityDynamicReplacements.a | 161	B |
+|                   总大小                   |  514 B   |
+
+
+根据可执行文件分析，得到新增的 Swift 相关动态链接库：
+
+| 序号 |            动态链接库             |
+| :--: | :-------------------------------: |
+|  1   | LC_LOAD_DYLIB(libswiftCore.dylib) |
+
+对于仅支持 Swift 环境的工程来说，只会链接 libswiftCore 这一个动态库，另外 LinkMap 中的库大小也还不到 1KB，基本可忽略不计。
+
+
+### 实现 Swift 混编业务的工程
+
+对纯 ObjC 工程实施 Swift 环境支持，且用 Swift 实现部分业务后。在一个 arm64 的设备下，LinkMap 中会增加如下内容：
+
+|                动态/静态库                 |   大小   |
+| :----------------------------------------: | :------: |
+|              libswiftCore.tbd              | 2.05 KB  |
+|           libswiftFoundation.tbd           |  448 B   |
+|            libswiftDispatch.tbd            |  256 B   |
+|             libswiftUIKit.tbd              |   96 B   |
+|           libswiftObjectiveC.tbd           | 64	B  |
+|         libswiftCompatibility50.a          | 321	B |
+| libswiftCompatibilityDynamicReplacements.a |  161 B   |
+|                   总大小                   | 3.36 KB  |
+
+
+根据可执行文件分析，得到新增的 Swift 相关动态链接库：
+
+| 序号 |                动态链接库                 |
+| :--: | :---------------------------------------: |
+|  1   |     LC_LOAD_DYLIB(libswiftCore.dylib)     |
+|  2   | LC_LOAD_DYLIB(libswiftCoreGraphics.dylib) |
+|  3   |   LC_LOAD_DYLIB(libswiftDispatch.dylib)   |
+|  4   |  LC_LOAD_DYLIB(libswiftFoundation.dylib)  |
+|  5   |  LC_LOAD_DYLIB(libswiftObjectiveC.dylib)  |
+|  6   |    LC_LOAD_DYLIB(libswiftUIKit.dylib)     |
+
+对比仅支持 Swift 环境的工程，多了许多动态库，这些就是项目中用到的 Swift 标准动态库。这也是为什么在 ABI 稳定前，随着涉及到越来越多的 Swift 标准动态库，包体积在不断增加的原因。另外 LinkMap 相应增长的大小只有 2.85KB，所以这个数值还是基本可以忽略不计的。
+
+
+
+## Swift 编译器的优化
+
+相比 ObjC 来说，编译器性能更高、速度更快，也更加安全。究其根本，Swift 一切的优越之处，都源于其经过无数优化的 Swift 编译器。首先在 C、C++、Objective-C 工程中，编译器前端使用的是 clang，后端使用的 LLVM。而在 Swift 中的编译器前端所使用的是 swift，后端同样是使用的 LLVM。惟一的区别就在于编译器前端的不同，也就是 clang 和 swift 的区别。
+
+
+### clang 编译前端
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/swiftresearch/swift-env-compiler-9.png" width="80%" img/>
+</center>
+
+上图修改于苹果公司 Swift 高级编译器工程师 Joe Groff 在 LLVM 开发者大会的分享的内容。其实 clang 有以下几个缺点：
+
+- 在源码和 LLVM IR 之间存在的巨大的抽象空间
+- IR (Intermidiate Resprsentation) 并不适用与源码级别的分析
+- CFG (Control Flow Graph) 缺乏精度
+- CFG 偏离了编译流程的主路径
+- 在 CFG 和 IR 降级中存在许多重复的工作
+
+
+### swift 编译前端
+
+然而，SIL 的设计就将这些问题全部解决。swift 是一个包含 clang 然后又做了许多优化的编译器前端，它的核心是 Swift Intermediate Language (SIL)。SIL 是 Swift 编译器在 AST（Abstract Syntax Tree）和 LLVM IR 之间的中间表示。也可以说 Swift 语言的绝大部分特性都取决于 SIL 所做的优化。
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/swiftresearch/swift-env-compiler-10.png" width="80%" img/>
+</center>
+
+上图中从 SILGen 到 IRGen 的过程，是与 clang 前端不同的功能。Swift 编译器将分析的过程植入编译流程主路径，SIL 很好地弥补了 AST 到 LLVM IR 之间的空间。
+
+SILGen 将词法语义分析后的 AST 生成未加工的 SIL，在 SIL 内部经过一些列的分析、诊断、优化等操作并生成标准的 SIL，然后 IRGen 在将标准的 SIL 降级为 LLVM IR，交付于编译器后端。在这个过程中，重中之重是 SIL 的分析和高级优化部分。分析工作主要是对数据流强制执行 Swift 语言要求的诊断，比如变量明确初始化、代码可达性等。高级优化工作包括引用计数优化、内存分配优化、动态方法去虚拟化、内联优化、泛型特化等等。
+
+
+
+## SIL 做了什么
+
+Swift 语言的核心就在于 SIL，前文中描述过 SIL 的功能了，究其根本就是分析和高级优化。这些优化可以归纳为下图中诸多方面。本节以性能优化为主，对其中部分优化展开阐述。
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/swiftresearch/swift-env-compiler-11.png" width="80%" img/>
+</center>
+
+### 内存管理
+
+Swfit 中的类分为值类型和引用类型，值类型是没有引用计数的，纯粹的值类型是存储于栈区的。struct 是 Swift 标准的值类型，也是官方推荐优先考虑使用的类型，它能够取代 ObjC 中大部分业务场景中的类。使用值类型时，仅仅通过入栈和出栈的方式来分配和销毁，无需引用计数。相对于堆区需要进行内存开辟、内存回收、引用计数管理，效率明显提升。在 ObjC 中一个对象类型的内存布局结构是，栈区存储指针，堆区存储内容。堆区在数据访问时，也要先通过栈区取值，然后通过指针找到对应堆区地址获取内容。所以值类型在数据访问时，也减少了一层数据读取，效率上也得到了提升。
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/swiftresearch/swift-env-compiler-12.png" width="80%" img/>
+</center>
+
+
+### copy-on-write
+
+对于值类型来说，当把某个变量赋值给另外一个变量时，这应该是一个拷贝的过程，会把内容拷贝到另一块内存中，所以两个变量对应了两块内存区域。但 Swift 对这里做了一些优化，即 copy-on-write，这一个懒加载的思路。当变量完成拷贝时，其实会共用一块内存，只有当第二个变量做出修改时，才会发生实际的拷贝行为。这只是 Swift 关于对内存诸多优化中的一个。
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/swiftresearch/swift-env-compiler-13.png" width="80%" img/>
+</center>
+
+
+### 内联优化
+
+在函数的调用过程可以解释为一个指令在函数地址来回跳转的过程。在某个函数中调用另一个函数时，指令就会跳转到被调用函数的入口地址，执行完成后指令再跳回原函数，继续执行后面的代码。Swift 编译器会将引用透明的函数进行强制内联，在编译期，编译器就会将被调用函数的代码副本放置在函数调用的位置。这样在运行时，就减少了指令的跳转，提升了执行效率。
+
+编译器内联优化前代码：
+
+```swift
+func getSomeNumber() -> Int {
+    return getOnHundred()
+}
+
+func getOnHundred() -> Int {
+    return 100
+}
+```
+
+编译器内联优化后代码：
+
+```swift
+func getSomeNumber() -> Int {
+    return 100
+}
+```
+
+### 泛型原理、泛型特化
+
+泛型是 Swift 中提升代码复用率的利器。泛型函数在执行过程中需要以 `Protocol Witness Table` 作为协议函数的管理者、`Value Witness Table` 作为生命周期管理者，动态创建 `Existential Container` 作为实际数据的管理者，然后才能让泛型对象执行正确的泛型函数。这个动态的过程，是泛类型的实现的核心，底层原理依赖于 Swift 中的协议。下图是编译器对泛型原理的伪代码，不是本文重点，就不过多讨论了。
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/swiftresearch/swift-env-compiler-14.png" width="80%" img/>
+</center>
+
+那么问题来了，既然是在运行时动态化调用，又执行了许多类型和协议相关的处理，那么执行效率一定低于静态化的方式。然而，泛型特化就是编译器为这个场景做的优化。
+
+```swift
+protocol Animal {
+    func eat()
+}
+
+struct Cat: Animal {
+    func eat() {
+        print("cat is eating")
+    }
+}
+
+struct Dog: Animal {
+    func eat() {
+        print("dog is eating")
+    }
+}
+```
+
+Cat 和 Dog 都是遵循并实现了 Animal 协议的类型，以它们为例，来实现一个泛型的函数，并进行调用。
+
+```swift
+// 泛型函数
+func doSomeThing<T: Animal>(someAnimal: T) {
+    someAnimal.eat()    // 如上文所述，其实编译器在这里做了许多动态性处理
+}
+
+// 泛型函数调用
+doSomeThing(someAnimal: Cat())
+doSomeThing(someAnimal: Dog())
+```
+
+泛型特化就是把泛型函数进行特定化处理，让其可以在不影响协议执行的情况下，减少诸多事务的处理，降低动态性。编译器优化后的代码大致如下：
+
+```swift
+// 泛型特化后函数
+func doSomeThingOfCat(someAnimal: Cat) {
+    someAnimal.eat()
+}
+func doSomeThingOfDog(someAnimal: Dog) {
+    someAnimal.eat()
+}
+
+// 泛型特化后函数调用
+doSomeThingOfCat(someAnimal: Cat())
+doSomeThingOfDog(someAnimal: Dog())
+```
+
+假如再加上函数内联的优化，可能会是这样：
+
+```swift
+// 泛型特化、内联优化后
+func doSomeThingOfCat(someAnimal: Cat) {
+    print("cat is eating")
+}
+func doSomeThingOfDog(someAnimal: Dog) {
+    print("dog is eating")
+}
+```
+
+泛型特化后代码执行效率得到不少提升，但是在某些场景下，诸如泛型特化、函数内联等操作编译器是不能实现的。原因在于编译器的非模块化编译模式，不允许编译器了解当前文件外的代码，这就导致编译器不会去进行优化。
+
+
+### 编译模式
+
+Swift 的编译模式有两种，一种是 `Incremental`，是以单个文件作为编译单元，进行增量编译。编译器读取解析源文件后，进行一些优化调整，生成机器可识别的汇编代码并写一个 `.o` 或者目标文件中。最后再由 `linker` 将多个目标文件合并到可执行文件或动态库中。
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/swiftresearch/swift-env-compiler-15.png" width="80%" img/>
+</center>
+
+在这种情况下，编译器优化的范围只是当前文件，这就把优化范围限制在当前文件中，所以编译就无法进行跨文件的深度优化。Swift 3 开始支持另一种编译模式，`whole-module-optimization`（-wmo），这将会以整个模块作为优化单元，这意味着编译器会了解所有代码实现，它可以针对上下文实施具体优化。这些优化包括函数内联优化、泛型特化、函数派发方式优化（文章后面会有描述）等。
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/swiftresearch/swift-env-compiler-16.png" width="80%" img/>
+</center>
+
+那 wmo 是不是就不会增量编译了？其实在 SIL 将整个模块进行优化后，模块又会被拆分，LLVM 后端会在多个线程中把拆分的部分进行处理。所以，即使在 wmo 下，编译器也可以并行、增量地执行大部分编译工作。
+
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/swiftresearch/swift-env-compiler-17.png" width="80%" img/>
+</center>
+
+
+### 函数调度
+
+Swift 是一门静态语言，但并不能说明只有静态调度，它一样也存在动态调度的情况。但本文所指的动态调度并不是 ObjC 中动态消息发送，而是虚函数表的调用方式，即 virtual method table（V-Table），这里不做展开讨论。
+
+静态调度在编译期就已经决定了，在运行时直接执行代码实现，而且编译器还会进行一系列的优化，比如内联等。动态调度是在编译期无法决定执行那些代码实现，只能在运行时根据上下文环境决定跳转到代码的实现。我们都了解静态调度的效率要高于动态调度。对于 Swift 来说，动态调度本质上比静态调度的效率相差并不大，但动态调度会造成 SIL 不能对这些函数进行进一步优化。这些优化的缺失，才是效率差距拉大的根本原因。
+
+为什么 Swift 要比 ObjC 要快呢？对于 ObjC 来说，编译器无法通过消息发送来消除动态调度，也无法执行任何分析、无法内联。而在 Swift 中，编译器有更多的信息，在许多情况下可以消除这些动态调度，从而带来了性能和运行速度的提升。
+
+
+#### class 的调度方式
+
+在 Swift 中，class 类型可以拥有继承关系的，一旦发生继承关系，编译器就可能在编译器不能决定执行过程，产生动态调度的情况。实现一个访问限制为 open 的 Person 类，并定义一个以 Person 作为入参的函数。
+
+```swift
+open class Person {
+    var name = ""
+    func eat() {}
+}
+
+func doAnyThing(per: Person) {
+    print("He is \(per.name)")
+    per.eat()
+}
+```
+
+但对于编译器来说，执行到 doAnyThing() 函数时，并不能确定当前这个对象的具体类型。所以就需要编译器先通过动态查询当前类型和该类型静态内存上的虚函数表，其中包含指向要执行函数实现的正确指针。具体编译器实现的伪代码如下：
+
+```swift
+func doAnyThing(per: Person) {
+    let nameGetter = Person.nameGetter(per)
+    print("He is \(nameGetter(per))")
+    let eatMethod = Person.noiseMethod(per)
+    eatMethod(per)
+}
+```
+
+那么 class 类型就一定是动态调度吗？不是的，如果编译器了解到当前类的函数没有被 override 的，就会自动优化到静态调度的方案，直接执行该类型的函数，达到提升效率的目的。
+
+
+#### struct 的调度方式
+
+struct 没有引用计数，不存在继承关系，也无需 V-Table，所以在函数的调度方式上，一定是静态的。但有一个需要注意的地方，这些函数不包括遵循协议的函数。因为协议函数的底层实现，是依赖 Witness Tables 的机制实现的，一部分可以做到静态调度，大部分需要动态调度。这里就不做展开讨论了。
+前文中也已经介绍过了，静态调度的函数，一定会最大程度上支持编译器的优化。所以 struct 不仅在调度方式上比较高效，在优化程度上也比较彻底，这也就决定了一般情况下的 struct 性能较好。
+
+
+### 数组越界检查
+
+
+对于数组来说，会检查数组的读取或者写入范围是否发生越界行为，为代码提供保护。一旦越界，就会发生诊断信息，而不是发生取值错误。下面以官方给出的例子进行解释。
+
+```swift 
+for i in 0..< n {
+    precondition (i < length)
+    A[i] ^= 13
+}
+```
+
+目前，而且 Swift 团队还将此检查提前到循环之外，将从时间复杂度从之前的O(n)优化为现在的O(1)了。即使在巨大的循环次数时，检查的成本也可以忽略不计。
+
+```swift
+precondition (i < length)
+    for i in 0..< n {	
+    A[i] ^= 13
+}
+```
+
+### 常量溢出检查
+
+如果常量表达式在计算过程中发生溢出，就会发出诊断信息，防止造成取值错误。
+
+```swift
+var max = Int.max
+max = max + 1 
+```
+
+### 函数返回分析
+
+函数返回分析可验证每个函数在其路径上的返回值，确保返回值与函数定义的类型一致。也可以理解为代码可达性检测的一种，如果编译器检查发现不一致或者无返回值，编译器就会在发出 unreachable 指令，提示开发者数据流的错误信息。这也就更能体现出 Swift 是一门强类型语言了。
+
+
+## 总结
+
+从语言活跃、社区活跃、应用现状等方面，与 Objective-C 做了详细对比，足以说明 Swift 开发环境已经完备。就优劣势而言，Swift 更为安全、高效、先进、简洁，利远大于弊。另外，苹果对于开源的 Swift 持续不断的改进，尤其是近一年来的重大更新，使我们欢呼雀跃。从跨平台的角度来看，笔者认为苹果对于 Swift 的战略定位绝不止 Apple Platform、也不止前端、后台、人工智能领域。总之，Swift 还很年轻，对于它来说才刚刚开始，但对于 Apple 开发者来说 Swift 的时代早已到来。若再问何时出发，不如就在今天。
+
+
+
+
+
+## 相关资料
+
+- [Swift 官方文档](https://swift.org)
+- [苹果开发者官网](https://developer.apple.com/)
+- [TIOBE](https://www.tiobe.com/)
+- [GitHub](https://github.com/)
+- [Stack Over Flow](https://stackoverflow.com)
+- [Swift Compiler](https://swift.org/swift-compiler/#compiler-architecture)
+- [swift docs](https://github.com/apple/swift/tree/master/docs)
+- [LLVM](http://www.aosabook.org/en/llvm.html)
+- [clang - the Clang C, C++, and Objective-C compiler](https://clang.llvm.org/docs/CommandGuide/clang.html)
+- [2015 LLVM Developers’ Meeting: Joseph Groff & Chris Lattner “Swift's High-Level IR: A Case Study..."](https://www.youtube.com/watch?v=Ntj8ab-5cvE&feature=youtu.be)
+- [High-Level Optimizations in SIL](https://apple-swift.readthedocs.io/en/latest/HighLevelSILOptimizations.html#)
+- [Optimizing Swift Performance](https://developer.apple.com/videos/play/wwdc2015/409/)
+- [Whole-Module Optimization](https://swift.org/blog/whole-module-optimizations/)
+- [Apple’s use of Swift and SwiftUI in iOS 15](https://blog.timac.org/2021/1219-state-of-swift-and-swiftui-ios15/)
+
+
+
+
+
+
+-------
+
+欢迎指正, [wangyanchang21](https://github.com/wangyanchang21).
+
