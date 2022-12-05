@@ -2,7 +2,7 @@
 title:  "Swift环境及编译优化调研"
 date:    2020-09-28 18:21:58
 categories: [iOS, Swift]
-tags: [iOS, ]
+tags: [iOS, Swift]
 ---
 
 
@@ -10,6 +10,10 @@ tags: [iOS, ]
 > 此文章首次发表在京东零售技术公众号：[Swift环境及编译优化调研](https://mp.weixin.qq.com/s/cM4arazOf9npcO7Ws0fnJA)
 
 [![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)
+
+
+
+---
 
 
 
@@ -165,20 +169,16 @@ tags: [iOS, ]
 
 国内 App Store 应用免费排行榜数据分析如下：
 
-```mermaid
-pie title 中国区 Top 100 App Swift 支持度
-"支持" : 31
-"不支持" : 69
-```
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/swiftresearch/swift-env-compiler-4.png" width="80%" img/>
+</center>
 
 
 但对于美国 App Store 应用免费排行榜进行分析后，发现数据上基本与国内相反，使用Swift的应用占比81%，不包含Swift的仅有19%。国外开发者对于 Swift 的使用力度还是很高的，与国内的数据形成一个十分明显的对比，所以国内开发者整体对于 Swift 的支持度还是有一定差距的。
 
-```mermaid
-pie title 美国区 Top 100 App Swift 支持度
-"支持" : 81
-"不支持" : 19
-```
+<center>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/swiftresearch/swift-env-compiler-5.png" width="80%" img/>
+</center>
 
 
 由于只采样前100个应用，所以数据并不能精确说明 Swift 在 iOS 中的应用比例，只能作为一个参考。2019年开发者曾对国内外 Top 1000 的 App 做过同样的分析，他们的结论是国内使用 Swift 的 APP 占比约22%，美区使用 Swift 的 APP 占比约78%。
