@@ -7,7 +7,8 @@ tags: [iOS, Swift]
 
 
 
-> 此文章首次发表在京东零售技术公众号：[Swift环境及编译优化调研](https://mp.weixin.qq.com/s/cM4arazOf9npcO7Ws0fnJA)
+> 此文章首次发表在京东零售技术公众号：
+> [Swift环境及编译优化调研](https://mp.weixin.qq.com/s/cM4arazOf9npcO7Ws0fnJA)
 
 [![Contact](https://img.shields.io/badge/contact-wangyanchang21-green.svg)](https://github.com/wangyanchang21)
 
@@ -611,20 +612,19 @@ max = max + 1
 
 ## 相关资料
 
-- [Swift 官方文档](https://swift.org)
-- [苹果开发者官网](https://developer.apple.com/)
-- [TIOBE](https://www.tiobe.com/)
-- [GitHub](https://github.com/)
-- [Stack Over Flow](https://stackoverflow.com)
-- [Swift Compiler](https://swift.org/swift-compiler/#compiler-architecture)
-- [swift docs](https://github.com/apple/swift/tree/master/docs)
-- [LLVM](http://www.aosabook.org/en/llvm.html)
-- [clang - the Clang C, C++, and Objective-C compiler](https://clang.llvm.org/docs/CommandGuide/clang.html)
-- [2015 LLVM Developers’ Meeting: Joseph Groff & Chris Lattner “Swift's High-Level IR: A Case Study..."](https://www.youtube.com/watch?v=Ntj8ab-5cvE&feature=youtu.be)
-- [High-Level Optimizations in SIL](https://apple-swift.readthedocs.io/en/latest/HighLevelSILOptimizations.html#)
-- [Optimizing Swift Performance](https://developer.apple.com/videos/play/wwdc2015/409/)
-- [Whole-Module Optimization](https://swift.org/blog/whole-module-optimizations/)
-- [Apple’s use of Swift and SwiftUI in iOS 15](https://blog.timac.org/2021/1219-state-of-swift-and-swiftui-ios15/)
+- https://swift.org
+- https://developer.apple.com
+- https://www.tiobe.com
+- https://github.com
+- https://stackoverflow.com
+- https://swift.org/swift-compiler/#compiler-architecture
+- https://github.com/apple/swift/tree/master/docs
+- http://www.aosabook.org/en/llvm.html
+- https://clang.llvm.org/docs/CommandGuide/clang.html
+- https://www.youtube.com/watch?v=Ntj8ab-5cvE&feature=youtu.be
+- https://apple-swift.readthedocs.io/en/latest/HighLevelSILOptimizations.html#
+- https://developer.apple.com/videos/play/wwdc2015/409/
+- https://swift.org/blog/whole-module-optimizations
 
 
 
