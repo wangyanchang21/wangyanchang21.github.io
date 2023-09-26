@@ -184,7 +184,7 @@ ViewController 持有 View 和 ViewModel，当 VC 初始化时，会让 ViewMode
 
 
 <center>
-<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/architecturalpattern/20160727185706979.png" width="80%" img/>
+<img src="https://raw.githubusercontent.com/wangyanchang21/wangyanchang21.github.io/master/resource/architecturalpattern/20160727185706979.gif" width="80%" img/>
 </center>
 
 View <-> C <-> ViewModel <-> Model，所以使用`MVVM `之后，就不需要Controller的说法是不正确的。严格来说`MVVM `其实是`MVCVM`。从图中可以得知，Controller夹在View和ViewModel之间做的其中一个主要事情就是将View和ViewModel进行绑定。在逻辑上，Controller知道应当展示哪个View，Controller也知道应当使用哪个ViewModel，然而View和ViewModel它们之间是互相不知道的，所以Controller就负责控制他们的绑定关系，所以叫Controller/控制器就是这个原因。
