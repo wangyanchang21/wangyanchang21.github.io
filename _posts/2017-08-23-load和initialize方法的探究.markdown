@@ -38,7 +38,7 @@ tags: [iOS, runtime]
 当`main函数`执行前，正是从`dyld`(the dynamic link editor)到`runtime`的过程。大致过程如下：
 
 - 系统调用当前App的进程，初始化运行环境。
-- `dyld`读取并加载程序的mach-o文件，即程序的二进制可执行文件。
+- `dyld`读取并加载程序的mach-o文件和动态库。
 - 开启缓存策略，加载程序中你链接的动态库，如 `framework`、`tbd`等。
 - `ImageLoader`加载所有`image`（镜像）到内存。
 - 当前类镜像的`map_images`函数执行。
@@ -52,7 +52,7 @@ tags: [iOS, runtime]
 类的category中的+load方法也会执行，并且是先执行类后执行分类的顺序。
 
 ### 执行次数
-每个类中的+load方法只会执行一次。当子类执行自己类中的+load方法前，它的父类会先执行自己的+load方法，且仅会执行一次。+load方法不需要显式调用`[super load]`，但也不会多次执行父类中+load方法的实现。即使在子类中手动调用`[super load]`，+load方法也只会执行一次。
++load方法系统只会执行一次。当子类执行自己类中的+load方法前，它的父类会先执行自己的+load方法，且仅会执行一次。+load方法不需要显式调用`[super load]`，如果在子类中手动调用`[super load]`，父类的+load才会再次执行。
 
 ### category中不会覆盖的load方法
 对于某个类, 当category中重写某个方法时, 只会执行category中的此方法, 并不会执行原类中的此方法。即方法覆盖了。
@@ -82,11 +82,11 @@ tags: [iOS, runtime]
 当类收到第一条消息之前初始化该类，初始化每个类只调用一次。与+load的加载时机不相同, 类似于懒加载的方式，所以也可能根本不会被调用。
 
 ### 执行顺序
-一个类的+initialize方法不需要显式调用`[super load]`，且父类会先执行自己类或者分类中的+initialize方法，再执行子类的+initialize方法。
+一个类的+initialize方法不需要显式调用`[super initialize]`，且父类会先执行自己类或者分类中的+initialize方法，再执行子类的+initialize方法。
 类的category中的+initialize方法会覆盖原类中的+initialize方法。
 
 ### 执行次数
-与+load方法不一样，+initialize方法可能会多次调用。+initialize方法同样不需要显式调用`[super load]`，但区别在于`[super load]`会执行父类中+load方法的实现。所以当父类和子类都重写+initialize方法后，可能造成父类中+initialize方法的多次调用。
++initialize方法系统也只会调用一次。同样不需要显式调用`[super initialize]`，如果在子类中手动调用`[super initialize]`，父类的+initialize也会再次执行。
 
 官方文档中也明确说明，如果您想保护自己的类不被多次执行，您可以按照以下方式构建您的实现：
 
